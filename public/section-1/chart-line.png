@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="241" height="98.4522" viewBox="0 0 241 98.4522" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="LineChart">
+<path id="Vector 1" d="M18.3744 88.4415L0.158451 98.155H240.846V10.9537L222.461 20.4465L203.908 69.0143L185.354 39.8736H166.801L148.248 49.5872L129.694 1.01934L111.141 59.3008L92.5877 78.7279L74.0344 97.7135L55.4811 10.7329L36.9278 30.1601L18.3744 88.4415Z" fill="url(#paint0_linear_0_8)"/>
+<path id="Vector 2" d="M0.158451 98.155L18.3744 88.4415L36.9278 30.16L55.4811 10.7329L74.0344 97.7135L92.5877 78.7279L111.141 59.3008L129.694 1.01934L148.248 49.5872L166.801 39.8736H185.354L203.908 69.0143L222.461 20.4465L240.846 10.9537" stroke="#60C94F" stroke-width="0.673504"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_8" x1="120.502" y1="1.01934" x2="120.502" y2="98.155" gradientUnits="userSpaceOnUse">
+<stop stop-color="#60C94F" stop-opacity="0.05"/>
+<stop offset="1" stop-color="#60C94F" stop-opacity="0.02"/>
+</linearGradient>
+</defs>
+</svg>

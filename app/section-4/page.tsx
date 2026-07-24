@@ -163,34 +163,33 @@ const Section4 = () => {
             <BillingToggle isYearly={isYearly} onChange={toggleBillingCycle} />
 
             <span
-              className={`text-base font-medium leading-normal tracking-[0.02em] transition-colors duration-200 ease motion-reduce:transition-none ${
+              className={`relative inline-block text-base font-medium leading-normal tracking-[0.02em] transition-colors duration-200 ease motion-reduce:transition-none ${
                 isYearly ? "text-[#cef240]" : "text-[#cacbce]"
               }`}
             >
               Yearly
-            </span>
-
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute top-[-32px] left-[217px] z-10 h-12.5 w-41.25 select-none"
-            >
-              <Image
-                alt=""
-                src="/section-4/save-arrow.svg"
-                width={44}
-                height={29}
-                className="absolute top-2.5 left-0 h-10 w-12.75 rotate-16"
-              />
-              <span className="absolute top-3.5 left-13.25 whitespace-nowrap text-base font-normal leading-normal tracking-[0.02em] text-[#cef240]">
-                ( Save 20% )
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -top-10 left-0 z-10 items-start gap-1 select-none ipad:-top-11 ipad:left-13.5 hidden iphone-max:flex"
+              >
+                <Image
+                  alt=""
+                  src="/section-4/save-arrow.svg"
+                  width={44}
+                  height={29}
+                  className="h-8 w-10 -rotate-20 ipad:h-10 ipad:w-12.75 ipad:rotate-16"
+                />
+                <span className="relative -top-3 whitespace-nowrap text-sm font-normal leading-normal tracking-[0.02em] text-[#cef240] ipad:top-2.5 ipad:text-base">
+                  ( Save 20% )
+                </span>
+                <Image
+                  alt=""
+                  src="/section-4/sparkle.svg"
+                  width={11}
+                  height={11}
+                  className="relative -top-2 -rotate-8 size-2.5 ipad:top-0 ipad:size-3"
+                />
               </span>
-              <Image
-                alt=""
-                src="/section-4/sparkle.svg"
-                width={11}
-                height={11}
-                className="absolute top-0 right-0 size-3 -rotate-8"
-              />
             </span>
           </div>
 

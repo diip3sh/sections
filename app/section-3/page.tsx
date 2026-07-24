@@ -35,15 +35,16 @@ const Section3 = () => {
               <Globe
                 direction="right"
                 dots={{
-                  color: "#282828",
+                  color: "#737373",
                   size: 10,
                   density: 4,
                   allDots: false,
                 }}
-                speed={0}
+                speed={1}
                 smoothing={0}
                 stopOnHover={false}
                 interactive
+                dragSpeed={5}
                 showOutline={false}
                 showGrid={false}
                 oceanColor="#050505"

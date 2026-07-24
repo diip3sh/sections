@@ -1,5 +1,12 @@
 import localFont from "next/font/local";
-import { Geist, Inter, Inter_Tight, Rethink_Sans, Tillana } from "next/font/google";
+import {
+  Geist,
+  Instrument_Sans,
+  Inter,
+  Inter_Tight,
+  Rethink_Sans,
+  Tillana,
+} from "next/font/google";
 
 export const switzer = localFont({
   src: "./switzer.ttf",
@@ -24,13 +31,19 @@ export const rethinkSans = Rethink_Sans({
 });
 
 export const geist = Geist({
-  variable: "--font-geist",
+  variable: "--font-geist-family",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
 });
 
 export const tillana = Tillana({
-  variable: "--font-tillana",
+  variable: "--font-tillana-family",
   subsets: ["latin"],
   weight: ["500"],
+});
+
+export const instrumentSans = Instrument_Sans({
+  variable: "--font-instrument-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });

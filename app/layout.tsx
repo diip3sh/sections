@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   geist,
+  instrumentSans,
   inter,
   interTight,
   rethinkSans,
@@ -23,7 +24,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${interTight.variable} ${switzer.variable} ${rethinkSans.variable} ${geist.variable} ${tillana.variable} h-full antialiased`}
+      className={`${inter.variable} ${interTight.variable} ${switzer.variable} ${rethinkSans.variable} ${geist.variable} ${tillana.variable} ${instrumentSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>

@@ -35,7 +35,7 @@ import { geoEquirectangular, geoPath } from "d3-geo";
 type Rgba = { r: number; g: number; b: number; a: number };
 
 const DEFAULT_DOTS: DotsConfig = {
-  color: "#ffffff",
+  color: "#262626",
   size: 5,
   density: 8,
   allDots: false,

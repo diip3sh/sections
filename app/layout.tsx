@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { inter, interTight, switzer } from "@/lib/fonts/font";
+import { inter, interTight, rethinkSans, switzer } from "@/lib/fonts/font";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${interTight.variable} ${switzer.variable} h-full antialiased`}
+      className={`${inter.variable} ${interTight.variable} ${switzer.variable} ${rethinkSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>

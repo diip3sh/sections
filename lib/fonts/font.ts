@@ -1,5 +1,5 @@
 import localFont from "next/font/local";
-import { Inter, Inter_Tight } from "next/font/google";
+import { Inter, Inter_Tight, Rethink_Sans } from "next/font/google";
 
 export const switzer = localFont({
   src: "./switzer.ttf",
@@ -15,4 +15,10 @@ export const inter = Inter({
 export const interTight = Inter_Tight({
   variable: "--font-inter-tight",
   subsets: ["latin"],
+});
+
+export const rethinkSans = Rethink_Sans({
+  variable: "--font-rethink-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });

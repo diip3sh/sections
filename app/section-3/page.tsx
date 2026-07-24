@@ -24,9 +24,9 @@ const Section3 = () => {
       >
         <div
           aria-hidden="true"
-          className="pointer-events-none relative h-106 w-full shrink-0 overflow-hidden sm:absolute sm:inset-x-0 sm:top-0 sm:h-126"
+          className="relative h-106 w-full shrink-0 overflow-hidden sm:absolute sm:inset-x-0 sm:top-0 sm:h-126"
         >
-          <div className="absolute left-1/2 top-67 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.10),transparent_70%)] sm:top-92.375 sm:h-82.75 sm:w-82.75" />
+          <div className="pointer-events-none absolute left-1/2 top-67 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.10),transparent_70%)] sm:top-92.375 sm:h-82.75 sm:w-82.75" />
 
           <OrbitControls />
 
@@ -41,6 +41,7 @@ const Section3 = () => {
                   allDots: false,
                 }}
                 speed={0}
+                smoothing={0}
                 stopOnHover={false}
                 interactive
                 showOutline={false}
@@ -53,10 +54,10 @@ const Section3 = () => {
             </div>
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-linear-to-b from-transparent to-black sm:h-28" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-linear-to-b from-transparent to-black sm:h-28" />
         </div>
 
-        <div className="relative z-10 flex w-full flex-1 flex-col items-center pt-4 sm:min-h-197.5 sm:pt-104">
+        <div className="pointer-events-none relative z-10 flex w-full flex-1 flex-col items-center pt-4 sm:min-h-197.5 sm:pt-104">
           <header className="-mt-20 flex w-full max-w-220.5 flex-col items-center gap-4 px-2 text-center sm:mt-0">
             <p className="flex items-center gap-1 text-[15px] font-medium leading-normal text-[#adb1b8] sm:text-[17px]">
               <Image
@@ -87,7 +88,7 @@ const Section3 = () => {
 
           <div aria-hidden="true" className="hidden min-h-10 flex-1 sm:block" />
 
-          <ul className="mt-16 grid w-full max-w-140 shrink-0 sm:mt-0 sm:max-w-none sm:grid-cols-3 sm:divide-x sm:divide-[#18191b]">
+          <ul className="pointer-events-auto mt-16 grid w-full max-w-140 shrink-0 sm:mt-0 sm:max-w-none sm:grid-cols-3 sm:divide-x sm:divide-[#18191b]">
             {METRICS.map((metric, index) => (
               <li
                 key={metric.value}

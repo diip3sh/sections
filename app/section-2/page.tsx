@@ -1,9 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useLayoutEffect, useRef, useState } from "react";
-
-type BillingCycle = "monthly" | "yearly";
+import { useLayoutEffect, useRef } from "react";
+import {
+  BillingCycleControl,
+  useBillingCycle,
+} from "./components/billing-toggle";
 
 type PricingPlan = {
   name: string;
@@ -77,7 +79,19 @@ const BENEFITS = [
   { icon: "/section-2/database.svg", label: "Data migration" },
 ] as const;
 
-const PriceRow = ({ price }: { price: number }) => {
+const CARD_OUTLINE_SHADOW =
+  "shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_1px_2px_-1px_rgba(0,0,0,0.06),0px_2px_4px_0px_rgba(0,0,0,0.04)]";
+
+const CARD_SURFACE_SHADOW =
+  "shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_1px_2px_-1px_rgba(0,0,0,0.06),0px_2px_4px_0px_rgba(0,0,0,0.04),0px_3px_4px_rgba(0,0,0,0.05),0px_1px_0.5px_rgba(0,0,0,0.2)]";
+
+const PriceRow = ({
+  price,
+  isYearly,
+}: {
+  price: number;
+  isYearly: boolean;
+}) => {
   const suffixRef = useRef<HTMLSpanElement>(null);
   const previousLeft = useRef<number | null>(null);
 
@@ -104,32 +118,40 @@ const PriceRow = ({ price }: { price: number }) => {
     }
 
     previousLeft.current = currentLeft;
-  }, [price]);
+  }, [price, isYearly]);
 
   return (
     <div className="flex flex-wrap items-end gap-x-2 gap-y-0.5 iphone:flex-nowrap">
-      <span className="font-tight text-[clamp(2.25rem,9vw,2.625rem)] font-semibold tabular-nums leading-none tracking-[-0.04em]">
+      <span className="font-tight text-[clamp(2.25rem,9vw,2.625rem)] font-semibold tabular-nums leading-none tracking-[-0.04em] transition-opacity duration-200 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none">
         ${price}
       </span>
       <span
         ref={suffixRef}
-        className="text-[15px] font-medium leading-normal text-[#4d4d4d] iphone:text-[17px]"
+        className="grid text-[15px] font-medium leading-normal text-[#4d4d4d] iphone:text-[17px]"
       >
-        per member / month
+        <span
+          aria-hidden={isYearly}
+          className={`col-start-1 row-start-1 transition-opacity duration-200 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none ${
+            isYearly ? "pointer-events-none opacity-0" : "opacity-100"
+          }`}
+        >
+          per member / month
+        </span>
+        <span
+          aria-hidden={!isYearly}
+          className={`col-start-1 row-start-1 transition-opacity duration-200 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none ${
+            isYearly ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+        >
+          per member / yearly
+        </span>
       </span>
     </div>
   );
 };
 
 const Section2 = () => {
-  const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
-  const isYearly = billingCycle === "yearly";
-
-  const handleBillingCycleChange = () => {
-    setBillingCycle((currentBillingCycle) =>
-      currentBillingCycle === "monthly" ? "yearly" : "monthly",
-    );
-  };
+  const { isYearly, toggleBillingCycle, getPrice } = useBillingCycle();
 
   return (
     <main className="min-h-screen bg-[#f4f1f0] px-2 py-16 text-[#111] sm:px-6 sm:py-24">
@@ -156,55 +178,21 @@ const Section2 = () => {
           </div>
         </header>
 
-        <div className="flex items-center gap-3.5 text-[17px] font-medium">
-          <span className={isYearly ? "text-[#808080]" : "text-[#111]"}>
-            Billed Monthly
-          </span>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={isYearly}
-            aria-label="Toggle yearly billing"
-            onClick={handleBillingCycleChange}
-            className="relative flex h-6.5 w-11.5 cursor-pointer items-center rounded-full border-2 border-transparent p-1 transition-transform duration-200 ease-[cubic-bezier(.215,.61,.355,1)] active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111] motion-reduce:transition-none motion-reduce:active:scale-100"
-            style={{
-              backgroundClip: "padding-box, border-box",
-              backgroundImage:
-                "linear-gradient(transparent, transparent), linear-gradient(90deg, #ff2f2f 0%, #ff2f2f 50%, #d511fd 100%)",
-              backgroundOrigin: "padding-box, border-box",
-            }}
-          >
-            <span
-              aria-hidden="true"
-              className={`absolute inset-0.5 rounded-full transition-colors duration-300 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none ${
-                isYearly ? "bg-white" : "bg-[#111]"
-              }`}
-            />
-            <span
-              className={`absolute top-1/2 left-1 z-10 size-4 -translate-y-1/2 rounded-full shadow-[0px_2px_2px_rgba(0,0,0,0.3)] transition-[transform,background-color] duration-300 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none ${
-                isYearly
-                  ? "translate-x-4.5 bg-[#111]"
-                  : "translate-x-0 bg-white"
-              }`}
-            />
-          </button>
-          <span className={isYearly ? "text-[#111]" : "text-[#808080]"}>
-            Billed yearly
-          </span>
-        </div>
+        <BillingCycleControl
+          isYearly={isYearly}
+          onChange={toggleBillingCycle}
+        />
 
         <div className="flex w-full flex-col gap-10">
           <div className="flex w-full flex-wrap items-stretch justify-center gap-5">
             {PRICING_PLANS.map((plan) => {
-              const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
+              const price = getPrice(plan.monthlyPrice, plan.yearlyPrice);
 
               return (
                 <article
                   key={plan.name}
-                  className={`flex min-w-0 w-full max-w-90.5 flex-col rounded-[20px] bg-[#edeae8] ${
-                    plan.isPopular
-                      ? "border-2 border-transparent"
-                      : "border border-[#dcd6d0]"
+                  className={`flex min-w-0 w-full max-w-90.5 flex-col rounded-[20px] bg-[#edeae8] ${CARD_OUTLINE_SHADOW} ${
+                    plan.isPopular ? "border-2 border-transparent" : ""
                   }`}
                   style={
                     plan.isPopular
@@ -218,7 +206,7 @@ const Section2 = () => {
                   }
                 >
                   <div
-                    className={`relative z-10 flex flex-col gap-8 bg-white p-5 shadow-[0px_3px_4px_rgba(0,0,0,0.05),0px_1px_0.5px_rgba(0,0,0,0.2)] android-sm:gap-9 android-sm:p-6 iphone:gap-10 iphone:p-7.5 ${
+                    className={`relative z-10 flex flex-col gap-8 bg-white p-5 ${CARD_SURFACE_SHADOW} android-sm:gap-9 android-sm:p-6 iphone:gap-10 iphone:p-7.5 ${
                       plan.isPopular
                         ? "-mx-0.5 -mt-0.5 rounded-[20px] rounded-b-[19px] pt-7 android-sm:pt-7.5 iphone:pt-8"
                         : "rounded-[19px]"
@@ -249,7 +237,7 @@ const Section2 = () => {
                         </p>
                       </div>
 
-                      <PriceRow price={price} />
+                      <PriceRow price={price} isYearly={isYearly} />
 
                       <button
                         type="button"

@@ -794,7 +794,6 @@ export default function Globe({
     let isDragging = false;
     let isHovering = false;
     let lastMouseX = 0;
-    let lastMouseY = 0;
     let animationFrameId: number | null = null;
     const lerpFactor =
       smoothingN === 0 ? 1 : mapLinear(smoothingN, 0, 1, 0.4, 0.03);
@@ -889,7 +888,6 @@ export default function Globe({
       velocity.x = 0;
       velocity.y = 0;
       lastMouseX = event.clientX;
-      lastMouseY = event.clientY;
       canvas.setPointerCapture(event.pointerId);
       startAnimation();
     };
@@ -898,17 +896,10 @@ export default function Globe({
 
       const sensitivity = mapDragSpeedUiToSensitivity(dragSpeed);
       const deltaX = event.clientX - lastMouseX;
-      const deltaY = event.clientY - lastMouseY;
       targetRotation.x += deltaX * sensitivity;
-      targetRotation.y += deltaY * sensitivity;
-      targetRotation.y = Math.max(
-        -Math.PI / 2,
-        Math.min(Math.PI / 2, targetRotation.y),
-      );
       velocity.x = deltaX * sensitivity * 0.3;
-      velocity.y = deltaY * sensitivity * 0.3;
+      velocity.y = 0;
       lastMouseX = event.clientX;
-      lastMouseY = event.clientY;
     };
     const handlePointerUp = (event: PointerEvent) => {
       isDragging = false;

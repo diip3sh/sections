@@ -12,6 +12,8 @@
   --font-tight: var(--font-inter-tight);
   --font-switzer: var(--font-switzer-family);
   --font-rethink: var(--font-rethink-sans);
+  --font-geist: var(--font-geist);
+  --font-tillana: var(--font-tillana);
 
   /* Small Android */
   --breakpoint-android-sm: 360px;

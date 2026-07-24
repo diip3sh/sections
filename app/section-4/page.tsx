@@ -7,6 +7,7 @@ type PricingPlan = {
   name: string;
   description: string;
   monthlyPrice: number | null;
+  yearlyPrice: number | null;
   buttonLabel: string;
   isPopular?: boolean;
   features: string[];
@@ -18,6 +19,7 @@ const PRICING_PLANS: PricingPlan[] = [
     description:
       "The Starter Plan is perfect for businesses looking to build a professional website",
     monthlyPrice: 499,
+    yearlyPrice: 4999,
     buttonLabel: "Get Started",
     features: [
       "Professionally Designed Website",
@@ -31,6 +33,7 @@ const PRICING_PLANS: PricingPlan[] = [
     description:
       "The Growth Plan is designed to accelerate your online growth with all the features.",
     monthlyPrice: 999,
+    yearlyPrice: 9999,
     buttonLabel: "Accelerate Growth",
     isPopular: true,
     features: [
@@ -45,6 +48,7 @@ const PRICING_PLANS: PricingPlan[] = [
     description:
       "For enterprises with complex digital needs, our Enterprise Plan offers bespoke",
     monthlyPrice: null,
+    yearlyPrice: null,
     buttonLabel: "Request Custom Quote",
     features: [
       "Tailored Solutions for Large Enterprises",
@@ -55,12 +59,11 @@ const PRICING_PLANS: PricingPlan[] = [
   },
 ];
 
-const YEARLY_DISCOUNT = 0.2;
-
-const getDisplayPrice = (monthlyPrice: number, isYearly: boolean) => {
-  if (!isYearly) return monthlyPrice;
-  return Math.round(monthlyPrice * (1 - YEARLY_DISCOUNT));
-};
+const getDisplayPrice = (
+  monthlyPrice: number,
+  yearlyPrice: number,
+  isYearly: boolean,
+) => (isYearly ? yearlyPrice : monthlyPrice);
 
 const BillingToggle = ({
   isYearly,
@@ -76,11 +79,11 @@ const BillingToggle = ({
       aria-checked={isYearly}
       aria-label="Toggle yearly billing"
       onClick={onChange}
-      className="relative h-8 w-13.5 shrink-0 cursor-pointer rounded-full bg-[#cef240] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#cef240] motion-reduce:transition-none"
+      className="relative h-8 w-13.5 shrink-0 cursor-pointer rounded-full bg-[#1f1f1f] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#cef240] motion-reduce:transition-none"
     >
       <span
         aria-hidden="true"
-        className={`absolute top-0.5 left-0.5 size-7 rounded-full bg-[#0f0f0f] transition-transform duration-200 ease-out motion-reduce:transition-none ${
+        className={`absolute top-0.5 left-0.5 size-7 rounded-full bg-[#cef240] transition-transform duration-200 ease-out motion-reduce:transition-none ${
           isYearly ? "translate-x-5.5" : "translate-x-0"
         }`}
       />
@@ -101,7 +104,7 @@ const FeatureItem = ({ label }: { label: string }) => {
           className="size-4.5"
         />
       </span>
-      <span className="min-w-0 flex-1 text-[15px] font-normal leading-normal text-[#b0b1b5]">
+      <span className="min-w-0 flex-1 text-[clamp(1.0625rem,2vw,1.125rem)] font-normal leading-normal text-[#b0b1b5]">
         {label}
       </span>
     </li>
@@ -135,11 +138,11 @@ const Section4 = () => {
           <div className="flex w-full flex-col items-center justify-center gap-2">
             <h1
               id="pricing-heading"
-              className="w-full text-[clamp(1.75rem,4vw,3rem)] font-bold leading-[1.2] tracking-[0.02em] text-[#f2f2f3]"
+              className="w-full text-[clamp(1.75rem,4vw,3.625rem)] font-bold leading-[1.2] tracking-[0.02em] text-[#f2f2f3]"
             >
               Unlock Your Digital Potential with Outstand&apos;s Pricing Plans
             </h1>
-            <p className="w-full max-w-180 text-base font-normal leading-normal tracking-[0.02em] text-[#96979c] sm:text-lg">
+            <p className="w-full max-w-180 text-[clamp(1.0625rem,2vw,1.125rem)] font-normal leading-normal tracking-[0.02em] text-[#96979c]">
               Embark on your digital journey with Outstand&apos;s range of
               pricing plans designed to meet your needs and propel your business
               forward.
@@ -148,7 +151,7 @@ const Section4 = () => {
         </header>
 
         <div className="flex w-full flex-col items-center gap-10">
-          <div className="relative flex items-center gap-4 rounded-[70px] bg-[#141414] px-4 py-2">
+          <div className="relative mt-10 flex items-center gap-4 rounded-[70px] bg-[#141414] px-4 py-2 ipad:mt-8 desktop-sm:mt-4">
             <span
               className={`text-base font-medium leading-normal tracking-[0.02em] transition-colors duration-200 ease motion-reduce:transition-none ${
                 isYearly ? "text-[#cacbce]" : "text-[#cef240]"
@@ -167,9 +170,9 @@ const Section4 = () => {
               Yearly
             </span>
 
-            <div
+            <span
               aria-hidden="true"
-              className="pointer-events-none absolute -top-8 -right-37.5 hidden h-12.5 w-41.25 select-none lg:block"
+              className="pointer-events-none absolute top-[-32px] left-[217px] z-10 h-12.5 w-41.25 select-none"
             >
               <Image
                 alt=""
@@ -186,30 +189,38 @@ const Section4 = () => {
                 src="/section-4/sparkle.svg"
                 width={11}
                 height={11}
-                className="absolute top-0 right-0 size-2.75 -rotate-8"
+                className="absolute top-0 right-0 size-3 -rotate-8"
               />
-            </div>
+            </span>
           </div>
 
-          <div className="flex w-full flex-col items-stretch justify-center gap-4 lg:flex-row">
+          <div className="grid w-full grid-cols-1 items-start justify-items-center gap-4 ipad:grid-cols-2 ipad:justify-items-stretch desktop-sm:flex desktop-sm:flex-wrap desktop-sm:justify-center">
             {PRICING_PLANS.map((plan) => {
               const price =
-                plan.monthlyPrice === null
+                plan.monthlyPrice === null || plan.yearlyPrice === null
                   ? null
-                  : getDisplayPrice(plan.monthlyPrice, isYearly);
+                  : getDisplayPrice(
+                      plan.monthlyPrice,
+                      plan.yearlyPrice,
+                      isYearly,
+                    );
+
+              const isStarter = plan.name === "Starter plan";
 
               return (
                 <article
                   key={plan.name}
-                  className={`flex min-w-0 flex-1 flex-col gap-7.5 overflow-clip rounded-2xl border bg-[#141414] p-7.5 ${
+                  className={`flex h-fit w-full max-w-[369px] flex-col gap-7.5 self-start overflow-clip rounded-2xl border bg-[#141414] p-7.5 ipad:max-w-none desktop-sm:w-[369px] desktop-sm:max-w-[369px] desktop-sm:shrink-0 ${
                     plan.isPopular
-                      ? "border-[#cef240] shadow-[0px_0px_0px_6px_#1a1a1a]"
-                      : "border-[#1f1f1f]"
+                      ? "order-1 border-[#cef240] shadow-[0px_0px_0px_6px_#1a1a1a] ipad:col-span-2 desktop-sm:order-2 desktop-sm:col-span-1"
+                      : isStarter
+                        ? "order-2 border-[#1f1f1f] desktop-sm:order-1"
+                        : "order-3 border-[#1f1f1f]"
                   }`}
                 >
                   <div className="flex w-full flex-col gap-4">
                     <div className="flex w-full items-center gap-5">
-                      <h2 className="min-w-0 flex-1 text-[22px] font-semibold leading-normal text-[#f2f2f3]">
+                      <h2 className="min-w-0 flex-1 text-[clamp(1.25rem,2vw,1.375rem)] font-semibold leading-normal text-[#f2f2f3]">
                         {plan.name}
                       </h2>
 
@@ -235,7 +246,7 @@ const Section4 = () => {
                       className="h-px w-full bg-[#1f1f1f]"
                     />
 
-                    <p className="text-lg font-normal leading-normal text-[#96979c]">
+                    <p className="text-[clamp(1.0625rem,2vw,1.125rem)] font-normal leading-normal text-[#96979c]">
                       {plan.description}
                     </p>
                   </div>
@@ -251,7 +262,7 @@ const Section4 = () => {
                           ${price}
                         </p>
                         <p className="text-base font-medium text-[#96979c]">
-                          /month
+                          /{isYearly ? "year" : "month"}
                         </p>
                       </>
                     )}
@@ -265,7 +276,7 @@ const Section4 = () => {
 
                   <button
                     type="button"
-                    className={`mt-auto flex min-h-11 w-full cursor-pointer items-center justify-center gap-3 rounded-[53px] border border-[#262626] px-5 py-3.5 text-sm font-medium leading-[1.2] tracking-[0.02em] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#cef240] ${
+                    className={`flex min-h-11 w-full cursor-pointer items-center justify-center gap-3 rounded-[53px] border border-[#262626] px-5 py-3.5 text-[clamp(1.0625rem,2vw,1.125rem)] font-medium leading-[1.2] tracking-[0.02em] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#cef240] ${
                       plan.isPopular
                         ? "bg-[#cef240] text-[#0f0f0f] hover:bg-[#daf66f]"
                         : "bg-[#1a1a1a] text-[#f2f2f3] hover:bg-[#222]"

@@ -79,7 +79,7 @@ const BillingToggle = ({
       aria-checked={isYearly}
       aria-label="Toggle yearly billing"
       onClick={onChange}
-      className="relative h-8 w-13.5 shrink-0 cursor-pointer rounded-full bg-[#1f1f1f] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#cef240] motion-reduce:transition-none"
+      className="relative h-8 w-13.5 shrink-0 cursor-pointer rounded-full border border-solid border-[#262626] bg-[#1f1f1f] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#cef240] motion-reduce:transition-none"
     >
       <span
         aria-hidden="true"
@@ -104,7 +104,7 @@ const FeatureItem = ({ label }: { label: string }) => {
           className="size-4.5"
         />
       </span>
-      <span className="min-w-0 flex-1 text-[clamp(1.0625rem,2vw,1.125rem)] font-normal leading-normal text-[#b0b1b5]">
+      <span className="min-w-0 flex-1 text-[15px] font-normal leading-normal text-[#b0b1b5]">
         {label}
       </span>
     </li>
@@ -193,7 +193,7 @@ const Section4 = () => {
             </span>
           </div>
 
-          <div className="grid w-full grid-cols-1 items-start justify-items-center gap-4 ipad:grid-cols-2 ipad:justify-items-stretch desktop-sm:flex desktop-sm:flex-wrap desktop-sm:justify-center">
+          <div className="grid w-full grid-cols-1 items-stretch justify-items-center gap-4 ipad:grid-cols-2 ipad:justify-items-stretch desktop-sm:flex desktop-sm:flex-wrap desktop-sm:items-stretch desktop-sm:justify-center">
             {PRICING_PLANS.map((plan) => {
               const price =
                 plan.monthlyPrice === null || plan.yearlyPrice === null
@@ -205,11 +205,14 @@ const Section4 = () => {
                     );
 
               const isStarter = plan.name === "Starter plan";
+              const arrowSrc = plan.isPopular
+                ? "/section-4/arrow-right-dark.svg"
+                : "/section-4/arrow-right.svg";
 
               return (
                 <article
                   key={plan.name}
-                  className={`flex h-fit w-full max-w-[369px] flex-col gap-7.5 self-start overflow-clip rounded-2xl border bg-[#141414] p-7.5 ipad:max-w-none desktop-sm:w-[369px] desktop-sm:max-w-[369px] desktop-sm:shrink-0 ${
+                  className={`flex h-full w-full max-w-[369px] flex-col gap-7.5 overflow-clip rounded-2xl border bg-[#141414] p-7.5 ipad:max-w-none desktop-sm:w-[369px] desktop-sm:max-w-[369px] desktop-sm:shrink-0 ${
                     plan.isPopular
                       ? "order-1 border-[#cef240] shadow-[0px_0px_0px_6px_#1a1a1a] ipad:col-span-2 desktop-sm:order-2 desktop-sm:col-span-1"
                       : isStarter
@@ -245,7 +248,7 @@ const Section4 = () => {
                       className="h-px w-full bg-[#1f1f1f]"
                     />
 
-                    <p className="text-[clamp(1.0625rem,2vw,1.125rem)] font-normal leading-normal text-[#96979c]">
+                    <p className="text-[15px] font-normal leading-normal text-[#96979c]">
                       {plan.description}
                     </p>
                   </div>
@@ -267,7 +270,7 @@ const Section4 = () => {
                     )}
                   </div>
 
-                  <ul className="flex w-full flex-col gap-3">
+                  <ul className="flex w-full flex-1 flex-col gap-3">
                     {plan.features.map((feature) => (
                       <FeatureItem key={feature} label={feature} />
                     ))}
@@ -275,25 +278,49 @@ const Section4 = () => {
 
                   <button
                     type="button"
-                    className={`flex min-h-11 w-full cursor-pointer items-center justify-center gap-3 rounded-[53px] border border-[#262626] px-5 py-3.5 text-[clamp(1.0625rem,2vw,1.125rem)] font-medium leading-[1.2] tracking-[0.02em] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#cef240] ${
+                    className={`group relative flex min-h-11 w-full cursor-pointer items-center justify-center overflow-hidden rounded-[53px] border border-[#262626] px-5 py-3.5 text-[clamp(1.0625rem,2vw,1.125rem)] font-medium leading-[1.2] tracking-[0.02em] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#cef240] ${
                       plan.isPopular
                         ? "bg-[#cef240] text-[#0f0f0f] hover:bg-[#daf66f]"
                         : "bg-[#1a1a1a] text-[#f2f2f3] hover:bg-[#222]"
                     }`}
                   >
-                    {plan.buttonLabel}
-                    <Image
-                      alt=""
-                      aria-hidden="true"
-                      src={
-                        plan.isPopular
-                          ? "/section-4/arrow-right-dark.svg"
-                          : "/section-4/arrow-right.svg"
-                      }
-                      width={20}
-                      height={20}
-                      className="size-5"
-                    />
+                    {plan.isPopular ? (
+                      <>
+                        <span className="relative z-10 inline-flex items-center gap-1">
+                          <span>{plan.buttonLabel}</span>
+                          <Image
+                            alt=""
+                            aria-hidden="true"
+                            src={arrowSrc}
+                            width={20}
+                            height={20}
+                            className="size-5"
+                          />
+                        </span>
+                        <div
+                          aria-hidden="true"
+                          className="pointer-events-none absolute inset-0 -top-5 hidden h-[calc(100%+40px)] w-full justify-center blur-[12px] will-change-transform motion-reduce:hidden [@media(hover:hover)_and_(pointer:fine)]:group-hover:flex [@media(hover:hover)_and_(pointer:fine)]:group-hover:animate-shine-infinite"
+                        >
+                          <div className="relative h-full w-8 bg-white/30" />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <span>{plan.buttonLabel}</span>
+                        <span
+                          aria-hidden="true"
+                          className="ml-1 transition-transform duration-200 ease motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 [@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-x-1"
+                        >
+                          <Image
+                            alt=""
+                            src={arrowSrc}
+                            width={20}
+                            height={20}
+                            className="size-5"
+                          />
+                        </span>
+                      </>
+                    )}
                   </button>
                 </article>
               );

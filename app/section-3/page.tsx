@@ -75,7 +75,7 @@ const Section3 = () => {
             <div className="flex flex-col items-center gap-4 sm:gap-5">
               <h1
                 id="global-presence-heading"
-                className="font-tight text-[clamp(2.125rem,8vw,3.625rem)] font-bold leading-[1.2] tracking-[-0.04em] text-balance text-white [text-shadow:0_8px_30px_rgba(255,255,255,0.25),0_4px_8px_rgba(255,255,255,0.05)]"
+                className="font-tight text-[clamp(2.125rem,8vw,2.75rem)] font-bold leading-[1.2] tracking-[-0.04em] text-balance text-white [text-shadow:0_8px_30px_rgba(255,255,255,0.25),0_4px_8px_rgba(255,255,255,0.05)] desktop-sm:text-[clamp(2.125rem,8vw,3.625rem)]"
               >
                 Connecting Worldwide Teams
               </h1>
@@ -89,15 +89,15 @@ const Section3 = () => {
 
           <div aria-hidden="true" className="hidden min-h-10 flex-1 sm:block" />
 
-          <ul className="pointer-events-auto mt-16 grid w-full max-w-140 shrink-0 sm:mt-0 sm:max-w-none sm:grid-cols-3 sm:divide-x sm:divide-[#18191b]">
+          <ul className="pointer-events-auto mt-16 grid w-full max-w-140 shrink-0 desktop-sm:mt-0 desktop-sm:max-w-none desktop-sm:grid-cols-3 desktop-sm:divide-x desktop-sm:divide-[#18191b]">
             {METRICS.map((metric, index) => (
               <li
                 key={metric.value}
-                className={`flex w-full max-w-81.75  mx-auto flex-col self-center items-center gap-2 py-8 text-center sm:max-w-none sm:self-auto sm:gap-6 sm:px-6 sm:py-0 ${
+                className={`flex w-full max-w-81.75 mx-auto flex-col self-center items-center gap-2 py-8 text-center desktop-sm:max-w-none desktop-sm:self-auto desktop-sm:gap-6 desktop-sm:px-6 desktop-sm:py-0 ${
                   index === 0
-                    ? "border-b border-[#18191b] sm:border-b-0"
+                    ? "border-b border-[#18191b] desktop-sm:border-b-0"
                     : index === METRICS.length - 1
-                      ? "border-t border-[#18191b] sm:border-t-0"
+                      ? "border-t border-[#18191b] desktop-sm:border-t-0"
                       : ""
                 }`}
               >

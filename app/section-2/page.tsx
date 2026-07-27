@@ -7,6 +7,8 @@ import {
   useBillingCycle,
 } from "./components/billing-toggle";
 
+const PRICE_SUFFIX_EASE = "cubic-bezier(.215,.61,.355,1)";
+
 type PricingPlan = {
   name: string;
   description: string;
@@ -82,68 +84,171 @@ const BENEFITS = [
 const CARD_OUTLINE_SHADOW =
   "shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_1px_2px_-1px_rgba(0,0,0,0.06),0px_2px_4px_0px_rgba(0,0,0,0.04)]";
 
-const CARD_SURFACE_SHADOW =
-  "shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_1px_2px_-1px_rgba(0,0,0,0.06),0px_2px_4px_0px_rgba(0,0,0,0.04),0px_3px_4px_rgba(0,0,0,0.05),0px_1px_0.5px_rgba(0,0,0,0.2)]";
+const CARD_SURFACE_SHADOW = "shadow-xs";
 
 const PriceRow = ({
-  price,
+  monthlyPrice,
+  yearlyPrice,
   isYearly,
 }: {
-  price: number;
+  monthlyPrice: number;
+  yearlyPrice: number;
   isYearly: boolean;
 }) => {
+  const rowRef = useRef<HTMLDivElement>(null);
   const suffixRef = useRef<HTMLSpanElement>(null);
-  const previousLeft = useRef<number | null>(null);
+  const previousOffset = useRef<{ x: number; y: number } | null>(null);
+  const clearAnimationRef = useRef<(() => void) | null>(null);
+
+  const readOffset = () => {
+    const row = rowRef.current;
+    const suffix = suffixRef.current;
+    if (!row || !suffix) return null;
+
+    const rowRect = row.getBoundingClientRect();
+    const suffixRect = suffix.getBoundingClientRect();
+
+    return {
+      x: suffixRect.left - rowRect.left,
+      y: suffixRect.top - rowRect.top,
+    };
+  };
+
+  useLayoutEffect(() => {
+    const row = rowRef.current;
+    if (!row) return;
+
+    const syncOffset = () => {
+      clearAnimationRef.current?.();
+      previousOffset.current = readOffset();
+    };
+
+    const observer = new ResizeObserver(syncOffset);
+    observer.observe(row);
+    window.addEventListener("resize", syncOffset);
+    syncOffset();
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", syncOffset);
+      clearAnimationRef.current?.();
+    };
+  }, []);
 
   useLayoutEffect(() => {
     const suffix = suffixRef.current;
     if (!suffix) return;
 
-    const currentLeft = suffix.getBoundingClientRect().left;
+    const offset = readOffset();
+    if (!offset) return;
+
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+    const prev = previousOffset.current;
 
-    if (previousLeft.current !== null && !prefersReducedMotion) {
-      const deltaX = previousLeft.current - currentLeft;
+    clearAnimationRef.current?.();
 
-      if (Math.abs(deltaX) > 0.5) {
+    if (prev !== null && !prefersReducedMotion) {
+      const deltaX = prev.x - offset.x;
+      const deltaY = prev.y - offset.y;
+      // Skip FLIP when the suffix wrapped to a new line — only X shifts on the same row.
+      const sameRow = Math.abs(deltaY) < 1;
+
+      if (sameRow && Math.abs(deltaX) > 0.5) {
+        suffix.style.willChange = "transform";
         suffix.style.transform = `translateX(${deltaX}px)`;
         suffix.style.transition = "none";
         suffix.getBoundingClientRect();
-        suffix.style.transition =
-          "transform 200ms cubic-bezier(.215,.61,.355,1)";
+        suffix.style.transition = `transform 200ms ${PRICE_SUFFIX_EASE}`;
         suffix.style.transform = "translateX(0)";
+
+        const handleEnd = (event: TransitionEvent) => {
+          if (event.propertyName !== "transform") return;
+          suffix.style.willChange = "auto";
+          suffix.style.transition = "";
+          suffix.style.transform = "";
+          suffix.removeEventListener("transitionend", handleEnd);
+          clearAnimationRef.current = null;
+        };
+
+        clearAnimationRef.current = () => {
+          suffix.removeEventListener("transitionend", handleEnd);
+          suffix.style.willChange = "auto";
+          suffix.style.transition = "";
+          suffix.style.transform = "";
+          clearAnimationRef.current = null;
+        };
+
+        suffix.addEventListener("transitionend", handleEnd);
       }
     }
 
-    previousLeft.current = currentLeft;
-  }, [price, isYearly]);
+    previousOffset.current = offset;
+  }, [isYearly]);
+
+  const priceClassName = `col-start-1 row-start-1 font-switzer text-[clamp(30px,9vw,2.625rem)] font-semibold tabular-nums leading-none tracking-[-0.04em] will-change-[opacity] transition-opacity duration-200 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none`;
 
   return (
-    <div className="flex flex-wrap items-end gap-x-2 gap-y-0.5 iphone:flex-nowrap">
-      <span className="font-tight text-[clamp(2.25rem,9vw,2.625rem)] font-semibold tabular-nums leading-none tracking-[-0.04em] transition-opacity duration-200 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none">
-        ${price}
-      </span>
+    <div
+      ref={rowRef}
+      className="flex flex-wrap items-end gap-x-2 gap-y-0.5 iphone:flex-nowrap"
+    >
       <span
-        ref={suffixRef}
-        className="grid text-[15px] font-medium leading-normal text-[#4d4d4d] iphone:text-[17px]"
+        className="relative inline-grid justify-items-start"
+        aria-live="polite"
       >
         <span
+          aria-hidden="true"
+          className="invisible col-start-1 row-start-1 font-switzer text-[clamp(30px,9vw,2.625rem)] font-semibold tabular-nums leading-none tracking-[-0.04em]"
+        >
+          ${Math.max(monthlyPrice, yearlyPrice)}
+        </span>
+        <span
           aria-hidden={isYearly}
-          className={`col-start-1 row-start-1 transition-opacity duration-200 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none ${
+          className={`${priceClassName} ${
             isYearly ? "pointer-events-none opacity-0" : "opacity-100"
           }`}
         >
-          per member / month
+          ${monthlyPrice}
         </span>
         <span
           aria-hidden={!isYearly}
-          className={`col-start-1 row-start-1 transition-opacity duration-200 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none ${
+          className={`${priceClassName} ${
             isYearly ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
         >
-          per member / yearly
+          ${yearlyPrice}
+        </span>
+      </span>
+      <span
+        ref={suffixRef}
+        className="flex items-baseline text-[15px] font-medium leading-normal text-[#4d4d4d] will-change-transform iphone:text-[17px]"
+      >
+        <span className="whitespace-nowrap">per member /&nbsp;</span>
+        <span className="relative inline-grid justify-items-start">
+          <span
+            aria-hidden="true"
+            className="invisible col-start-1 row-start-1 whitespace-nowrap"
+          >
+            yearly
+          </span>
+          <span
+            aria-hidden={isYearly}
+            className={`col-start-1 row-start-1 whitespace-nowrap will-change-[opacity] transition-opacity duration-200 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none ${
+              isYearly ? "pointer-events-none opacity-0" : "opacity-100"
+            }`}
+          >
+            month
+          </span>
+          <span
+            aria-hidden={!isYearly}
+            className={`col-start-1 row-start-1 whitespace-nowrap will-change-[opacity] transition-opacity duration-200 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none ${
+              isYearly ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
+          >
+            yearly
+          </span>
         </span>
       </span>
     </div>
@@ -151,7 +256,7 @@ const PriceRow = ({
 };
 
 const Section2 = () => {
-  const { isYearly, toggleBillingCycle, getPrice } = useBillingCycle();
+  const { isYearly, toggleBillingCycle } = useBillingCycle();
 
   return (
     <main className="min-h-screen bg-[#f4f1f0] px-4 py-16 text-[#111] sm:px-6 sm:py-24">
@@ -183,15 +288,13 @@ const Section2 = () => {
           onChange={toggleBillingCycle}
         />
 
-        <div className="flex w-full flex-col gap-10">
+        <div className="mx-auto flex w-full max-w-4xl desktop-sm:max-w-none flex-col gap-10">
           <div className="flex w-full flex-wrap items-stretch justify-center gap-5">
             {PRICING_PLANS.map((plan) => {
-              const price = getPrice(plan.monthlyPrice, plan.yearlyPrice);
-
               return (
                 <article
                   key={plan.name}
-                  className={`flex min-w-0 w-full max-w-90.5 flex-col rounded-[20px] bg-[#edeae8] ${CARD_OUTLINE_SHADOW} ${
+                  className={`flex min-w-0 w-full max-w-90.5 flex-col rounded-[20px] bg-[#edeae8] ipad:max-w-[359px] ipad-landscape:max-w-90.5 ${CARD_OUTLINE_SHADOW} ${
                     plan.isPopular ? "border-2 border-transparent" : ""
                   }`}
                   style={
@@ -237,18 +340,22 @@ const Section2 = () => {
                         </p>
                       </div>
 
-                      <PriceRow price={price} isYearly={isYearly} />
+                      <PriceRow
+                        monthlyPrice={plan.monthlyPrice}
+                        yearlyPrice={plan.yearlyPrice}
+                        isYearly={isYearly}
+                      />
 
                       <button
                         type="button"
-                        className="min-h-11 w-full cursor-pointer rounded-lg bg-[#111] px-5 py-3 text-[15px] font-semibold leading-none text-white transition-colors duration-200 ease-[cubic-bezier(.215,.61,.355,1)] hover:bg-[#2a2a2a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111] iphone:min-h-12 iphone:px-6 iphone:py-3.5 iphone:text-[17px]"
+                        className="flex h-[59px] w-full cursor-pointer items-center justify-center rounded-lg border-t border-white/10 bg-[#111] px-6 text-[17px] font-semibold leading-none text-white transition-colors duration-200 ease-[cubic-bezier(.215,.61,.355,1)] hover:bg-[#2a2a2a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111]"
                       >
                         {plan.buttonLabel}
                       </button>
                     </div>
                   </div>
 
-                  <ul className="flex flex-1 flex-col gap-2.5 rounded-b-[18px] px-5 pb-6 pt-4 text-[15px] font-medium leading-normal android-sm:px-6 iphone:gap-3 iphone:px-7.5 iphone:pb-7.5 iphone:pt-5 iphone:text-[17px]">
+                  <ul className="flex flex-1 flex-col gap-3 rounded-b-[18px] p-7.5 text-[15px] font-medium leading-normal iphone:text-[17px]">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-center gap-2">
                         <Image
@@ -276,9 +383,9 @@ const Section2 = () => {
             })}
           </div>
 
-          <div className="flex flex-col items-center gap-7.5 ">
-            <div className="flex w-full max-w-90.5 flex-col items-center gap-5 rounded-[10px] border border-[#ded8d3] bg-[#e9e5e2] p-5 iphone-max:w-full iphone-max:max-w-none sm:flex-row sm:items-center sm:justify-between sm:gap-12.5 sm:py-2.5 sm:pl-5 sm:pr-2.5">
-              <p className="text-center text-[17px] font-medium leading-normal text-[#1a1a1a] sm:text-left">
+          <div className="w-full ipad-landscape:px-18.5">
+            <div className="mx-auto flex w-full flex-col items-center gap-5 rounded-[10px] border border-[#ded8d3] bg-[#e9e5e2] p-5 ipad:max-w-89.75 ipad-landscape:max-w-none ipad-landscape:flex-row ipad-landscape:items-center ipad-landscape:justify-between ipad-landscape:gap-12.5 ipad-landscape:py-2.5 ipad-landscape:px-5">
+              <p className="text-center text-[17px] font-medium leading-normal text-[#1a1a1a] ipad-landscape:text-left">
                 We just launched our startup program -{" "}
                 <span
                   className="bg-clip-text font-semibold text-transparent"
@@ -297,7 +404,9 @@ const Section2 = () => {
                 Apply Now
               </button>
             </div>
+          </div>
 
+          <div className="flex w-full flex-col items-center gap-7.5">
             <ul className="flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-5 sm:gap-y-3">
               {BENEFITS.map((benefit, index) => (
                 <li key={benefit.label} className="flex items-center gap-5">

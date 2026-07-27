@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 const NAV_LINKS = [
-  { label: "Benefits", href: "#benefits", active: true },
-  { label: "Pricing", href: "#pricing", active: false },
-  { label: "Testimonials", href: "#testimonials", active: false },
+  { label: "Benefits", href: "#benefits" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Testimonials", href: "#testimonials" },
 ] as const;
 
 const BRAND_LOGOS = [
@@ -36,10 +36,29 @@ const CARD_DELAY_BASE = PHONE_STAGGER * 3 + 0.04;
 /** Stable shuffled order — looks random, hydration-safe */
 const CARD_REVEAL_ORDER = ["stats", "actions", "liked", "comment"] as const;
 
+const MenuIcon = () => (
+  <svg
+    aria-hidden="true"
+    width="20"
+    height="14"
+    viewBox="0 0 20 14"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="size-[20px]"
+  >
+    <path
+      d="M1 1.5h18M1 7h18M1 12.5h11"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
 const Navbar = () => (
   <nav
     aria-label="Primary"
-    className="relative z-30 mx-auto flex w-full max-w-[995px] items-center justify-between overflow-clip rounded-full border border-solid border-[#dee5ed] bg-white py-3.5 pr-3.5 pl-5"
+    className="relative z-30 mx-auto flex w-full max-w-[995px] items-center justify-between overflow-clip rounded-full border border-solid border-[#dee5ed] bg-white py-3.5 pr-3.5 pl-5 ipad:max-w-[450px] ipad-landscape:max-w-[995px]"
   >
     <a
       href="#top"
@@ -73,18 +92,14 @@ const Navbar = () => (
     </a>
 
     <ul
-      className="absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-[18px] ipad:flex"
+      className="absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-[18px] ipad-landscape:flex"
       aria-label="Navigation links"
     >
       {NAV_LINKS.map((link) => (
         <li key={link.label}>
           <a
             href={link.href}
-            className={
-              link.active
-                ? "inline-flex items-center overflow-clip rounded-full border border-solid border-[#dee5ed] bg-[#f5f7fa] px-5 py-4 text-base font-semibold leading-normal whitespace-nowrap text-[#333] transition-[background-color,border-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#eef2f7]"
-                : "inline-flex items-center text-base font-medium leading-normal whitespace-nowrap text-[#333] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] [@media(hover:hover)_and_(pointer:fine)]:hover:text-[#1d1d1d]"
-            }
+            className="inline-flex items-center text-base font-medium leading-normal whitespace-nowrap text-[#333] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] [@media(hover:hover)_and_(pointer:fine)]:hover:text-[#1d1d1d]"
           >
             {link.label}
           </a>
@@ -94,10 +109,18 @@ const Navbar = () => (
 
     <a
       href="#template"
-      className="inline-flex shrink-0 touch-manipulation items-center overflow-clip rounded-full bg-[#923cf6] px-5 py-4 text-base font-semibold leading-normal whitespace-nowrap text-white transition-[background-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#8129e0] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]"
+      className="hidden shrink-0 touch-manipulation items-center overflow-clip rounded-full bg-[#923cf6] px-5 py-4 text-base font-semibold leading-normal whitespace-nowrap text-white transition-[background-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] motion-reduce:transition-none ipad-landscape:inline-flex [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#8129e0] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]"
     >
       Get Template
     </a>
+
+    <button
+      type="button"
+      aria-label="Open menu"
+      className="inline-flex size-14 shrink-0 touch-manipulation items-center justify-center overflow-clip rounded-full bg-[#923cf6] transition-[background-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] motion-reduce:transition-none ipad-landscape:hidden [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#8129e0] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]"
+    >
+      <MenuIcon />
+    </button>
   </nav>
 );
 
@@ -181,6 +204,7 @@ type PhoneMockupProps = {
   screenWidth: number;
   screenHeight: number;
   className?: string;
+  style?: CSSProperties;
 };
 
 /** Upright Mobile.svg frame — screen fills the Figma placeholder exactly. */
@@ -189,8 +213,9 @@ const PhoneMockup = ({
   screenWidth,
   screenHeight,
   className = "",
+  style,
 }: PhoneMockupProps) => (
-  <div className={`relative overflow-clip ${className}`}>
+  <div className={`relative overflow-clip ${className}`} style={style}>
     {/*
       White fill + Vector behind the SVG hole.
       Vectors have transparent rounded corners — white backing prevents gaps.
@@ -377,10 +402,24 @@ const CommentCard = ({ className = "" }: { className?: string }) => (
   </div>
 );
 
-/** Figma 3049:7876 — 1440×342 artboard scaled to container width. */
+/** Desktop artboard — Figma 3049:7876 */
+const DESKTOP_ARTBOARD = { width: 1440, height: 342 } as const;
+/** Below desktop — center phone + 3 cards; crop matches iPad reference */
+const TABLET_ARTBOARD = { width: 900, height: 560 } as const;
+const TABLET_PHONE = {
+  width: 473,
+  fullHeight: (735.556 * 473) / 364,
+  /** Caps at header → top of post image (ref ≈525 @ 473w) */
+  cropHeight: 525,
+} as const;
+/** Matches --breakpoint-desktop-sm — 3-phone layout from here up */
+const DESKTOP_MIN_WIDTH = 1280;
+
+/** Figma 3049:7876 — artboard scaled to container width. */
 const PhoneShowcase = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [isDesktop, setIsDesktop] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const reduceMotion = prefersReducedMotion === true;
 
@@ -388,15 +427,26 @@ const PhoneShowcase = () => {
     const el = ref.current;
     if (!el) return;
 
-    const updateScale = () => {
-      setScale(el.clientWidth / 1440);
+    const mql = window.matchMedia(`(min-width: ${DESKTOP_MIN_WIDTH}px)`);
+
+    const updateLayout = () => {
+      const desktop = mql.matches;
+      setIsDesktop(desktop);
+      const nextArtboard = desktop ? DESKTOP_ARTBOARD : TABLET_ARTBOARD;
+      setScale(el.clientWidth / nextArtboard.width);
     };
 
-    updateScale();
-    const observer = new ResizeObserver(updateScale);
+    updateLayout();
+    const observer = new ResizeObserver(updateLayout);
     observer.observe(el);
-    return () => observer.disconnect();
+    mql.addEventListener("change", updateLayout);
+    return () => {
+      observer.disconnect();
+      mql.removeEventListener("change", updateLayout);
+    };
   }, []);
+
+  const artboard = isDesktop ? DESKTOP_ARTBOARD : TABLET_ARTBOARD;
 
   const phoneTransition = (index: number) => ({
     ...SHARED_TWEEN,
@@ -423,42 +473,52 @@ const PhoneShowcase = () => {
     <div
       ref={ref}
       className="relative w-full overflow-x-clip overflow-y-hidden"
-      style={{ height: `${342 * scale}px` }}
+      style={{ height: `${artboard.height * scale}px` }}
     >
       <div
         aria-hidden="true"
-        className="absolute top-0 left-0 h-[342px] w-[1440px]"
+        className="absolute top-0 left-0"
         style={{
+          width: artboard.width,
+          height: artboard.height,
           transform: `scale(${scale})`,
           transformOrigin: "top left",
         }}
       >
-        <div className="absolute bottom-0 left-0 h-[279px] w-full rounded-bl-[50px] rounded-br-[50px] bg-linear-to-b from-[rgba(146,60,246,0)] to-[rgba(146,60,246,0.2)]" />
-
-        {/* Left phone — Figma 3049:7910, rotate −18.77°. Extra left room so tilt isn't clipped. */}
-        <motion.div
-          className="absolute top-[68px] left-0 z-0 h-[274px] w-[420px] overflow-hidden will-change-transform"
-          initial={phoneInitial}
-          animate={phoneAnimate}
-          transition={phoneTransition(0)}
-        >
-          <div className="absolute bottom-[-107.78px] left-[49px] flex h-[388.845px] w-[360.122px] items-center justify-center">
-            <div className="flex-none rotate-[-18.77deg]">
-              <div className="relative h-[318.173px] w-[272.221px] overflow-hidden">
-                <PhoneMockup
-                  screen="/section-10/Vector3.png"
-                  screenWidth={362}
-                  screenHeight={788}
-                  className="absolute top-0 left-0 h-[551.68px] w-[272.221px]"
-                />
+        {/* Left phone — desktop only */}
+        {isDesktop ? (
+          <motion.div
+            className="absolute top-[68px] left-0 z-0 h-[274px] w-[420px] overflow-hidden will-change-transform"
+            initial={phoneInitial}
+            animate={phoneAnimate}
+            transition={phoneTransition(0)}
+          >
+            <div className="absolute bottom-[-107.78px] left-[49px] flex h-[388.845px] w-[360.122px] items-center justify-center">
+              <div className="flex-none rotate-[-18.77deg]">
+                <div className="relative h-[318.173px] w-[272.221px] overflow-hidden">
+                  <PhoneMockup
+                    screen="/section-10/Vector3.png"
+                    screenWidth={362}
+                    screenHeight={788}
+                    className="absolute top-0 left-0 h-[551.68px] w-[272.221px]"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        ) : null}
 
         <div className="absolute bottom-0 left-1/2 z-10 -translate-x-1/2">
           <motion.div
-            className="h-[325px] w-[364px] overflow-hidden will-change-transform"
+            className="overflow-hidden will-change-transform"
+            style={
+              isDesktop
+                ? { width: 364, height: 325 }
+                : {
+                    width: TABLET_PHONE.width,
+                    height: TABLET_PHONE.cropHeight,
+                  }
+            }
             initial={phoneInitial}
             animate={phoneAnimate}
             transition={phoneTransition(1)}
@@ -467,36 +527,47 @@ const PhoneShowcase = () => {
               screen="/section-10/Vector.png"
               screenWidth={417}
               screenHeight={906}
-              className="h-[735.556px] w-[364px]"
+              className={isDesktop ? "h-[735.556px] w-[364px]" : undefined}
+              style={
+                isDesktop
+                  ? undefined
+                  : {
+                      width: TABLET_PHONE.width,
+                      height: TABLET_PHONE.fullHeight,
+                    }
+              }
             />
           </motion.div>
         </div>
 
-        <motion.div
-          className="absolute top-[68px] right-[40px] z-0 h-[274px] w-[400px] overflow-hidden will-change-transform"
-          initial={phoneInitial}
-          animate={phoneAnimate}
-          transition={phoneTransition(2)}
-        >
-          <div className="absolute top-[-7.07px] right-[20px] flex h-[388.845px] w-[360.122px] items-center justify-center">
-            <div className="flex-none rotate-[18.77deg]">
-              <div className="relative h-[318.173px] w-[272.221px] overflow-hidden">
-                <PhoneMockup
-                  screen="/section-10/Vector2.png"
-                  screenWidth={362}
-                  screenHeight={788}
-                  className="absolute top-0 left-0 h-[551.68px] w-[272.221px]"
-                />
+        {/* Right phone — desktop only */}
+        {isDesktop ? (
+          <motion.div
+            className="absolute top-[68px] right-[40px] z-0 h-[274px] w-[400px] overflow-hidden will-change-transform"
+            initial={phoneInitial}
+            animate={phoneAnimate}
+            transition={phoneTransition(2)}
+          >
+            <div className="absolute top-[-7.07px] right-[20px] flex h-[388.845px] w-[360.122px] items-center justify-center">
+              <div className="flex-none rotate-[18.77deg]">
+                <div className="relative h-[318.173px] w-[272.221px] overflow-hidden">
+                  <PhoneMockup
+                    screen="/section-10/Vector2.png"
+                    screenWidth={362}
+                    screenHeight={788}
+                    className="absolute top-0 left-0 h-[551.68px] w-[272.221px]"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </motion.div>
-
-        <div className="pointer-events-none absolute bottom-[-3px] left-0 z-20 h-[118px] w-full rounded-bl-[50px] rounded-br-[50px] bg-linear-to-b from-[rgba(146,60,246,0)] to-[rgba(146,60,246,0.1)] backdrop-blur-[1px]" />
+          </motion.div>
+        ) : null}
 
         {/* Cards — shuffled order, same tween */}
         <motion.div
-          className="absolute top-[89px] left-[399px] z-30 will-change-transform"
+          className={`absolute z-30 will-change-transform ${
+            isDesktop ? "top-[89px] left-[399px]" : "top-[156px] left-[150px]"
+          }`}
           initial={cardInitial}
           animate={cardAnimate}
           transition={{ ...SHARED_TWEEN, delay: cardDelay("liked") }}
@@ -505,7 +576,9 @@ const PhoneShowcase = () => {
         </motion.div>
 
         <motion.div
-          className="absolute top-[89px] left-[861px] z-30 will-change-transform"
+          className={`absolute z-30 will-change-transform ${
+            isDesktop ? "top-[89px] left-[861px]" : "top-[255px] left-[550px]"
+          }`}
           initial={cardInitial}
           animate={cardAnimate}
           transition={{ ...SHARED_TWEEN, delay: cardDelay("actions") }}
@@ -514,7 +587,11 @@ const PhoneShowcase = () => {
         </motion.div>
 
         <motion.div
-          className="absolute top-[219.61px] left-[360px] z-30 will-change-transform"
+          className={`absolute z-30 will-change-transform ${
+            isDesktop
+              ? "top-[219.61px] left-[360px]"
+              : "top-[400px] left-[78px]"
+          }`}
           initial={cardInitial}
           animate={cardAnimate}
           transition={{ ...SHARED_TWEEN, delay: cardDelay("stats") }}
@@ -522,14 +599,16 @@ const PhoneShowcase = () => {
           <StatsCard />
         </motion.div>
 
-        <motion.div
-          className="absolute top-[188px] left-[838px] z-30 will-change-transform"
-          initial={cardInitial}
-          animate={cardAnimate}
-          transition={{ ...SHARED_TWEEN, delay: cardDelay("comment") }}
-        >
-          <CommentCard />
-        </motion.div>
+        {isDesktop ? (
+          <motion.div
+            className="absolute top-[188px] left-[838px] z-30 will-change-transform"
+            initial={cardInitial}
+            animate={cardAnimate}
+            transition={{ ...SHARED_TWEEN, delay: cardDelay("comment") }}
+          >
+            <CommentCard />
+          </motion.div>
+        ) : null}
       </div>
     </div>
   );
@@ -542,16 +621,18 @@ const Section11 = () => {
       aria-label="Capable hero"
       className="relative w-full h-full overflow-hidden bg-white text-[#0d0d0d]"
     >
-      <a
-        href="#download"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-[#923cf6] focus:px-4 focus:py-2 focus:text-white"
-      >
-        Skip to content
-      </a>
-
-      <div className="relative mx-auto w-full max-w-[1440px]">
+      <div className="relative mx-auto w-full">
         {/* Hero shell */}
         <div className="relative overflow-hidden rounded-b-[clamp(1.5rem,4vw,3.125rem)] border-b border-solid border-[#dee5ed] bg-[#f8fafc] shadow-[0_0_0_6px_white,0_7px_6px_rgba(140,150,169,0.12),0_22px_30px_rgba(140,150,169,0.1)]">
+          {/* Soft lavender wash under phone showcase */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[min(52%,28rem)] rounded-b-[inherit]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to bottom, rgba(248,250,252,0) 0%, #f0edf8 38%, #e3d4f9 72%, #dac2f7 100%)",
+            }}
+          />
           {/* Dot grid */}
           <div
             aria-hidden="true"
@@ -585,10 +666,11 @@ const Section11 = () => {
                 </div>
 
                 <div className="flex w-full animate-page-reveal flex-col items-center justify-center gap-5 px-0 text-center will-change-transform ipad:px-[clamp(1rem,6vw,6.25rem)] [animation-delay:140ms]">
-                  <h1 className="font-urbanist text-[clamp(2rem,5.5vw,4.25rem)] font-bold leading-[1.2] text-[#0d0d0d]">
-                    Empower Your Social Connections with Capable
+                  <h1 className="font-urbanist text-[clamp(2rem,5.5vw,4.25rem)] font-bold leading-[1.2] text-[#0d0d0d] text-balance text-center ipad:text-[38px] ipad-landscape:text-[clamp(2rem,5.5vw,4.25rem)]">
+                    Empower Your Social Connections with
+                    <br className="block ipad-landscape:hidden" /> Capable
                   </h1>
-                  <p className="max-w-[640px] text-[clamp(1rem,2.2vw,1.25rem)] font-medium leading-normal text-[#666]">
+                  <p className="max-w-md text-[clamp(1rem,2.2vw,1.25rem)] font-medium leading-normal text-[#666] ipad:text-[18px] ipad-landscape:text-[clamp(1rem,2.2vw,1.25rem)] text-pretty">
                     Join Capable to build authentic connections and share your
                     passions effortlessly.
                   </p>

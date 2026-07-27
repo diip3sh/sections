@@ -25,7 +25,7 @@ const PRICING_PLANS: PricingPlan[] = [
     description: "Perfect for small teams and startups.",
     icon: "/section-2/basic.svg",
     monthlyPrice: 10,
-    yearlyPrice: 100,
+    yearlyPrice: 50,
     buttonLabel: "Get Started",
     features: [
       "Task Management",
@@ -39,7 +39,7 @@ const PRICING_PLANS: PricingPlan[] = [
     description: "Ideal for growing teams and projects.",
     icon: "/section-2/pro.svg",
     monthlyPrice: 25,
-    yearlyPrice: 200,
+    yearlyPrice: 75,
     buttonLabel: "Start 7-day free trial",
     isPopular: true,
     emphasizedFeature: "Everything in Basic +",
@@ -58,7 +58,7 @@ const PRICING_PLANS: PricingPlan[] = [
     description: "Built for large organizations needs.",
     icon: "/section-2/enterprise.svg",
     monthlyPrice: 39,
-    yearlyPrice: 319,
+    yearlyPrice: 99,
     buttonLabel: "Start 7-day free trial",
     emphasizedFeature: "Everything in Basic +",
     features: [
@@ -154,7 +154,7 @@ const Section2 = () => {
   const { isYearly, toggleBillingCycle, getPrice } = useBillingCycle();
 
   return (
-    <main className="min-h-screen bg-[#f4f1f0] px-2 py-16 text-[#111] sm:px-6 sm:py-24">
+    <main className="min-h-screen bg-[#f4f1f0] px-4 py-16 text-[#111] sm:px-6 sm:py-24">
       <section
         aria-labelledby="pricing-heading"
         className="mx-auto flex w-full max-w-7xl flex-col items-center gap-10"
@@ -276,7 +276,7 @@ const Section2 = () => {
             })}
           </div>
 
-          <div className="flex flex-col items-center gap-7.5">
+          <div className="flex flex-col items-center gap-7.5 ">
             <div className="flex w-full max-w-90.5 flex-col items-center gap-5 rounded-[10px] border border-[#ded8d3] bg-[#e9e5e2] p-5 iphone-max:w-full iphone-max:max-w-none sm:flex-row sm:items-center sm:justify-between sm:gap-12.5 sm:py-2.5 sm:pl-5 sm:pr-2.5">
               <p className="text-center text-[17px] font-medium leading-normal text-[#1a1a1a] sm:text-left">
                 We just launched our startup program -{" "}

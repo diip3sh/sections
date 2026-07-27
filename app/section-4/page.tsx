@@ -18,8 +18,8 @@ const PRICING_PLANS: PricingPlan[] = [
     name: "Starter plan",
     description:
       "The Starter Plan is perfect for businesses looking to build a professional website",
-    monthlyPrice: 499,
-    yearlyPrice: 4999,
+    monthlyPrice: 100,
+    yearlyPrice: 499,
     buttonLabel: "Get Started",
     features: [
       "Professionally Designed Website",
@@ -32,8 +32,8 @@ const PRICING_PLANS: PricingPlan[] = [
     name: "Growth Plan",
     description:
       "The Growth Plan is designed to accelerate your online growth with all the features.",
-    monthlyPrice: 999,
-    yearlyPrice: 9999,
+    monthlyPrice: 499,
+    yearlyPrice: 999,
     buttonLabel: "Accelerate Growth",
     isPopular: true,
     features: [

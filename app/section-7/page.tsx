@@ -437,7 +437,7 @@ const Section7 = () => {
     <main className="min-h-screen bg-white text-[#010110] flex items-center justify-center">
       <section
         aria-labelledby="potential-heading"
-        className="relative mx-auto flex w-full max-w-[80dvw] flex-col items-center overflow-clip rounded-3xl px-4 py-16 sm:px-6 sm:py-20 ipad:px-10 ipad:py-24 laptop:px-[clamp(2rem,10vw,13.8rem)] laptop:py-25"
+        className="relative mx-auto flex w-full max-w-[98dvw] flex-col items-center overflow-clip rounded-3xl px-4 py-16 sm:px-6 sm:py-20 ipad:px-10 ipad:py-24 laptop:px-[clamp(2rem,10vw,13.8rem)] laptop:py-25"
       >
         <div
           aria-hidden="true"

@@ -1,11 +1,14 @@
 import localFont from "next/font/local";
 import {
+  Baskervville,
   Geist,
   Instrument_Sans,
   Inter,
   Inter_Tight,
+  Manrope,
   Rethink_Sans,
   Tillana,
+  Urbanist,
 } from "next/font/google";
 
 export const switzer = localFont({
@@ -46,4 +49,23 @@ export const instrumentSans = Instrument_Sans({
   variable: "--font-instrument-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+});
+
+export const manrope = Manrope({
+  variable: "--font-manrope-family",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+export const baskervville = Baskervville({
+  variable: "--font-baskervville-family",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+});
+
+export const urbanist = Urbanist({
+  variable: "--font-urbanist-family",
+  subsets: ["latin"],
+  weight: ["700"],
 });

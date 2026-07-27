@@ -1,21 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import {
-  useLayoutEffect,
-  useRef,
-  useState,
-  type KeyboardEvent,
-  type ReactNode,
-} from "react";
+import { useState, type KeyboardEvent, type ReactNode } from "react";
 
 type Feature = {
   id: string;
   title: string;
   description: string;
   icon: ReactNode;
+  image: string;
 };
-
 
 const FEATURES: Feature[] = [
   {
@@ -30,7 +24,7 @@ const FEATURES: Feature[] = [
         viewBox="0 0 24 24"
         fill="none"
       >
-        <g clip-path="url(#clip0_3038_18146)">
+        <g clipPath="url(#clip0_3038_18146)">
           <path
             opacity="0.2"
             d="M21 12.0005C21.0013 13.2626 20.7365 14.5109 20.2228 15.6638C19.7091 16.8167 18.9581 17.8484 18.0188 18.6914C17.454 17.5805 16.5927 16.6477 15.5304 15.9963C14.4681 15.3448 13.2462 15.0001 12 15.0005C12.7417 15.0005 13.4667 14.7805 14.0834 14.3685C14.7001 13.9564 15.1807 13.3707 15.4646 12.6855C15.7484 12.0003 15.8226 11.2463 15.6779 10.5189C15.5333 9.79143 15.1761 9.12325 14.6517 8.5988C14.1272 8.07435 13.459 7.7172 12.7316 7.57251C12.0042 7.42781 11.2502 7.50207 10.5649 7.7859C9.87972 8.06973 9.29405 8.55038 8.88199 9.16706C8.46994 9.78375 8.25 10.5088 8.25 11.2505C8.25 12.245 8.64509 13.1988 9.34835 13.9021C10.0516 14.6054 11.0054 15.0005 12 15.0005C10.7538 15.0001 9.5319 15.3448 8.46958 15.9963C7.40725 16.6477 6.54601 17.5805 5.98125 18.6914C4.86586 17.6881 4.01896 16.422 3.51756 15.008C3.01615 13.5941 2.87615 12.0772 3.11028 10.5954C3.34442 9.11357 3.94526 7.71377 4.85817 6.5233C5.77108 5.33283 6.9671 4.38945 8.33747 3.77894C9.70784 3.16843 11.2091 2.91017 12.7047 3.02763C14.2003 3.1451 15.6428 3.63456 16.9011 4.45152C18.1593 5.26848 19.1934 6.38702 19.9093 7.70541C20.6251 9.02381 21.0001 10.5002 21 12.0005Z"
@@ -48,6 +42,7 @@ const FEATURES: Feature[] = [
         </defs>
       </svg>
     ),
+    image: "/section-7/meeting.png",
   },
   {
     id: "planning",
@@ -72,6 +67,7 @@ const FEATURES: Feature[] = [
         />
       </svg>
     ),
+    image: "/section-7/planning.png",
   },
   {
     id: "events",
@@ -85,7 +81,7 @@ const FEATURES: Feature[] = [
         viewBox="0 0 24 24"
         fill="none"
       >
-        <g clip-path="url(#clip0_3038_18164)">
+        <g clipPath="url(#clip0_3038_18164)">
           <g filter="url(#filter0_dd_3038_18164)">
             <path
               opacity="0.2"
@@ -158,6 +154,7 @@ const FEATURES: Feature[] = [
         </defs>
       </svg>
     ),
+    image: "/section-7/event.png",
   },
   {
     id: "integrations",
@@ -239,6 +236,7 @@ const FEATURES: Feature[] = [
         </defs>
       </svg>
     ),
+    image: "/section-7/powerful-integration.png",
   },
 ];
 
@@ -300,41 +298,8 @@ const FeatureTabs = ({
   onSelect: (id: string) => void;
   onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void;
 }) => {
-  const listRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const activeTabRef = useRef<HTMLButtonElement>(null);
-
-  useLayoutEffect(() => {
-    const updateClipPath = () => {
-      const list = listRef.current;
-      const overlay = overlayRef.current;
-      const activeTab = activeTabRef.current;
-      if (!list || !overlay || !activeTab) return;
-
-      const listRect = list.getBoundingClientRect();
-      const tabRect = activeTab.getBoundingClientRect();
-      if (listRect.height === 0) return;
-
-      const clipTop = ((tabRect.top - listRect.top) / listRect.height) * 100;
-      const clipBottom =
-        ((listRect.bottom - tabRect.bottom) / listRect.height) * 100;
-
-      overlay.style.clipPath = `inset(${clipTop.toFixed(2)}% 0 ${clipBottom.toFixed(2)}% 0 round 12px)`;
-    };
-
-    updateClipPath();
-
-    const list = listRef.current;
-    if (!list || typeof ResizeObserver === "undefined") return;
-
-    const observer = new ResizeObserver(() => updateClipPath());
-    observer.observe(list);
-    return () => observer.disconnect();
-  }, [activeId]);
-
   return (
     <div
-      ref={listRef}
       role="tablist"
       aria-label="Product features"
       aria-orientation="vertical"
@@ -343,11 +308,13 @@ const FeatureTabs = ({
     >
       {FEATURES.map((feature) => {
         const isActive = activeId === feature.id;
+        const hoverClass = isActive
+          ? ""
+          : "[@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#f7f9fb]";
 
         return (
           <button
             key={feature.id}
-            ref={isActive ? activeTabRef : null}
             type="button"
             role="tab"
             id={`feature-tab-${feature.id}`}
@@ -355,27 +322,19 @@ const FeatureTabs = ({
             aria-controls="feature-preview"
             tabIndex={isActive ? 0 : -1}
             onClick={() => onSelect(feature.id)}
-            className="relative z-0 flex w-full min-h-11 cursor-pointer items-center gap-3 overflow-clip rounded-xl border border-transparent bg-white p-3 text-left touch-manipulation transition-transform duration-200 ease-[cubic-bezier(.215,.61,.355,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1e1e1e] motion-reduce:transition-none active:scale-[0.99] motion-reduce:active:scale-100 [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#f7f9fb]"
+            className={`relative z-0 flex w-full min-h-11 min-w-0 cursor-pointer items-center gap-3 overflow-clip rounded-xl border border-solid p-3 text-left touch-manipulation transition-[background-color,border-color,box-shadow] duration-200 ease-[cubic-bezier(.215,.61,.355,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1e1e1e] motion-reduce:transition-none active:scale-[0.99] motion-reduce:active:scale-100 ${hoverClass} ${
+              isActive
+                ? `border-[#9bd3e9] bg-[#bce7f8] ${ACTIVE_TAB_SHADOW}`
+                : "border-transparent bg-white"
+            }`}
           >
-            <FeatureTabVisual feature={feature} variant="idle" />
+            <FeatureTabVisual
+              feature={feature}
+              variant={isActive ? "active" : "idle"}
+            />
           </button>
         );
       })}
-
-      <div
-        ref={overlayRef}
-        aria-hidden="true"
-        className={`feature-tabs-clip pointer-events-none absolute inset-0 z-10 flex flex-col gap-3 py-1 pl-0 will-change-[clip-path] ipad:gap-4 ipad:py-2 ipad:pl-2`}
-      >
-        {FEATURES.map((feature) => (
-          <div
-            key={feature.id}
-            className={`flex w-full min-h-11 items-center gap-3 overflow-clip rounded-xl border border-solid border-[#9bd3e9] bg-[#bce7f8] p-3 ${ACTIVE_TAB_SHADOW}`}
-          >
-            <FeatureTabVisual feature={feature} variant="active" />
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
@@ -384,12 +343,15 @@ const WIDGET_IMAGE_WIDTH = 2020;
 const WIDGET_IMAGE_HEIGHT = 965;
 
 const FeaturePreview = ({ activeId }: { activeId: string }) => {
+  const activeFeature =
+    FEATURES.find((feature) => feature.id === activeId) ?? FEATURES[0];
+
   return (
     <div
       id="feature-preview"
       role="tabpanel"
       aria-labelledby={`feature-tab-${activeId}`}
-      className="relative min-h-55 w-full flex-1 overflow-clip rounded-[17px] border border-solid border-[#dfe1e2] bg-white iphone:min-h-70 ipad:min-h-80"
+      className="relative min-h-55 w-full min-w-0 flex-1 overflow-clip rounded-[17px] border border-solid border-[#dfe1e2] bg-white iphone:min-h-70 ipad:min-h-80"
     >
       <div
         aria-hidden="true"
@@ -416,12 +378,12 @@ const FeaturePreview = ({ activeId }: { activeId: string }) => {
 
       <div className="relative z-10 flex h-full items-center justify-center p-5 iphone:p-8 ipad:p-10">
         <div
-          key={activeId}
+          key={activeFeature.id}
           className="w-full max-w-121.5 animate-hero-reveal motion-reduce:animate-none"
         >
           <Image
-            alt="Task Members dashboard showing instructors, courses, progress, and status"
-            src="/section-7/widget-image.png"
+            alt={activeFeature.title}
+            src={activeFeature.image}
             width={WIDGET_IMAGE_WIDTH}
             height={WIDGET_IMAGE_HEIGHT}
             className="m-0 block h-auto w-full"
@@ -475,7 +437,7 @@ const Section7 = () => {
     <main className="min-h-screen bg-white text-[#010110] flex items-center justify-center">
       <section
         aria-labelledby="potential-heading"
-        className="relative mx-auto flex w-full max-w-300 flex-col items-center overflow-clip rounded-3xl px-4 py-16 sm:px-6 sm:py-20 ipad:px-10 ipad:py-24 laptop:px-[clamp(2rem,10vw,13.8rem)] laptop:py-25"
+        className="relative mx-auto flex w-full max-w-[80dvw] flex-col items-center overflow-clip rounded-3xl px-4 py-16 sm:px-6 sm:py-20 ipad:px-10 ipad:py-24 laptop:px-[clamp(2rem,10vw,13.8rem)] laptop:py-25"
       >
         <div
           aria-hidden="true"
@@ -515,7 +477,7 @@ const Section7 = () => {
           </header>
 
           <div
-            className={`animate-section-rise flex w-full flex-col gap-4 overflow-clip rounded-3xl bg-white p-3 motion-reduce:animate-none [animation-delay:160ms] ${CARD_SHADOW} ipad:flex-row ipad:items-stretch ipad:gap-5`}
+            className={`animate-section-rise flex w-full max-w-237.5 flex-col gap-7 overflow-clip rounded-3xl bg-white p-3 motion-reduce:animate-none [animation-delay:160ms] ${CARD_SHADOW} ipad:min-h-[372px] ipad:flex-row ipad:items-stretch ipad:gap-5`}
           >
             <FeatureTabs
               activeId={activeId}

@@ -1,0 +1,624 @@
+"use client";
+
+import Image from "next/image";
+import { motion, useReducedMotion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+
+const NAV_LINKS = [
+  { label: "Benefits", href: "#benefits", active: true },
+  { label: "Pricing", href: "#pricing", active: false },
+  { label: "Testimonials", href: "#testimonials", active: false },
+] as const;
+
+const BRAND_LOGOS = [
+  { name: "Lumina", src: "/section-11/brand-lumina.svg" },
+  { name: "Vortex", src: "/section-11/brand-vortex.svg" },
+  { name: "Velocity", src: "/section-11/brand-velocity.svg" },
+  { name: "Synergy", src: "/section-11/brand-synergy.svg" },
+  { name: "Enigma", src: "/section-11/brand-enigma.svg" },
+  { name: "Spectrum", src: "/section-11/brand-spectrum.svg" },
+] as const;
+
+/** ease-out-cubic — enter animations (Emil Kowalski) */
+const EASE_OUT = [0.215, 0.61, 0.355, 1] as const;
+
+const SHARED_TWEEN = {
+  type: "tween" as const,
+  duration: 0.4,
+  ease: EASE_OUT,
+};
+
+const PHONE_STAGGER = 0.09;
+const CARD_STAGGER = 0.07;
+/** Cards start after the three phones finish staggering in */
+const CARD_DELAY_BASE = PHONE_STAGGER * 3 + 0.04;
+
+/** Stable shuffled order — looks random, hydration-safe */
+const CARD_REVEAL_ORDER = ["stats", "actions", "liked", "comment"] as const;
+
+const Navbar = () => (
+  <nav
+    aria-label="Primary"
+    className="relative z-30 mx-auto flex w-full max-w-[995px] items-center justify-between overflow-clip rounded-full border border-solid border-[#dee5ed] bg-white py-3.5 pr-3.5 pl-5"
+  >
+    <a
+      href="#top"
+      aria-label="Capable home"
+      className="relative h-11 w-[148px] shrink-0 touch-manipulation focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6]"
+    >
+      {/* Logo mark — Figma inset + mirrored */}
+      <span className="absolute inset-[2.27%_71.59%_2.27%_0] flex items-center justify-center">
+        <span className="relative size-full -scale-x-100 overflow-clip">
+          <Image
+            src="/section-11/logo-capable-mark.svg"
+            alt=""
+            width={42}
+            height={42}
+            className="size-full object-contain"
+            aria-hidden="true"
+          />
+        </span>
+      </span>
+      {/* Wordmark */}
+      <span className="absolute inset-[25.81%_1.65%_22.58%_33.79%] overflow-clip">
+        <Image
+          src="/section-11/logo-capable-text.svg"
+          alt=""
+          width={96}
+          height={23}
+          className="size-full object-contain object-left"
+          aria-hidden="true"
+        />
+      </span>
+    </a>
+
+    <ul
+      className="absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-[18px] ipad:flex"
+      aria-label="Navigation links"
+    >
+      {NAV_LINKS.map((link) => (
+        <li key={link.label}>
+          <a
+            href={link.href}
+            className={
+              link.active
+                ? "inline-flex items-center overflow-clip rounded-full border border-solid border-[#dee5ed] bg-[#f5f7fa] px-5 py-4 text-base font-semibold leading-normal whitespace-nowrap text-[#333] transition-[background-color,border-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#eef2f7]"
+                : "inline-flex items-center text-base font-medium leading-normal whitespace-nowrap text-[#333] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] [@media(hover:hover)_and_(pointer:fine)]:hover:text-[#1d1d1d]"
+            }
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <a
+      href="#template"
+      className="inline-flex shrink-0 touch-manipulation items-center overflow-clip rounded-full bg-[#923cf6] px-5 py-4 text-base font-semibold leading-normal whitespace-nowrap text-white transition-[background-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#8129e0] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]"
+    >
+      Get Template
+    </a>
+  </nav>
+);
+
+const AnnouncementBadge = () => (
+  <a
+    href="#download"
+    className="inline-flex touch-manipulation items-center gap-1 overflow-clip rounded-full border border-solid border-[#dee5ed] bg-[#f1f4f8] py-1.5 pr-3 pl-1.5 shadow-[0_0_0_3px_white,0_4px_2px_rgba(140,150,169,0.25),0_8px_17.2px_rgba(140,150,169,0.1)] transition-[background-color,border-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#e8edf4] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]"
+  >
+    <span className="inline-flex items-center gap-2">
+      <span className="inline-flex items-center justify-center overflow-clip rounded-full bg-[#923cf6] px-3 py-[5px] text-[15px] font-semibold leading-normal text-white">
+        New
+      </span>
+      <span className="text-center text-base font-medium leading-normal whitespace-nowrap text-[#262626]">
+        Build your connections now
+      </span>
+    </span>
+    <span className="relative size-[18px] shrink-0 overflow-clip">
+      <Image
+        src="/section-11/arrow-right.svg"
+        alt=""
+        width={18}
+        height={18}
+        className="size-full"
+        aria-hidden="true"
+      />
+    </span>
+  </a>
+);
+
+const BrandLogoItem = ({
+  brand,
+  duplicate = false,
+}: {
+  brand: (typeof BRAND_LOGOS)[number];
+  duplicate?: boolean;
+}) => (
+  <li
+    className="relative h-[42px] w-[126px] shrink-0 overflow-clip"
+    aria-hidden={duplicate || undefined}
+  >
+    <Image
+      src={brand.src}
+      alt={duplicate ? "" : brand.name}
+      width={126}
+      height={42}
+      className="size-full object-contain"
+      aria-hidden={duplicate}
+    />
+  </li>
+);
+
+const TrustedBy = () => (
+  <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center gap-7.5 px-5">
+    <p className="text-center text-lg font-medium leading-normal text-[#1d1d1d]">
+      Trusted by 1000+ businesses across the world
+    </p>
+
+    <div
+      className="relative w-full max-w-[820px] overflow-hidden mask-[linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]"
+      aria-label="Trusted brands"
+      role="region"
+    >
+      <ul className="flex w-max items-center gap-x-2 iphone:gap-x-3.5 animate-trusted-marquee motion-reduce:animate-none will-change-transform">
+        {BRAND_LOGOS.map((brand) => (
+          <BrandLogoItem key={brand.name} brand={brand} />
+        ))}
+        {BRAND_LOGOS.map((brand) => (
+          <BrandLogoItem
+            key={`${brand.name}-duplicate`}
+            brand={brand}
+            duplicate
+          />
+        ))}
+      </ul>
+    </div>
+  </div>
+);
+
+type PhoneMockupProps = {
+  screen: string;
+  screenWidth: number;
+  screenHeight: number;
+  className?: string;
+};
+
+/** Upright Mobile.svg frame — screen fills the Figma placeholder exactly. */
+const PhoneMockup = ({
+  screen,
+  screenWidth,
+  screenHeight,
+  className = "",
+}: PhoneMockupProps) => (
+  <div className={`relative overflow-clip ${className}`}>
+    {/*
+      White fill + Vector behind the SVG hole.
+      Vectors have transparent rounded corners — white backing prevents gaps.
+      Inset matches Figma screen placeholder (2.36% / 5.65%).
+    */}
+    <div
+      aria-hidden="true"
+      className="absolute inset-[1.4%_4.2%_1.4%_4.2%] overflow-hidden bg-white"
+    >
+      <Image
+        src={screen}
+        alt=""
+        width={screenWidth}
+        height={screenHeight}
+        priority
+        className="pointer-events-none size-full max-w-none object-cover object-top"
+      />
+    </div>
+    <Image
+      src="/section-10/Mobile.svg"
+      alt=""
+      aria-hidden="true"
+      width={235}
+      height={476}
+      priority
+      className="pointer-events-none absolute inset-0 z-10 size-full object-fill"
+    />
+  </div>
+);
+
+const LikedCard = ({ className = "" }: { className?: string }) => (
+  <div
+    className={`flex items-center gap-2.5 overflow-clip rounded-full border border-solid border-[#dee5ed] bg-white py-2 pr-3 pl-2 shadow-[0_0_0_2px_white,0_15px_28.6px_rgba(0,0,0,0.12)] ${className}`}
+  >
+    <div className="flex items-center">
+      {(
+        [
+          "/section-11/avatar-1.png",
+          "/section-11/avatar-2.png",
+          "/section-11/avatar-3.png",
+        ] as const
+      ).map((src, index) => (
+        <span
+          key={src}
+          className={`relative size-7 shrink-0 overflow-clip rounded-full ${index < 2 ? "mr-[-11px]" : ""}`}
+        >
+          <Image
+            src={src}
+            alt=""
+            width={28}
+            height={28}
+            className="size-full object-cover"
+            aria-hidden="true"
+          />
+        </span>
+      ))}
+    </div>
+    <span className="flex items-center gap-0.5">
+      <Image
+        src="/section-11/heart.svg"
+        alt=""
+        width={24}
+        height={24}
+        className="size-6"
+        aria-hidden="true"
+      />
+      <span className="text-[15px] font-medium leading-normal whitespace-nowrap text-[#1d1d1d]">
+        Liked
+      </span>
+    </span>
+  </div>
+);
+
+const ActionsCard = ({ className = "" }: { className?: string }) => (
+  <div
+    className={`flex items-start gap-[5.931px] overflow-clip rounded-full bg-white p-[5.931px] shadow-[0_0_0_2px_white,0_15px_28.6px_rgba(0,0,0,0.12)] ${className}`}
+  >
+    {(
+      [
+        { label: "Edit Profile", active: false },
+        { label: "Ads", active: false },
+        { label: "Insight", active: true },
+      ] as const
+    ).map((item) => (
+      <span
+        key={item.label}
+        className={
+          item.active
+            ? "inline-flex items-center rounded-full bg-[#923cf6] px-[14.826px] py-[8.896px] text-[11.861px] font-medium leading-normal whitespace-nowrap text-white"
+            : "inline-flex items-center rounded-full border-[0.741px] border-solid border-[#dee5ed] bg-white px-[14.826px] py-[8.896px] text-[11.861px] font-medium leading-normal whitespace-nowrap text-[#262626]"
+        }
+      >
+        {item.label}
+      </span>
+    ))}
+  </div>
+);
+
+const StatsCard = ({ className = "" }: { className?: string }) => (
+  <div
+    className={`flex w-[216px] items-start justify-between overflow-clip rounded-[10.205px] border-[0.85px] border-solid border-[#dee5ed] bg-white p-[13.606px] shadow-[0_0_0_1.701px_white,0_8.504px_32.315px_rgba(0,0,0,0.12)] ${className}`}
+  >
+    {(
+      [
+        { value: "58", label: "Posts" },
+        { value: "486", label: "Follower" },
+        { value: "397", label: "Following" },
+      ] as const
+    ).map((stat) => (
+      <div
+        key={stat.label}
+        className="flex flex-col items-center gap-[3.402px]"
+      >
+        <span className="text-[15.307px] font-bold tracking-[0.1531px] text-[#1d1d1d]">
+          {stat.value}
+        </span>
+        <span className="text-[11.906px] font-medium tracking-[0.1191px] text-[#333]">
+          {stat.label}
+        </span>
+      </div>
+    ))}
+  </div>
+);
+
+const CommentCard = ({ className = "" }: { className?: string }) => (
+  <div
+    className={`flex w-[279px] flex-col gap-[16.127px] rounded-[16.127px] bg-white p-[16.127px] shadow-[0_-1.613px_14.353px_rgba(124,124,155,0.08),0_17.74px_35.802px_rgba(0,0,0,0.12)] ${className}`}
+  >
+    <div className="flex w-full items-start gap-[12.095px]">
+      <span className="relative size-[40.318px] shrink-0 overflow-clip rounded-full">
+        <Image
+          src="/section-11/avatar-comment.png"
+          alt=""
+          width={40}
+          height={40}
+          className="size-full object-cover"
+          aria-hidden="true"
+        />
+      </span>
+      <div className="flex min-w-0 flex-1 flex-col gap-[7.257px]">
+        <p className="text-[12.902px] font-medium leading-normal text-[#1d1d1d]">
+          Kurniawan
+        </p>
+        <p className="text-[9.676px] leading-normal tracking-[0.4838px] text-[#333]">
+          I like the overall vibe! How do you create that arrow on the all
+          design?
+        </p>
+      </div>
+    </div>
+    <div className="flex items-center gap-[20.159px]">
+      <span className="flex items-center gap-[6.451px]">
+        <Image
+          src="/section-11/icon-like.svg"
+          alt=""
+          width={15}
+          height={15}
+          className="size-[14.5px] rotate-180"
+          aria-hidden="true"
+        />
+        <span className="text-[9.676px] text-[#808080]">Like</span>
+      </span>
+      <span className="flex items-center gap-[6.451px]">
+        <span className="relative h-[13.7px] w-4">
+          <Image
+            src="/section-11/icon-comment-line.svg"
+            alt=""
+            width={16}
+            height={14}
+            className="absolute inset-0 size-full"
+            aria-hidden="true"
+          />
+          <Image
+            src="/section-11/icon-comment-dot.svg"
+            alt=""
+            width={8}
+            height={2}
+            className="absolute top-[4.4px] left-[2.8px] h-[1.6px] w-2"
+            aria-hidden="true"
+          />
+        </span>
+        <span className="text-[9.676px] text-[#808080]">Comment</span>
+      </span>
+    </div>
+  </div>
+);
+
+/** Figma 3049:7876 — 1440×342 artboard scaled to container width. */
+const PhoneShowcase = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const prefersReducedMotion = useReducedMotion();
+  const reduceMotion = prefersReducedMotion === true;
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const updateScale = () => {
+      setScale(el.clientWidth / 1440);
+    };
+
+    updateScale();
+    const observer = new ResizeObserver(updateScale);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const phoneTransition = (index: number) => ({
+    ...SHARED_TWEEN,
+    delay: reduceMotion ? 0 : index * PHONE_STAGGER,
+  });
+
+  const cardDelay = (cardId: (typeof CARD_REVEAL_ORDER)[number]) => {
+    if (reduceMotion) return 0;
+    const orderIndex = CARD_REVEAL_ORDER.indexOf(cardId);
+    return CARD_DELAY_BASE + orderIndex * CARD_STAGGER;
+  };
+
+  const phoneInitial = reduceMotion ? { opacity: 0 } : { opacity: 0, x: -28 };
+  const phoneAnimate = reduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 };
+
+  const cardInitial = reduceMotion
+    ? { opacity: 0 }
+    : { opacity: 0, y: 14, scale: 0.96 };
+  const cardAnimate = reduceMotion
+    ? { opacity: 1 }
+    : { opacity: 1, y: 0, scale: 1 };
+
+  return (
+    <div
+      ref={ref}
+      className="relative w-full overflow-x-clip overflow-y-hidden"
+      style={{ height: `${342 * scale}px` }}
+    >
+      <div
+        aria-hidden="true"
+        className="absolute top-0 left-0 h-[342px] w-[1440px]"
+        style={{
+          transform: `scale(${scale})`,
+          transformOrigin: "top left",
+        }}
+      >
+        <div className="absolute bottom-0 left-0 h-[279px] w-full rounded-bl-[50px] rounded-br-[50px] bg-linear-to-b from-[rgba(146,60,246,0)] to-[rgba(146,60,246,0.2)]" />
+
+        {/* Left phone — Figma 3049:7910, rotate −18.77°. Extra left room so tilt isn't clipped. */}
+        <motion.div
+          className="absolute top-[68px] left-0 z-0 h-[274px] w-[420px] overflow-hidden will-change-transform"
+          initial={phoneInitial}
+          animate={phoneAnimate}
+          transition={phoneTransition(0)}
+        >
+          <div className="absolute bottom-[-107.78px] left-[49px] flex h-[388.845px] w-[360.122px] items-center justify-center">
+            <div className="flex-none rotate-[-18.77deg]">
+              <div className="relative h-[318.173px] w-[272.221px] overflow-hidden">
+                <PhoneMockup
+                  screen="/section-10/Vector3.png"
+                  screenWidth={362}
+                  screenHeight={788}
+                  className="absolute top-0 left-0 h-[551.68px] w-[272.221px]"
+                />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="absolute bottom-0 left-1/2 z-10 -translate-x-1/2">
+          <motion.div
+            className="h-[325px] w-[364px] overflow-hidden will-change-transform"
+            initial={phoneInitial}
+            animate={phoneAnimate}
+            transition={phoneTransition(1)}
+          >
+            <PhoneMockup
+              screen="/section-10/Vector.png"
+              screenWidth={417}
+              screenHeight={906}
+              className="h-[735.556px] w-[364px]"
+            />
+          </motion.div>
+        </div>
+
+        <motion.div
+          className="absolute top-[68px] right-[40px] z-0 h-[274px] w-[400px] overflow-hidden will-change-transform"
+          initial={phoneInitial}
+          animate={phoneAnimate}
+          transition={phoneTransition(2)}
+        >
+          <div className="absolute top-[-7.07px] right-[20px] flex h-[388.845px] w-[360.122px] items-center justify-center">
+            <div className="flex-none rotate-[18.77deg]">
+              <div className="relative h-[318.173px] w-[272.221px] overflow-hidden">
+                <PhoneMockup
+                  screen="/section-10/Vector2.png"
+                  screenWidth={362}
+                  screenHeight={788}
+                  className="absolute top-0 left-0 h-[551.68px] w-[272.221px]"
+                />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="pointer-events-none absolute bottom-[-3px] left-0 z-20 h-[118px] w-full rounded-bl-[50px] rounded-br-[50px] bg-linear-to-b from-[rgba(146,60,246,0)] to-[rgba(146,60,246,0.1)] backdrop-blur-[1px]" />
+
+        {/* Cards — shuffled order, same tween */}
+        <motion.div
+          className="absolute top-[89px] left-[399px] z-30 will-change-transform"
+          initial={cardInitial}
+          animate={cardAnimate}
+          transition={{ ...SHARED_TWEEN, delay: cardDelay("liked") }}
+        >
+          <LikedCard />
+        </motion.div>
+
+        <motion.div
+          className="absolute top-[89px] left-[861px] z-30 will-change-transform"
+          initial={cardInitial}
+          animate={cardAnimate}
+          transition={{ ...SHARED_TWEEN, delay: cardDelay("actions") }}
+        >
+          <ActionsCard />
+        </motion.div>
+
+        <motion.div
+          className="absolute top-[219.61px] left-[360px] z-30 will-change-transform"
+          initial={cardInitial}
+          animate={cardAnimate}
+          transition={{ ...SHARED_TWEEN, delay: cardDelay("stats") }}
+        >
+          <StatsCard />
+        </motion.div>
+
+        <motion.div
+          className="absolute top-[188px] left-[838px] z-30 will-change-transform"
+          initial={cardInitial}
+          animate={cardAnimate}
+          transition={{ ...SHARED_TWEEN, delay: cardDelay("comment") }}
+        >
+          <CommentCard />
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+const Section11 = () => {
+  return (
+    <section
+      id="top"
+      aria-label="Capable hero"
+      className="relative w-full h-full overflow-hidden bg-white text-[#0d0d0d]"
+    >
+      <a
+        href="#download"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-[#923cf6] focus:px-4 focus:py-2 focus:text-white"
+      >
+        Skip to content
+      </a>
+
+      <div className="relative mx-auto w-full max-w-[1440px]">
+        {/* Hero shell */}
+        <div className="relative overflow-hidden rounded-b-[clamp(1.5rem,4vw,3.125rem)] border-b border-solid border-[#dee5ed] bg-[#f8fafc] shadow-[0_0_0_6px_white,0_7px_6px_rgba(140,150,169,0.12),0_22px_30px_rgba(140,150,169,0.1)]">
+          {/* Dot grid */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 rounded-b-[inherit] bg-size-[186px_186px] bg-top-left opacity-100"
+            style={{ backgroundImage: "url('/section-11/dots.png')" }}
+          />
+          {/* Soft top fade over dots */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 rounded-b-[inherit]"
+            style={{
+              backgroundImage:
+                "radial-gradient(ellipse 100% 70% at 50% 0%, #f8fafc 15%, transparent 70%)",
+            }}
+          />
+
+          <div className="relative z-10 flex flex-col items-center px-5 pt-[30px] android-sm:px-8 ipad:px-10">
+            {/* 1. Navbar */}
+            <div className="w-full animate-page-reveal will-change-transform">
+              <Navbar />
+            </div>
+
+            {/* 2. Container — internal stagger */}
+            <div
+              id="download"
+              className="mt-[clamp(2.75rem,7vw,5.375rem)] flex w-full max-w-[1145px] scroll-mt-8 flex-col items-center gap-10"
+            >
+              <div className="flex w-full flex-col items-center gap-4">
+                <div className="animate-page-reveal will-change-transform [animation-delay:80ms]">
+                  <AnnouncementBadge />
+                </div>
+
+                <div className="flex w-full animate-page-reveal flex-col items-center justify-center gap-5 px-0 text-center will-change-transform ipad:px-[clamp(1rem,6vw,6.25rem)] [animation-delay:140ms]">
+                  <h1 className="font-urbanist text-[clamp(2rem,5.5vw,4.25rem)] font-bold leading-[1.2] text-[#0d0d0d]">
+                    Empower Your Social Connections with Capable
+                  </h1>
+                  <p className="max-w-[640px] text-[clamp(1rem,2.2vw,1.25rem)] font-medium leading-normal text-[#666]">
+                    Join Capable to build authentic connections and share your
+                    passions effortlessly.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex w-full max-w-[556px] animate-page-reveal flex-col items-center will-change-transform [animation-delay:200ms]">
+                <a
+                  href="#download"
+                  className="inline-flex min-h-14 touch-manipulation items-center rounded-full bg-[#923cf6] px-6 py-4 text-lg font-semibold leading-normal whitespace-nowrap text-white transition-[background-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#8129e0] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]"
+                >
+                  Download App
+                </a>
+              </div>
+            </div>
+
+            {/* Phone showcase — Figma 3049:7876 */}
+            <div className="relative z-10 mt-[clamp(1.5rem,4vw,2.75rem)] -mx-5 w-[calc(100%+2.5rem)] android-sm:-mx-8 android-sm:w-[calc(100%+4rem)] ipad:-mx-10 ipad:w-[calc(100%+5rem)]">
+              <PhoneShowcase />
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Trusted by */}
+        <div className="animate-page-reveal py-[clamp(2.5rem,5vw,3.75rem)] will-change-transform [animation-delay:360ms]">
+          <TrustedBy />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Section11;

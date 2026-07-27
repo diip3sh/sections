@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import {
+  baskervville,
   geist,
   instrumentSans,
   inter,
   interTight,
+  manrope,
   rethinkSans,
   switzer,
   tillana,
+  urbanist,
 } from "@/lib/fonts/font";
 import "./globals.css";
 
@@ -24,7 +27,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${interTight.variable} ${switzer.variable} ${rethinkSans.variable} ${geist.variable} ${tillana.variable} ${instrumentSans.variable} h-full antialiased`}
+      className={`${inter.variable} ${interTight.variable} ${switzer.variable} ${rethinkSans.variable} ${geist.variable} ${tillana.variable} ${instrumentSans.variable} ${manrope.variable} ${baskervville.variable} ${urbanist.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>

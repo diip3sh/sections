@@ -377,10 +377,9 @@ const Section9 = () => {
             className="pointer-events-none absolute bottom-0 left-1/2 h-70 w-full -translate-x-1/2 bg-[#f8f6fe] mask-[linear-gradient(to_bottom,black_0%,black_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_60%,transparent_100%)]"
           />
           <div
-            className="relative z-10 flex w-full flex-col items-center gap-8 overflow-clip rounded-tl-[36px] rounded-tr-[36px] px-4 pt-20 pb-16 iphone:gap-10 iphone:px-6 ipad:rounded-tl-[64px] ipad:rounded-tr-[64px] ipad:px-10 ipad:pt-30 ipad:pb-20"
+            className="relative z-10 flex w-full flex-col items-center gap-8 overflow-clip rounded-tl-[36px] rounded-tr-[36px] bg-cover bg-top bg-no-repeat px-4 pt-20 pb-16 iphone:gap-10 iphone:px-6 ipad:rounded-tl-[64px] ipad:rounded-tr-[64px] ipad:px-10 ipad:pt-30 ipad:pb-20"
             style={{
-              backgroundImage:
-                "linear-gradient(180deg, rgb(230, 223, 251) 0%, rgb(246, 232, 247) 66%, rgb(249, 243, 251) 85%, rgb(248, 246, 254) 100%)",
+              backgroundImage: "url('/section-9/background.png')",
             }}
           >
             <HeroAtmosphere />

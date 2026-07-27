@@ -304,7 +304,7 @@ const FeatureTabs = ({
       aria-label="Product features"
       aria-orientation="vertical"
       onKeyDown={onKeyDown}
-      className="relative flex w-full shrink-0 flex-col gap-3 py-1 pl-0 ipad:w-90.25 ipad:gap-4 ipad:py-2 ipad:pl-2"
+      className="relative flex w-full shrink-0 flex-col gap-2.5 py-1 pl-0 ipad-landscape:w-90.25 ipad-landscape:gap-3 ipad-landscape:py-1 ipad-landscape:pl-1"
     >
       {FEATURES.map((feature) => {
         const isActive = activeId === feature.id;
@@ -322,7 +322,7 @@ const FeatureTabs = ({
             aria-controls="feature-preview"
             tabIndex={isActive ? 0 : -1}
             onClick={() => onSelect(feature.id)}
-            className={`relative z-0 flex w-full min-h-11 min-w-0 cursor-pointer items-center gap-3 overflow-clip rounded-xl border border-solid p-3 text-left touch-manipulation transition-[background-color,border-color,box-shadow] duration-200 ease-[cubic-bezier(.215,.61,.355,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1e1e1e] motion-reduce:transition-none active:scale-[0.99] motion-reduce:active:scale-100 ${hoverClass} ${
+            className={`relative z-0 flex w-full min-h-11 min-w-0 cursor-pointer items-center gap-3 overflow-clip rounded-xl border border-solid p-3 text-left touch-manipulation transition-[background-color,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1e1e1e] motion-reduce:transition-none ${hoverClass} ${
               isActive
                 ? `border-[#9bd3e9] bg-[#bce7f8] ${ACTIVE_TAB_SHADOW}`
                 : "border-transparent bg-white"
@@ -351,21 +351,12 @@ const FeaturePreview = ({ activeId }: { activeId: string }) => {
       id="feature-preview"
       role="tabpanel"
       aria-labelledby={`feature-tab-${activeId}`}
-      className="relative min-h-55 w-full min-w-0 flex-1 overflow-clip rounded-[17px] border border-solid border-[#dfe1e2] bg-white iphone:min-h-70 ipad:min-h-80"
+      className="relative w-full min-w-0 flex-1 overflow-clip rounded-[17px] border border-solid border-[#dfe1e2] ipad-landscape:min-h-0"
+      style={{
+        backgroundImage:
+          "linear-gradient(135deg, #fffcf5 0%, #fdfdfd 32%, #f7fcff 68%, #f0f8ff 100%)",
+      }}
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.12]"
-      >
-        <Image
-          alt=""
-          src="/section-7/bg.png"
-          fill
-          sizes="600px"
-          className="object-cover"
-        />
-      </div>
-
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-40"
@@ -376,18 +367,18 @@ const FeaturePreview = ({ activeId }: { activeId: string }) => {
         }}
       />
 
-      <div className="relative z-10 flex h-full items-center justify-center p-5 iphone:p-8 ipad:p-10">
+      <div className="relative z-10 flex items-center justify-center p-3 iphone:p-4 ipad-landscape:absolute ipad-landscape:inset-0 ipad-landscape:p-5">
         <div
           key={activeFeature.id}
-          className="w-full max-w-121.5 animate-hero-reveal motion-reduce:animate-none"
+          className="flex w-full items-center justify-center animate-hero-reveal motion-reduce:animate-none [animation-duration:500ms] [animation-timing-function:cubic-bezier(0.23,1,0.32,1)] ipad-landscape:h-full"
         >
           <Image
             alt={activeFeature.title}
             src={activeFeature.image}
             width={WIDGET_IMAGE_WIDTH}
             height={WIDGET_IMAGE_HEIGHT}
-            className="m-0 block h-auto w-full"
-            sizes="(max-width: 768px) 90vw, 486px"
+            className="m-0 block h-auto w-full object-contain ipad-landscape:max-h-full"
+            sizes="(max-width: 1023px) 92vw, 640px"
             priority
           />
         </div>
@@ -437,7 +428,7 @@ const Section7 = () => {
     <main className="min-h-screen bg-white text-[#010110] flex items-center justify-center">
       <section
         aria-labelledby="potential-heading"
-        className="relative mx-auto flex w-full max-w-[98dvw] flex-col items-center overflow-clip rounded-3xl px-4 py-16 sm:px-6 sm:py-20 ipad:px-10 ipad:py-24 laptop:px-[clamp(2rem,10vw,13.8rem)] laptop:py-25"
+        className="relative mx-auto my-5 flex w-full max-w-[98dvw] flex-col items-center overflow-clip rounded-3xl px-4 py-16 sm:px-6 sm:py-20 ipad:px-10 ipad:py-24 laptop:px-[clamp(2rem,10vw,13.8rem)] laptop:py-25"
       >
         <div
           aria-hidden="true"
@@ -466,18 +457,19 @@ const Section7 = () => {
           <header className="flex w-full max-w-180 flex-col items-center gap-3 text-center">
             <h1
               id="potential-heading"
-              className="animate-section-rise text-[clamp(1.75rem,4vw,2.5rem)] font-medium leading-[1.12] tracking-[-0.02em] text-[#010110] motion-reduce:animate-none [animation-delay:0ms]"
+              className="animate-section-rise text-[clamp(1.75rem,4vw,2.5rem)] font-medium leading-[1.12] tracking-[-0.04em] text-[#010110] motion-reduce:animate-none [animation-delay:0ms]"
             >
               Unique Potential for you
             </h1>
             <p className="animate-section-rise max-w-155 text-pretty text-[15px] font-medium leading-normal tracking-[-0.02em] text-[#45545e] iphone:text-base motion-reduce:animate-none [animation-delay:80ms]">
               Stop juggling disconnected systems. Enlumen brings everything
+              <br className="hidden ipad:block" />
               together into one intelligent, automated platform.
             </p>
           </header>
 
           <div
-            className={`animate-section-rise flex w-full max-w-237.5 flex-col gap-7 overflow-clip rounded-3xl bg-white p-3 motion-reduce:animate-none [animation-delay:160ms] ${CARD_SHADOW} ipad:min-h-[372px] ipad:flex-row ipad:items-stretch ipad:gap-5`}
+            className={`animate-section-rise flex w-full max-w-237.5 flex-col gap-5 overflow-clip rounded-3xl bg-white p-3 motion-reduce:animate-none [animation-delay:160ms] ${CARD_SHADOW} ipad-landscape:flex-row ipad-landscape:items-stretch ipad-landscape:gap-5`}
           >
             <FeatureTabs
               activeId={activeId}

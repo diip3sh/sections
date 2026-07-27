@@ -93,24 +93,6 @@ const ELITE_FEATURES_RIGHT: PricingFeature[] = [
 
 const TOGGLE_KNOB_TRAVEL_PX = 17;
 
-const DottedArrow = () => (
-  <svg
-    aria-hidden="true"
-    width="18"
-    height="18"
-    viewBox="0 0 18 18"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="size-4.5 shrink-0"
-  >
-    <circle cx="6" cy="3" r="1.5" fill="currentColor" />
-    <circle cx="9" cy="6" r="1.5" fill="currentColor" />
-    <circle cx="12" cy="9" r="1.5" fill="currentColor" />
-    <circle cx="9" cy="12" r="1.5" fill="currentColor" />
-    <circle cx="6" cy="15" r="1.5" fill="currentColor" />
-  </svg>
-);
-
 const BillingToggle = ({
   checked,
   onChange,
@@ -191,11 +173,14 @@ const FeatureItem = ({
 
 const CtaButton = ({ variant }: { variant: ButtonVariant }) => {
   const isBlue = variant === "blue";
+  const arrowSrc = isBlue
+    ? "/section-8/arrow-light.svg"
+    : "/section-8/arrow-dark.svg";
 
   return (
     <a
       href="#get-started"
-      className={`relative inline-flex min-h-11 shrink-0 touch-manipulation items-center justify-center gap-1.5 overflow-clip rounded-lg px-5 py-3.5 text-[17px] font-semibold leading-none text-white transition-[transform,background-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1b1f22] active:scale-[0.98] motion-reduce:active:scale-100 motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90 ${
+      className={`relative inline-flex shrink-0 touch-manipulation items-center justify-center gap-1.5 overflow-clip rounded-lg px-5 py-3.5 text-[17px] font-semibold leading-[1.5] whitespace-nowrap text-white transition-[transform,background-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1b1f22] active:scale-[0.98] motion-reduce:active:scale-100 motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90 ${
         variant === "muted" ? "bg-[#444d55]" : "bg-[#1b1f22]"
       }`}
     >
@@ -206,8 +191,21 @@ const CtaButton = ({ variant }: { variant: ButtonVariant }) => {
         }`}
       />
       <span className="relative z-10 inline-flex items-center gap-1.5">
-        <span className="leading-none">Get started</span>
-        <DottedArrow />
+        <span>Get started</span>
+        <span className="relative size-[18px] shrink-0 overflow-visible">
+          <Image
+            src={arrowSrc}
+            alt=""
+            width={18}
+            height={isBlue ? 25 : 18}
+            className={
+              isBlue
+                ? "pointer-events-none absolute top-0 left-0 h-[24.5px] w-[18px] max-w-none"
+                : "pointer-events-none size-full"
+            }
+            aria-hidden="true"
+          />
+        </span>
       </span>
     </a>
   );
@@ -224,7 +222,7 @@ const PriceRow = ({
 }) => (
   <div className="flex items-baseline gap-2 whitespace-nowrap">
     <span
-      className={`text-[clamp(34px,5vw,58px)] font-bold leading-none ${
+      className={`text-[clamp(34px,5vw,50px)] font-bold leading-none ${
         dark ? "text-white" : "text-[#1b1f22]"
       }`}
     >
@@ -308,34 +306,41 @@ const ElitePlan = ({
   >
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 rounded-[inherit]"
+      className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"
     >
-      <div className="absolute inset-0 rounded-[inherit] bg-linear-to-b from-[#292f33] to-[#1b1f22]" />
+      <div className="absolute inset-0 bg-linear-to-b from-[#292f33] to-[#1b1f22]" />
       <div
-        className="absolute inset-0 rounded-[inherit] opacity-40 mix-blend-screen"
+        className="absolute inset-0 opacity-40 mix-blend-screen"
         style={{
           backgroundImage: "url(/section-8/elite-bg.png)",
           backgroundSize: "14px 14px",
           backgroundPosition: "top left",
         }}
       />
-      <div className="absolute inset-0 rounded-[inherit] bg-[radial-gradient(ellipse_at_92%_78%,rgba(94,143,237,0.55)_0%,rgba(48,111,232,0.2)_28%,transparent_58%)]" />
-      <div className="pointer-events-none absolute -right-10 -bottom-5 h-70 w-80 overflow-hidden opacity-90">
+      {/* Soft bottom-right light — blends under feature lists */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse 95% 85% at 100% 100%, rgba(255,255,255,0.42) 0%, rgba(105,161,241,0.28) 22%, rgba(48,111,232,0.12) 42%, transparent 68%)",
+        }}
+      />
+      <div className="absolute right-0 bottom-0 h-[min(100%,28rem)] w-[min(100%,32rem)]">
         <Image
           src="/section-8/elite-glow-1.svg"
           alt=""
           width={504}
           height={451}
-          className="absolute top-0 right-0 h-auto w-105 max-w-none"
+          className="absolute right-[-8%] bottom-[-6%] h-auto w-[110%] max-w-none opacity-90 [mask-image:radial-gradient(ellipse_70%_70%_at_100%_100%,black_20%,transparent_78%)] [-webkit-mask-image:radial-gradient(ellipse_70%_70%_at_100%_100%,black_20%,transparent_78%)]"
         />
       </div>
-      <div className="pointer-events-none absolute -right-30 -bottom-45 h-90 w-120 overflow-hidden opacity-40">
+      <div className="absolute right-0 bottom-0 h-[min(100%,36rem)] w-[min(100%,42rem)]">
         <Image
           src="/section-8/elite-glow-2.svg"
           alt=""
           width={898}
           height={693}
-          className="absolute right-0 bottom-0 h-auto w-140 max-w-none"
+          className="absolute right-[-18%] bottom-[-22%] h-auto w-[130%] max-w-none opacity-50 [mask-image:radial-gradient(ellipse_75%_75%_at_100%_100%,black_15%,transparent_72%)] [-webkit-mask-image:radial-gradient(ellipse_75%_75%_at_100%_100%,black_15%,transparent_72%)]"
         />
       </div>
     </div>
@@ -372,16 +377,16 @@ const ElitePlan = ({
         </div>
       </div>
 
-      <CtaButton variant={isActive ? "blue" : "muted"} />
+      <CtaButton variant="blue" />
     </div>
 
-    <ul className="relative flex min-w-0 flex-1 flex-col items-start justify-center gap-3  px-6 py-8 iphone:px-8 ipad-landscape:border-t-0 ipad-landscape:border-x ipad-landscape:border-[#2d3339] ipad-landscape:px-7.5 ipad-landscape:py-12.5">
+    <ul className="relative flex min-w-0 flex-1 flex-col items-start justify-start gap-3 bg-transparent px-6 pt-8 pb-0 iphone:px-8 ipad-landscape:border-t-0 ipad-landscape:border-x ipad-landscape:border-[#2d3339] ipad-landscape:px-7.5 ipad-landscape:py-12.5">
       {ELITE_FEATURES_LEFT.map((feature) => (
         <FeatureItem key={feature.text} {...feature} tone="dark" />
       ))}
     </ul>
 
-    <ul className="relative flex min-w-0 flex-1 flex-col items-start justify-center gap-3 px-6 py-8 iphone:px-8 ipad-landscape:border-t-0 ipad-landscape:px-7.5 ipad-landscape:py-12.5">
+    <ul className="relative flex min-w-0 flex-1 flex-col items-start justify-start gap-3 bg-transparent px-6 pt-3 pb-8 iphone:px-8 ipad-landscape:border-t-0 ipad-landscape:px-7.5 ipad-landscape:pt-12.5 ipad-landscape:pb-12.5">
       {ELITE_FEATURES_RIGHT.map((feature) => (
         <FeatureItem key={feature.text} {...feature} tone="dark" />
       ))}
@@ -425,7 +430,7 @@ const Section8 = () => {
             <div className="flex w-full max-w-200 flex-col items-center gap-4">
               <h1
                 id="pricing-heading"
-                className="w-full bg-center bg-cover bg-clip-text bg-no-repeat text-[clamp(34px,5vw,58px)] font-bold leading-[1.2] text-transparent"
+                className="w-full bg-center bg-cover bg-clip-text bg-no-repeat text-[clamp(34px,5vw,58px)] font-bold leading-[1.2] text-transparent tracking-tight"
                 style={{
                   backgroundImage: "url(/section-8/heading-fill.png)",
                 }}
@@ -439,8 +444,8 @@ const Section8 = () => {
             </div>
           </header>
 
-          <div className="animate-section-rise flex w-full max-w-[418px] flex-col items-start motion-reduce:animate-none [animation-delay:120ms] ipad-landscape:max-w-none">
-            <div className="relative z-2 mb-0 flex w-full flex-col overflow-clip rounded-xl border border-solid border-[#dee5ed] bg-white ipad-landscape:-mb-7.5 ipad-landscape:flex-row ipad-landscape:items-start">
+          <div className="animate-section-rise flex w-full max-w-[418px] flex-col items-start gap-5 motion-reduce:animate-none [animation-delay:120ms] ipad-landscape:max-w-none ipad-landscape:gap-0">
+            <div className="relative z-2 flex w-full flex-col overflow-clip rounded-xl border border-solid border-[#dee5ed] bg-white ipad-landscape:-mb-7.5 ipad-landscape:flex-row ipad-landscape:items-start">
               {PRICING_PLANS.map((plan, index) => (
                 <PlanColumn
                   key={plan.id}

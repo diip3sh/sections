@@ -73,7 +73,6 @@ type PhoneMockupProps = {
   screenWidth: number;
   screenHeight: number;
   className?: string;
-  delayMs?: number;
 };
 
 /**
@@ -85,12 +84,8 @@ const PhoneMockup = ({
   screenWidth,
   screenHeight,
   className = "",
-  delayMs = 0,
 }: PhoneMockupProps) => (
-  <div
-    className={`relative overflow-clip animate-section-rise motion-reduce:animate-none ${className}`}
-    style={{ animationDelay: `${delayMs}ms` }}
-  >
+  <div className={`relative overflow-clip ${className}`}>
     {/* Screen behind frame — shows through Mobile.svg hole */}
     <div
       aria-hidden="true"
@@ -122,49 +117,65 @@ const PhoneMockup = ({
 const PhonesHero = () => (
   <div className="pointer-events-none absolute top-0 left-1/2 z-10 -translate-x-1/2">
     <div className="relative h-[528.892px] w-[506.68px] origin-bottom scale-[0.58] android-sm:scale-[0.72] iphone:scale-[0.85] ipad:scale-100">
-      {/* Left phone — rotate -14.52°, 203.9×413.2 */}
-      <div className="absolute bottom-0 left-[calc(50%-102.85px)] z-0 flex h-[451.104px] w-[300.972px] -translate-x-1/2 items-center justify-center">
-        <div className="flex-none rotate-[-14.52deg]">
-          <PhoneMockup
-            screen="/section-10/Vector2.png"
-            screenWidth={362}
-            screenHeight={788}
-            className="h-[413.181px] w-[203.908px]"
-            delayMs={0}
-          />
+      {/* Dot grid behind phones */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-0 opacity-60"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, #c8ced8 1.4px, transparent 1.5px)",
+          backgroundSize: "9.02px 9.02px",
+          maskImage:
+            "radial-gradient(ellipse 80% 70% at 50% 40%, black 20%, transparent 75%), linear-gradient(to bottom, black 0%, black 55%, transparent 100%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 80% 70% at 50% 40%, black 20%, transparent 75%), linear-gradient(to bottom, black 0%, black 55%, transparent 100%)",
+          maskComposite: "intersect",
+          WebkitMaskComposite: "source-in",
+        }}
+      />
+
+      {/* Left phone — flip-in after center */}
+      <div className="absolute bottom-0 left-[calc(50%-102.85px)] z-[1] flex h-[451.104px] w-[300.972px] -translate-x-1/2 items-center justify-center [perspective:900px]">
+        <div className="origin-bottom animate-phone-flip-in-x will-change-transform motion-reduce:animate-none [transform-style:preserve-3d] [animation-delay:280ms]">
+          <div className="flex-none rotate-[-14.52deg]">
+            <PhoneMockup
+              screen="/section-10/Vector2.png"
+              screenWidth={362}
+              screenHeight={788}
+              className="h-[413.181px] w-[203.908px]"
+            />
+          </div>
         </div>
       </div>
 
-      {/* Right phone — rotate +14.52°, 203.9×413.2 */}
-      <div className="absolute bottom-0 left-[calc(50%+102.84px)] z-0 flex h-[451.108px] w-[300.987px] -translate-x-1/2 items-center justify-center">
-        <div className="flex-none rotate-[14.52deg]">
-          <PhoneMockup
-            screen="/section-10/Vector3.png"
-            screenWidth={362}
-            screenHeight={788}
-            className="h-[413.181px] w-[203.908px]"
-            delayMs={120}
-          />
+      {/* Right phone — flip-in after center */}
+      <div className="absolute bottom-0 left-[calc(50%+102.84px)] z-[1] flex h-[451.108px] w-[300.987px] -translate-x-1/2 items-center justify-center [perspective:900px]">
+        <div className="origin-bottom animate-phone-flip-in-x will-change-transform motion-reduce:animate-none [transform-style:preserve-3d] [animation-delay:360ms]">
+          <div className="flex-none rotate-[14.52deg]">
+            <PhoneMockup
+              screen="/section-10/Vector3.png"
+              screenWidth={362}
+              screenHeight={788}
+              className="h-[413.181px] w-[203.908px]"
+            />
+          </div>
         </div>
       </div>
 
-      {/* Center phone — upright, raised, front */}
-      <PhoneMockup
-        screen="/section-10/Vector.png"
-        screenWidth={417}
-        screenHeight={906}
-        className="absolute bottom-[21.82px] left-1/2 z-10 h-[475.386px] w-[234.606px] -translate-x-1/2"
-        delayMs={240}
-      />
+      {/* Center phone — slide up first */}
+      <div className="absolute bottom-[21.82px] left-1/2 z-10 -translate-x-1/2 animate-phone-slide-up will-change-transform motion-reduce:animate-none [animation-delay:0ms]">
+        <PhoneMockup
+          screen="/section-10/Vector.png"
+          screenWidth={417}
+          screenHeight={906}
+          className="h-[475.386px] w-[234.606px]"
+        />
+      </div>
 
-      {/* Dual white fades — Figma 3048:7800 / 3048:7801 */}
+      {/* Soft white bottom fade — linear-gradient overlay (to top) */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-[0.21px] left-0 z-20 h-[528.892px] w-full bg-linear-to-t from-[20.382%] from-white to-transparent"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-[0.21px] left-0 z-20 h-[341.619px] w-full bg-linear-to-t from-[7.542%] from-white to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[70%] bg-linear-to-t from-white from-[12%] via-white/85 via-[42%] to-transparent to-[78%]"
       />
     </div>
   </div>
@@ -182,7 +193,7 @@ const StoreButton = ({
     target="_blank"
     rel="noopener noreferrer"
     aria-label={ariaLabel}
-    className="inline-flex w-full min-h-17 touch-manipulation items-center justify-center gap-2.5 rounded-full border border-solid border-[#dee5ed] bg-[#f5f7fa] px-6 transition-[background-color,border-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#333] motion-reduce:transition-none iphone:w-auto [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#eef2f7]"
+    className="inline-flex w-[195px] min-h-17 touch-manipulation items-center justify-center gap-2.5 rounded-full border border-solid border-[#dee5ed] bg-[#f5f7fa] px-6 transition-[background-color,border-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#333] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#eef2f7]"
   >
     <span className="relative size-8 shrink-0 overflow-clip">
       <Image
@@ -235,9 +246,17 @@ const Footer = () => (
           <a
             key={link.label}
             href={link.href}
-            className="inline-flex min-h-11 touch-manipulation items-center overflow-clip rounded-full border border-solid border-[#dee5ed] bg-[#f5f7fa] px-5 py-3.5 text-base font-medium leading-normal whitespace-nowrap text-[#333] transition-[background-color,border-color,color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#333] [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#eef2f7]"
+            className="group relative inline-flex min-h-11 touch-manipulation items-center justify-center overflow-clip rounded-full border border-solid border-[#dee5ed] bg-[#f5f7fa] px-5 py-3.5 text-base font-medium leading-normal whitespace-nowrap text-[#333] transition-[background-color,border-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#333] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#eef2f7]"
           >
-            {link.label}
+            <span className="translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:group-hover:-translate-y-[150%]">
+              {link.label}
+            </span>
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 flex items-center justify-center translate-y-[150%] transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-y-0"
+            >
+              {link.label}
+            </span>
           </a>
         ))}
       </nav>
@@ -255,7 +274,7 @@ const Footer = () => (
               target="_blank"
               rel="noopener noreferrer"
               aria-label={social.label}
-              className="inline-flex size-11 touch-manipulation items-center justify-center rounded-full bg-[#262626] p-2.5 transition-[background-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#262626] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:scale-105 [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#3a3a3a]"
+              className="inline-flex size-11 touch-manipulation items-center justify-center rounded-full bg-[#262626] p-2.5 transition-[background-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#262626] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-0.5 [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#3a3a3a]"
             >
               <span className="relative size-6 overflow-clip">
                 <Image
@@ -300,24 +319,28 @@ const Section10 = () => {
           id="download"
           className="flex w-full max-w-[1201px] scroll-mt-8 flex-col items-center gap-[clamp(3.5rem,8vw,6.25rem)]"
         >
-          <div className="relative flex w-full max-w-[795px] flex-col items-center gap-10 pt-[clamp(12rem,38vw,23.75rem)]">
+          <div className="relative flex w-full max-w-[795px] flex-col items-center gap-10 pt-[clamp(20.5rem,52vw,23.75rem)] android-sm:pt-[clamp(24.5rem,56vw,27rem)] iphone:pt-[clamp(29rem,60vw,32rem)] ipad:pt-[23.75rem]">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 z-0"
               style={{
                 backgroundImage:
-                  'url("data:image/svg+xml;utf8,<svg viewBox=\'0 0 1013.7 586.55\' xmlns=\'http://www.w3.org/2000/svg\' preserveAspectRatio=\'none\'><rect x=\'0\' y=\'0\' height=\'100%\' width=\'100%\' fill=\'url(%23grad)\' opacity=\'1\'/><defs><radialGradient id=\'grad\' gradientUnits=\'userSpaceOnUse\' cx=\'0\' cy=\'0\' r=\'10\' gradientTransform=\'matrix(5.2218e-7 -58.655 68.122 6.0647e-7 507.62 586.55)\'><stop stop-color=\'rgba(255,255,255,0)\' offset=\'0.085153\'/><stop stop-color=\'rgba(255,255,255,1)\' offset=\'1\'/></radialGradient></defs></svg>")',
+                  "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 1013.7 586.55' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='1'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(5.2218e-7 -58.655 68.122 6.0647e-7 507.62 586.55)'><stop stop-color='rgba(255,255,255,0)' offset='0.085153'/><stop stop-color='rgba(255,255,255,1)' offset='1'/></radialGradient></defs></svg>\")",
               }}
             />
-
-            <DotGrid />
             <PhonesHero />
 
-            <div className="relative z-20 flex w-full animate-hero-reveal flex-col items-center gap-5 px-2 text-center motion-reduce:animate-none iphone:px-12.5 [animation-delay:80ms]">
-              <h1 className="font-urbanist text-[clamp(2rem,6.5vw,3.625rem)] font-bold leading-[1.2] text-[#0d0d0d]">
-                Download Capable and Connect Today
+            <div className="relative z-20 flex w-full animate-hero-reveal flex-col items-center gap-5 px-0 pt-2 text-center motion-reduce:animate-none android-sm:pt-4 iphone:pt-6 ipad:px-12.5 ipad:pt-0 [animation-delay:80ms]">
+              {/* Soft white mask over phone bottoms — android-sm / iphone */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 bottom-full h-20 android-sm:h-24 iphone:h-28 ipad:hidden"
+              />
+              <h1 className="font-urbanist text-[30px] font-bold leading-[1.2] text-[#0d0d0d] ipad:text-[38px] ipad-landscape:text-[clamp(2.5rem,6.5vw,3.625rem)]">
+                Download Capable and
+                <br className="ipad-landscape:hidden" /> Connect Today
               </h1>
-              <p className="max-w-[695px] text-[clamp(1rem,2.5vw,1.125rem)] font-medium leading-normal text-[#666]">
+              <p className="w-full text-base font-medium leading-normal text-[#666] text-pretty ipad:text-[clamp(1rem,2.5vw,1.125rem)] ipad-landscape:max-w-[695px]">
                 Download Capable now to start connecting with like-minded people
                 and enjoy a seamless social experience!
               </p>

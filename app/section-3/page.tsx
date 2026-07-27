@@ -26,32 +26,34 @@ const Section3 = () => {
           aria-hidden="true"
           className="relative h-106 w-full shrink-0 overflow-hidden sm:absolute sm:inset-x-0 sm:top-0 sm:h-126"
         >
-          <div className="pointer-events-none absolute left-1/2 top-67 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.10),transparent_70%)] sm:top-92.375 sm:h-82.75 sm:w-82.75" />
+          <div className="absolute inset-0 mask-[linear-gradient(to_bottom,black_0%,black_48%,rgba(0,0,0,0.35)_52%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_48%,rgba(0,0,0,0.35)_72%,transparent_100%)]">
+            <div className="pointer-events-none absolute left-1/2 top-67 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.10),transparent_70%)] sm:top-92.375 sm:h-82.75 sm:w-82.75" />
 
-          <OrbitControls />
+            <OrbitControls />
 
-          <div className="pointer-events-auto absolute left-1/2 top-28 size-78 -translate-x-1/2 cursor-grab touch-none active:cursor-grabbing sm:top-51 sm:size-82.75">
-            <div className="relative size-78 sm:size-82.75">
-              <Globe
-                direction="right"
-                dots={{
-                  color: "#737373",
-                  size: 10,
-                  density: 4,
-                  allDots: false,
-                }}
-                speed={1}
-                smoothing={0}
-                stopOnHover={false}
-                interactive
-                dragSpeed={5}
-                showOutline={false}
-                showGrid={false}
-                oceanColor="#050505"
-                scale={9}
-                initialLatitude={23}
-                initialLongitude={-23}
-              />
+            <div className="pointer-events-auto absolute left-1/2 top-28 size-78 -translate-x-1/2 cursor-grab touch-none active:cursor-grabbing sm:top-51 sm:size-82.75">
+              <div className="relative size-78 sm:size-82.75">
+                <Globe
+                  direction="right"
+                  dots={{
+                    color: "#737373",
+                    size: 10,
+                    density: 4,
+                    allDots: false,
+                  }}
+                  speed={1}
+                  smoothing={0}
+                  stopOnHover={false}
+                  interactive
+                  dragSpeed={5}
+                  showOutline={false}
+                  showGrid={false}
+                  oceanColor="#050505"
+                  scale={9}
+                  initialLatitude={23}
+                  initialLongitude={-23}
+                />
+              </div>
             </div>
           </div>
 
@@ -89,7 +91,7 @@ const Section3 = () => {
 
           <div aria-hidden="true" className="hidden min-h-10 flex-1 sm:block" />
 
-          <ul className="pointer-events-auto mt-16 grid w-full max-w-140 shrink-0 desktop-sm:mt-0 desktop-sm:max-w-none desktop-sm:grid-cols-3 desktop-sm:divide-x desktop-sm:divide-[#18191b]">
+          <ul className="pointer-events-auto my-16 grid w-full max-w-140 shrink-0 desktop-sm:mt-0 desktop-sm:max-w-none desktop-sm:grid-cols-3 desktop-sm:divide-x desktop-sm:divide-[#18191b]">
             {METRICS.map((metric, index) => (
               <li
                 key={metric.value}

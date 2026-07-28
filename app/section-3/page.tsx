@@ -61,7 +61,7 @@ const Section3 = () => {
         </div>
 
         <div className="pointer-events-none relative z-10 flex w-full flex-1 flex-col items-center pt-4 sm:min-h-197.5 sm:pt-104">
-          <header className="-mt-20 flex w-full max-w-220.5 flex-col items-center gap-4 px-2 text-center sm:mt-0">
+          <header className="flex w-full max-w-220.5 flex-col items-center gap-4 px-2 text-center -mt-36 sm:mt-0 md:-mt-2">
             <p className="flex items-center gap-1 text-[15px] font-medium leading-normal text-[#adb1b8] sm:text-[17px]">
               <Image
                 alt=""
@@ -77,12 +77,12 @@ const Section3 = () => {
             <div className="flex flex-col items-center gap-4 sm:gap-5">
               <h1
                 id="global-presence-heading"
-                className="font-tight text-[clamp(2.125rem,8vw,2.75rem)] font-bold leading-[1.2] tracking-[-0.04em] text-balance text-white [text-shadow:0_8px_30px_rgba(255,255,255,0.25),0_4px_8px_rgba(255,255,255,0.05)] desktop-sm:text-[clamp(2.125rem,8vw,3.625rem)]"
+                className="font-tight text-[clamp(2.125rem,8vw,2.75rem)] font-bold leading-[1.2] tracking-[-0.01em] text-balance text-white [text-shadow:0_8px_30px_rgba(255,255,255,0.25),0_4px_8px_rgba(255,255,255,0.05)] desktop-sm:text-[clamp(2.125rem,8vw,3.625rem)]"
               >
                 Connecting Worldwide Teams
               </h1>
 
-              <p className="max-w-2xl text-[15px] font-medium leading-normal text-pretty text-[#9297a0] sm:text-[18px]">
+              <p className="max-w-2xl font-medium leading-normal text-balance text-[#9297a0] text-[18px]">
                 Empowering teams across the globe to collaborate seamlessly,
                 driving innovation and success everywhere.
               </p>
@@ -91,19 +91,19 @@ const Section3 = () => {
 
           <div aria-hidden="true" className="hidden min-h-10 flex-1 sm:block" />
 
-          <ul className="pointer-events-auto my-16 grid w-full max-w-140 shrink-0 desktop-sm:mt-0 desktop-sm:max-w-none desktop-sm:grid-cols-3 desktop-sm:divide-x desktop-sm:divide-[#18191b]">
+          <ul className="pointer-events-auto mt-8 mb-16 grid w-full max-w-140 shrink-0 sm:my-16 desktop-sm:mt-0 ipad-landscape:max-w-none ipad-landscape:grid-cols-3 ipad-landscape:divide-x ipad-landscape:divide-[#18191b]">
             {METRICS.map((metric, index) => (
               <li
                 key={metric.value}
-                className={`flex w-full max-w-81.75 mx-auto flex-col self-center items-center gap-2 py-8 text-center desktop-sm:max-w-none desktop-sm:self-auto desktop-sm:gap-6 desktop-sm:px-6 desktop-sm:py-0 ${
+                className={`flex w-full max-w-81.75 mx-auto flex-col self-center items-center gap-6 py-8 text-center ipad-landscape:max-w-none ipad-landscape:self-auto ipad-landscape:gap-6 ipad-landscape:px-6 ipad-landscape:py-0 ${
                   index === 0
-                    ? "border-b border-[#18191b] desktop-sm:border-b-0"
+                    ? "border-b border-[#18191b] ipad-landscape:border-b-0"
                     : index === METRICS.length - 1
-                      ? "border-t border-[#18191b] desktop-sm:border-t-0"
+                      ? "border-t border-[#18191b] ipad-landscape:border-t-0"
                       : ""
                 }`}
               >
-                <span className="bg-linear-to-br from-white to-white/50 bg-clip-text font-tight text-[clamp(2.375rem,10vw,3.625rem)] font-semibold tabular-nums leading-[1.2] tracking-[-0.04em] text-transparent [text-shadow:0_8px_30px_rgba(255,255,255,0.25),0_4px_8px_rgba(255,255,255,0.05)]">
+                <span className="bg-linear-to-br from-white to-white/50 bg-clip-text font-tight text-[clamp(2.125rem,34px,3.625rem)] font-semibold tabular-nums leading-[1.2] tracking-[-0.04em] text-transparent [text-shadow:0_8px_30px_rgba(255,255,255,0.25),0_4px_8px_rgba(255,255,255,0.05)]">
                   {metric.value}
                 </span>
 

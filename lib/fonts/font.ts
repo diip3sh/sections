@@ -84,3 +84,9 @@ export const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
+
+export const clash = localFont({
+  src: "./clash-grotesk.ttf",
+  variable: "--font-clash-grotesk-family",
+  display: "swap",
+});

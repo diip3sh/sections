@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   baskervville,
+  clash,
   geist,
   instrumentSans,
   inter,
@@ -29,7 +30,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${interTight.variable} ${switzer.variable} ${rethinkSans.variable} ${geist.variable} ${tillana.variable} ${instrumentSans.variable} ${manrope.variable} ${baskervville.variable} ${playfairDisplay.variable} ${urbanist.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`${inter.variable} ${interTight.variable} ${switzer.variable} ${rethinkSans.variable} ${geist.variable} ${tillana.variable} ${instrumentSans.variable} ${manrope.variable} ${baskervville.variable} ${playfairDisplay.variable} ${urbanist.variable} ${spaceGrotesk.variable} ${clash.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>

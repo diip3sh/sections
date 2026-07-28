@@ -68,7 +68,7 @@ const PhoneMockup = ({
   screenHeight: number;
 }) => {
   return (
-    <div className="absolute top-[clamp(0.5rem,2.5vw,1.75rem)] left-1/2 aspect-[263.67/532] w-[clamp(10rem,70%,16.479375rem)] -translate-x-1/2 translate-y-14 overflow-clip will-change-transform android-sm:translate-y-12 iphone:translate-y-8 iphone-max:translate-y-5 ipad:translate-y-2 ipad-landscape:translate-y-0 laptop:translate-y-0 motion-reduce:translate-y-0">
+    <div className="absolute top-[clamp(0.5rem,2.5vw,1.75rem)] left-1/2 aspect-[263.67/532] w-[clamp(10rem,70%,16.479375rem)] -translate-x-1/2 translate-y-3 overflow-clip will-change-transform ipad:translate-y-2 ipad-landscape:translate-y-0 laptop:translate-y-0 motion-reduce:translate-y-0">
       {/* Outer frame */}
       <div className="absolute inset-x-[0.84%] inset-y-0" aria-hidden="true">
         <Image
@@ -260,7 +260,7 @@ const CardVisual = ({
   screenHeight: number;
 }) => {
   return (
-    <div className="relative h-[clamp(10.5rem,46vw,20.0625rem)] w-full shrink-0 overflow-clip rounded-t-3xl border-2 border-solid border-white android-sm:h-[clamp(11.25rem,48vw,20.0625rem)] iphone:h-[clamp(12rem,50vw,20.0625rem)] ipad:h-[20.0625rem]">
+    <div className="relative h-[clamp(74rem,58vw,20.0625rem)] w-full shrink-0 overflow-clip rounded-t-3xl border-2 border-solid border-white android-sm:h-[clamp(15rem,60vw,20.0625rem)] iphone:h-[clamp(16rem,62vw,20.0625rem)] ipad:h-[20.0625rem]">
       {/* Soft blue light glow — Figma: top -236.59, left -54.77, 373.54×343.5 */}
       <div
         aria-hidden="true"
@@ -372,13 +372,13 @@ const StepCard = ({
         <CornerShapes />
 
         <div className="flex items-center justify-center rounded-full border border-solid border-[#e7e9ef] px-2.5 py-1.25">
-          <span className="font-instrument text-[clamp(0.8125rem,2.5vw,0.9375rem)] leading-normal font-medium whitespace-nowrap text-[#3d3d3d]">
+          <span className="font-instrument-tight text-[clamp(0.8125rem,2.5vw,0.9375rem)] leading-normal font-medium whitespace-nowrap text-[#3d3d3d]">
             {step}
           </span>
         </div>
 
         <div className="flex w-full flex-col items-center gap-1 text-center leading-normal">
-          <h3 className="font-tight text-[18px] lg:text-[20px] xl:text-[22px] font-medium text-[#1a1a1a]">
+          <h3 className="font-clash text-[18px] lg:text-[20px] xl:text-[22px] font-medium text-[#1a1a1a]">
             {title}
           </h3>
           <p className="w-full text-pretty font-instrument text-[16px] leading-normal font-medium text-[#616161]">
@@ -414,7 +414,7 @@ const Section6 = () => {
 
           <h1
             id="steps-heading"
-            className="font-tight text-center text-[28px] lg:text-[56px] leading-[1.2] font-medium tracking-[-0.02em] text-balance text-[#0d0d0d]"
+            className="text-center text-[28px] lg:text-[42px] xl:text-[56px] leading-[1.2] font-medium tracking-[-0.02em] text-balance text-[#0d0d0d] font-clash"
           >
             Steps to Start
           </h1>

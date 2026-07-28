@@ -67,12 +67,8 @@ const MarqueeHalf = ({
 const TrustedBy = ({ logos, active = false }: TrustedByProps) => {
   const prefersReducedMotion = useReducedMotion();
 
-  const hidden = prefersReducedMotion
-    ? { opacity: 0 }
-    : { opacity: 0, y: 24 };
-  const visible = prefersReducedMotion
-    ? { opacity: 1 }
-    : { opacity: 1, y: 0 };
+  const hidden = prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 24 };
+  const visible = prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 };
 
   return (
     <motion.div
@@ -92,8 +88,7 @@ const TrustedBy = ({ logos, active = false }: TrustedByProps) => {
         />
         <p className="shrink-0 text-center text-[16px] font-medium tracking-[-0.0125em] text-black/70 ipad:text-base">
           More than 100+
-          <br className="block ipad:hidden" />
-          companies trusted us
+          <br className="block ipad:hidden" /> companies trusted us
         </p>
         <span
           aria-hidden="true"

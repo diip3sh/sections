@@ -7,12 +7,12 @@ import SpotlightReveal from "./spotlight-reveal";
 import TrustedBy from "./trusted-by";
 
 const TRUSTED_LOGOS = [
-  {
-    src: "/section-5/logo-1.svg",
-    alt: "Logoipsum",
-    width: 128,
-    height: 12,
-  },
+  // {
+  //   src: "/section-5/logo-1.svg",
+  //   alt: "Logoipsum",
+  //   width: 128,
+  //   height: 10,
+  // },
   {
     src: "/section-5/logo-2.svg",
     alt: "Logoipsum",
@@ -113,12 +113,8 @@ const PREVIEW_IMAGE_CLASSNAME =
 const BrowserPreview = ({ active }: { active: boolean }) => {
   const prefersReducedMotion = useReducedMotion();
 
-  const hidden = prefersReducedMotion
-    ? { opacity: 0 }
-    : { opacity: 0, y: 48 };
-  const visible = prefersReducedMotion
-    ? { opacity: 1 }
-    : { opacity: 1, y: 0 };
+  const hidden = prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 48 };
+  const visible = prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 };
 
   return (
     <motion.div
@@ -132,7 +128,7 @@ const BrowserPreview = ({ active }: { active: boolean }) => {
       }}
     >
       <div className="translate-y-6 rounded-[14px] bg-[#f4f0e8] p-[8.5px] shadow-[0_0_6px_1px_rgba(0,0,0,0.05),0_0_200px_rgba(0,0,0,0.08),0_15px_20px_-17px_rgba(0,0,0,0.13),0_7px_14px_-10px_rgba(0,0,0,0.08)] ipad:translate-y-14 ipad:rounded-[18px]">
-        <div className="relative overflow-hidden rounded-[7px] ipad:rounded-[11px]">
+        <div className="relative overflow-hidden rounded-[5.5px] ipad:rounded-[9.5px]">
           <Image
             alt="Mirror Pro dashboard preview in a browser mockup"
             src="/section-5/dashboard-preview.png"
@@ -180,12 +176,8 @@ const SlideIn = ({
   const prefersReducedMotion = useReducedMotion();
   const doneRef = useRef(false);
 
-  const hidden = prefersReducedMotion
-    ? { opacity: 0 }
-    : { opacity: 0, y };
-  const visible = prefersReducedMotion
-    ? { opacity: 1 }
-    : { opacity: 1, y: 0 };
+  const hidden = prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y };
+  const visible = prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 };
 
   return (
     <motion.div
@@ -246,20 +238,16 @@ const Section5Content = () => {
     <main className="min-h-screen overflow-x-hidden bg-white px-3 pt-2.5 text-[#010110]">
       <section
         aria-labelledby="onchat-hero-heading"
-        className="relative mx-auto w-full overflow-hidden rounded-xl bg-[url(/section-5/mesh-gradient.png)] bg-cover bg-center pb-0 ipad:pb-10 desktop-sm:min-h-200"
+        className="relative mx-auto w-full overflow-hidden md:rounded-[10px] bg-[url(/section-5/mesh-gradient.png)] bg-cover bg-center pb-0 rounded-[10px] ipad:pb-10 desktop-sm:min-h-200"
       >
-        <div className="relative z-10 flex w-full flex-col items-center px-4 pt-2 ipad:pt-2.5">
+        <div className="relative z-10 flex w-full flex-col items-center px-3 pt-3 ipad:px-4 ipad:pt-4">
           <motion.header
-            className="flex w-full max-w-150.5 items-center justify-between gap-2 rounded-full border border-white bg-white px-2.5 py-1.5 shadow-[0_0_0.5px_rgba(0,0,0,0.5)] will-change-transform ipad:gap-3 ipad:px-3 ipad:py-2"
+            className="flex w-full max-w-150.5 items-center justify-between gap-2 rounded-full border border-white bg-white px-2.5 py-1.5 shadow-[0_0_0.5px_rgba(0,0,0,0.5)] ipad:gap-3 ipad:px-3 ipad:py-2"
             initial={
-              prefersReducedMotion
-                ? { opacity: 0 }
-                : { opacity: 0, y: -28 }
+              prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -28 }
             }
             animate={
-              prefersReducedMotion
-                ? { opacity: 1 }
-                : { opacity: 1, y: 0 }
+              prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }
             }
             transition={{
               type: "tween",
@@ -373,7 +361,7 @@ const Section5Content = () => {
               </a>
               <a
                 href="#demo"
-                className="relative inline-flex min-h-11.5 w-full shrink-0 items-center justify-center rounded-full border-3 border-solid border-white bg-linear-to-b from-[#f4f4f4] to-[#fefefe] py-3.5 pr-5 pl-[19px] text-center text-[clamp(15px,2.5vw,16px)] font-medium leading-[1.1] tracking-[-0.01em] text-[#161616] transition-[opacity,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#010110] active:scale-[0.96] motion-reduce:active:scale-100 ipad:w-auto [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90 shadow-[0_0_0.225px_rgba(0,0,0,0.07),0_0_0.225px_rgba(0,0,0,0.05),0_2.698px_2.923px_-1.349px_rgba(0,0,0,0.25),0_0.899px_3.598px_0.899px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.14),inset_0_-1px_1px_rgba(0,0,0,0.06)]"
+                className="relative inline-flex min-h-11.5 w-full shrink-0 items-center justify-center rounded-full border-3 border-solid border-white bg-linear-to-b from-[#f4f4f4] to-[#fefefe] py-3.5 pr-5 pl-[19px] text-center text-[clamp(15px,2.5vw,16px)] font-medium leading-[1.1] tracking-[-0.01em] text-[#161616] shadow-[0_0_0.225px_rgba(0,0,0,0.07),0_0_0.225px_rgba(0,0,0,0.05),0_2.698px_2.923px_-1.349px_rgba(0,0,0,0.25),0_0.899px_3.598px_0.899px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.14),inset_0_-1px_1px_rgba(0,0,0,0.06)] transition-[transform,box-shadow,opacity] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#010110] active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100 motion-reduce:hover:translate-y-0 ipad:w-auto [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-0.5 [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-95 [@media(hover:hover)_and_(pointer:fine)]:hover:shadow-[0_0_0.225px_rgba(0,0,0,0.08),0_0_0.225px_rgba(0,0,0,0.06),0_4px_8px_-2px_rgba(0,0,0,0.22),0_2px_6px_1px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.14),inset_0_-1px_1px_rgba(0,0,0,0.06)]"
               >
                 Book a demo
               </a>

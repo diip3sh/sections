@@ -17,6 +17,24 @@ type TrustedByProps = {
 
 const easeOutCubic = [0.215, 0.61, 0.355, 1] as const;
 
+const LogoItem = ({
+  logo,
+  duplicate = false,
+}: {
+  logo: TrustedLogo;
+  duplicate?: boolean;
+}) => (
+  <li className="shrink-0 opacity-80" aria-hidden={duplicate || undefined}>
+    <Image
+      alt={duplicate ? "" : logo.alt}
+      src={logo.src}
+      width={logo.width}
+      height={logo.height}
+      className={logo.className}
+    />
+  </li>
+);
+
 const TrustedBy = ({ logos }: TrustedByProps) => {
   const prefersReducedMotion = useReducedMotion();
 
@@ -46,18 +64,33 @@ const TrustedBy = ({ logos }: TrustedByProps) => {
       >
         <span
           aria-hidden="true"
-          className="h-px min-w-0 flex-1 bg-[#d0d0d0]"
+          className="h-px min-w-0 flex-1 bg-linear-to-r from-[#4b4b4b]/0 to-[#4b4b4b]"
         />
         <p className="shrink-0 text-center text-[0.8125rem] font-medium tracking-[-0.0125em] text-black/70 ipad:text-base">
           More than 100+ companies trusted us
         </p>
         <span
           aria-hidden="true"
-          className="h-px min-w-0 flex-1 bg-[#d0d0d0]"
+          className="h-px min-w-0 flex-1 bg-linear-to-r from-[#4b4b4b] to-[#4b4b4b]/0"
         />
       </motion.div>
 
-      <ul className="flex w-full flex-wrap items-center justify-center gap-x-6 gap-y-4 ipad:gap-x-10 laptop:gap-x-14">
+      <div
+        className="relative w-full overflow-hidden mask-[linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] motion-reduce:hidden desktop-sm:hidden"
+        aria-label="Trusted brands"
+        role="region"
+      >
+        <ul className="flex w-max items-center gap-x-6 ipad:gap-x-10 animate-trusted-marquee will-change-transform motion-reduce:animate-none">
+          {logos.map((logo) => (
+            <LogoItem key={logo.src} logo={logo} />
+          ))}
+          {logos.map((logo) => (
+            <LogoItem key={`${logo.src}-duplicate`} logo={logo} duplicate />
+          ))}
+        </ul>
+      </div>
+
+      <ul className="hidden w-full flex-wrap items-center justify-center gap-x-6 gap-y-4 motion-reduce:flex ipad:gap-x-10 laptop:gap-x-14 desktop-sm:flex">
         {logos.map((logo, index) => (
           <motion.li
             key={logo.src}

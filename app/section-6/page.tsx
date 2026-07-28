@@ -13,6 +13,8 @@ type Step = {
   description: string;
   screen: string;
   screenAlt: string;
+  screenWidth: number;
+  screenHeight: number;
 };
 
 const STEPS: Step[] = [
@@ -21,209 +23,72 @@ const STEPS: Step[] = [
     title: "Create an Account",
     description:
       "Create an account to start exploring and enrolling in our amazing courses and blogs.",
-    screen: "/section-6/screen-1.png",
-    screenAlt:
-      "Task details screen showing assign to, deadline, priority, and members",
+    screen: "/section-6/vector.png",
+    screenAlt: "Dashboard screen showing ongoing projects and today’s tasks",
+    screenWidth: 780,
+    screenHeight: 1688,
   },
   {
     step: "Step 02",
     title: "Complete your Course",
     description:
       "Complete your courses by engaging with all the nice lessons and assignments.",
-    screen: "/section-6/screen-2.png",
-    screenAlt: "Dashboard screen showing ongoing projects and search",
+    screen: "/section-6/vector2.png",
+    screenAlt:
+      "Task details screen showing assign to, deadline, priority, and checklist",
+    screenWidth: 780,
+    screenHeight: 1688,
   },
   {
     step: "Step 03",
     title: "Receive Certificates",
     description:
       "Earn certificates upon course completion to showcase your new skills.",
-    screen: "/section-6/screen-3.png",
+    screen: "/section-6/vector3.png",
     screenAlt: "Project details screen showing a 78 percent progress gauge",
+    screenWidth: 1560,
+    screenHeight: 3376,
   },
 ];
 
-const PhoneMockup = ({
+/**
+ * Upright mobile.svg frame — vector screen shows through the SVG hole.
+ * Placement matches Figma: ~12% top inset, ~65% card width, clipped mid-body.
+ */
+const MobileShowcase = ({
   screen,
   screenAlt,
+  screenWidth,
+  screenHeight,
 }: {
   screen: string;
   screenAlt: string;
+  screenWidth: number;
+  screenHeight: number;
 }) => {
   return (
-    <div className="absolute bottom-[-74%] left-1/2 aspect-[263.67/532] w-[clamp(9rem,68%,16.48rem)] -translate-x-1/2 overflow-clip">
-      {/* Outer frame */}
-      <div className="absolute inset-x-[0.84%] inset-y-0">
-        <Image
-          alt=""
-          aria-hidden="true"
-          src="/section-6/phone-frame.svg"
-          width={259}
-          height={532}
-          className="size-full"
-        />
-      </div>
-
-      {/* Screen glare */}
-      <div className="absolute inset-[0.23%_1.33%_0.24%_1.32%] mix-blend-screen">
-        <Image
-          alt=""
-          aria-hidden="true"
-          src="/section-6/phone-glare.svg"
-          width={256}
-          height={529}
-          className="size-full"
-        />
-      </div>
-
-      {/* Inner bezel */}
-      <div className="absolute inset-[0.76%_2.53%_0.76%_2.51%]">
-        <Image
-          alt=""
-          aria-hidden="true"
-          src="/section-6/phone-bezel.svg"
-          width={250}
-          height={524}
-          className="size-full"
-        />
-      </div>
-
-      {/* App screen */}
-      <div className="absolute inset-[2.36%_5.65%_2.36%_5.64%] overflow-hidden rounded-[28px]">
+    <div className="absolute top-[12%] left-1/2 aspect-[234.606/475.386] w-[clamp(9.5rem,64.7%,14.662875rem)] -translate-x-1/2">
+      {/* Screen behind frame — shows through mobile.svg hole */}
+      <div className="absolute inset-[1.4%_4.2%_1.4%_4.2%] overflow-hidden bg-white">
         <Image
           alt={screenAlt}
           src={screen}
-          width={234}
-          height={507}
+          width={screenWidth}
+          height={screenHeight}
+          sizes="(max-width: 640px) 65vw, 235px"
           className="size-full object-cover object-top"
-          sizes="(max-width: 640px) 72vw, 264px"
           priority
         />
       </div>
 
-      {/* Side buttons — insets relative to phone */}
-      <div
-        className="absolute inset-[25.55%_0_62.4%_99.14%]"
+      <Image
+        alt=""
         aria-hidden="true"
-      >
-        <Image
-          alt=""
-          src="/section-6/phone-btn-r.svg"
-          width={3}
-          height={64}
-          className="size-full"
-        />
-      </div>
-      <div
-        className="absolute inset-[23.01%_99.16%_69.35%_0]"
-        aria-hidden="true"
-      >
-        <Image
-          alt=""
-          src="/section-6/phone-btn-l1.svg"
-          width={3}
-          height={40}
-          className="size-full"
-        />
-      </div>
-      <div
-        className="absolute inset-[32.62%_99.16%_59.75%_0]"
-        aria-hidden="true"
-      >
-        <Image
-          alt=""
-          src="/section-6/phone-btn-l2.svg"
-          width={3}
-          height={40}
-          className="size-full"
-        />
-      </div>
-      <div
-        className="absolute inset-[15.8%_99.16%_80.28%_0]"
-        aria-hidden="true"
-      >
-        <Image
-          alt=""
-          src="/section-6/phone-btn-l3.svg"
-          width={3}
-          height={21}
-          className="size-full"
-        />
-      </div>
-
-      {/* Dynamic Island — all insets relative to phone */}
-      <div
-        className="absolute inset-[3.82%_39.39%_93.01%_38.52%]"
-        aria-hidden="true"
-      >
-        <Image
-          alt=""
-          src="/section-6/phone-island.svg"
-          width={58}
-          height={17}
-          className="size-full"
-        />
-      </div>
-      <div
-        className="absolute inset-[4.72%_42.07%_93.9%_55.13%]"
-        aria-hidden="true"
-      >
-        <Image
-          alt=""
-          src="/section-6/phone-cam-1.svg"
-          width={7}
-          height={7}
-          className="size-full"
-        />
-      </div>
-      <div
-        className="absolute inset-[5.01%_42.67%_94.2%_55.73%]"
-        aria-hidden="true"
-      >
-        <Image
-          alt=""
-          src="/section-6/phone-cam-2.svg"
-          width={5}
-          height={5}
-          className="size-full"
-        />
-      </div>
-      <div
-        className="absolute inset-[5.06%_42.77%_94.24%_55.83%]"
-        aria-hidden="true"
-      >
-        <Image
-          alt=""
-          src="/section-6/phone-cam-3.svg"
-          width={5}
-          height={5}
-          className="size-full"
-        />
-      </div>
-      <div
-        className="absolute inset-[5.06%_42.77%_94.24%_55.83%] mix-blend-multiply"
-        aria-hidden="true"
-      >
-        <Image
-          alt=""
-          src="/section-6/phone-cam-4.svg"
-          width={5}
-          height={5}
-          className="size-full"
-        />
-      </div>
-      <div
-        className="absolute inset-[5.47%_42.84%_94.29%_56.66%] mix-blend-screen"
-        aria-hidden="true"
-      >
-        <Image
-          alt=""
-          src="/section-6/phone-cam-5.svg"
-          width={2}
-          height={2}
-          className="size-full"
-        />
-      </div>
+        src="/section-6/mobile.svg"
+        width={235}
+        height={476}
+        className="pointer-events-none absolute inset-0 z-10 size-full object-fill"
+      />
     </div>
   );
 };
@@ -231,9 +96,13 @@ const PhoneMockup = ({
 const CardVisual = ({
   screen,
   screenAlt,
+  screenWidth,
+  screenHeight,
 }: {
   screen: string;
   screenAlt: string;
+  screenWidth: number;
+  screenHeight: number;
 }) => {
   return (
     <div className="relative h-[clamp(12.5rem,52vw,20.0625rem)] w-full shrink-0 overflow-clip rounded-t-3xl border-2 border-solid border-white">
@@ -253,7 +122,7 @@ const CardVisual = ({
         </div>
       </div>
 
-      {/* Dot / concentric pattern */}
+      {/* Dot / concentric pattern behind phone */}
       <div
         aria-hidden="true"
         className="absolute bottom-[-57%] left-1/2 aspect-[431.76/422.9] w-[134%] max-w-none -translate-x-1/2"
@@ -267,7 +136,12 @@ const CardVisual = ({
         />
       </div>
 
-      <PhoneMockup screen={screen} screenAlt={screenAlt} />
+      <MobileShowcase
+        screen={screen}
+        screenAlt={screenAlt}
+        screenWidth={screenWidth}
+        screenHeight={screenHeight}
+      />
     </div>
   );
 };
@@ -305,9 +179,17 @@ const CornerShapes = () => {
   );
 };
 
-const StepCard = ({ step, title, description, screen, screenAlt }: Step) => {
+const StepCard = ({
+  step,
+  title,
+  description,
+  screen,
+  screenAlt,
+  screenWidth,
+  screenHeight,
+}: Step) => {
   return (
-    <article className="relative flex min-w-0 flex-1 flex-col items-end overflow-clip rounded-3xl border border-solid border-[#e1e4eb] p-1.5 shadow-[0_0_0_5px_white]">
+    <article className="relative flex h-full min-w-0 flex-1 flex-col overflow-clip rounded-3xl border border-solid border-[#e1e4eb] p-1.5 shadow-[0_0_0_5px_white]">
       {/* Card background: gradient + texture + fade */}
       <div
         aria-hidden="true"
@@ -321,9 +203,14 @@ const StepCard = ({ step, title, description, screen, screenAlt }: Step) => {
         <div className="absolute inset-0 rounded-3xl bg-linear-to-b from-[rgba(234,243,251,0)] to-white" />
       </div>
 
-      <CardVisual screen={screen} screenAlt={screenAlt} />
+      <CardVisual
+        screen={screen}
+        screenAlt={screenAlt}
+        screenWidth={screenWidth}
+        screenHeight={screenHeight}
+      />
 
-      <div className="relative z-10 flex w-full shrink-0 flex-col items-center justify-center gap-3 rounded-b-[20px] bg-white px-[clamp(1rem,4vw,1.875rem)] py-[clamp(1.25rem,4vw,1.5rem)] shadow-[0_-2px_6px_rgba(183,183,183,0.1),0_2px_4px_rgba(178,181,188,0.2)]">
+      <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-center gap-3 rounded-b-[20px] bg-white px-[clamp(1rem,4vw,1.875rem)] py-[clamp(1.25rem,4vw,1.5rem)] shadow-[0_-2px_6px_rgba(183,183,183,0.1),0_2px_4px_rgba(178,181,188,0.2)]">
         <CornerShapes />
 
         <div className="flex items-center justify-center rounded-full border border-solid border-[#e7e9ef] px-2.5 py-[5px]">
@@ -332,11 +219,11 @@ const StepCard = ({ step, title, description, screen, screenAlt }: Step) => {
           </span>
         </div>
 
-        <div className="flex w-full flex-col gap-1 text-center leading-normal">
-          <h3 className="font-tight text-[clamp(1.125rem,3.5vw,1.375rem)] font-medium text-[#1a1a1a]">
+        <div className="flex w-full flex-col items-center gap-1 text-center leading-normal">
+          <h3 className="font-space text-[clamp(1.125rem,3.5vw,1.375rem)] font-medium text-[#1a1a1a]">
             {title}
           </h3>
-          <p className="font-instrument text-[clamp(0.9375rem,2.8vw,1.0625rem)] font-medium text-balance text-[#616161]">
+          <p className="w-fit max-w-full text-balance font-instrument text-[clamp(0.9375rem,2.8vw,17px)] leading-[1.5] font-medium text-[#616161]">
             {description}
           </p>
         </div>
@@ -369,14 +256,14 @@ const Section6 = () => {
 
           <h1
             id="steps-heading"
-            className="font-tight text-center text-[clamp(2rem,6vw,4rem)] leading-[1.2] font-medium tracking-[-0.02em] text-balance text-[#0d0d0d]"
+            className="font-space text-center text-[clamp(2rem,12vw,64px)] leading-[1.2] font-medium text-balance text-[#0d0d0d]"
           >
             Steps to Start
           </h1>
         </header>
 
         <div className="flex w-full flex-col items-center gap-[clamp(2rem,5vw,3.125rem)]">
-          <div className="grid w-full grid-cols-1 gap-5 iphone-max:gap-6 ipad:grid-cols-3 ipad:gap-5 ipad-landscape:gap-6 laptop:gap-6">
+          <div className="grid w-full grid-cols-1 items-stretch gap-5 iphone-max:gap-6 ipad:grid-cols-3 ipad:gap-5 ipad-landscape:gap-6 laptop:gap-6">
             {STEPS.map((step) => (
               <StepCard key={step.step} {...step} />
             ))}

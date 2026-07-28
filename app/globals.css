@@ -95,6 +95,7 @@
   --font-urbanist: var(--font-urbanist-family);
   --font-manrope: var(--font-manrope-family);
   --font-baskervville: var(--font-baskervville-family);
+  --font-space: var(--font-space-grotesk-family);
 
   --animate-hero-reveal: hero-reveal 300ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
   --animate-section-rise: section-rise 500ms cubic-bezier(0.23, 1, 0.32, 1) both;

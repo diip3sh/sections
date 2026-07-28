@@ -7,6 +7,7 @@ import {
   Inter_Tight,
   Manrope,
   Rethink_Sans,
+  Space_Grotesk,
   Tillana,
   Urbanist,
 } from "next/font/google";
@@ -68,4 +69,10 @@ export const urbanist = Urbanist({
   variable: "--font-urbanist-family",
   subsets: ["latin"],
   weight: ["700"],
+});
+
+export const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk-family",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });

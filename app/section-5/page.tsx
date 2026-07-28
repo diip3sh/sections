@@ -87,14 +87,46 @@ const MenuIcon = () => {
   );
 };
 
+const BrowserPreview = () => {
+  return (
+    <div className="relative mx-auto mt-4 w-full min-w-0 max-w-[56rem] translate-y-14 self-center rounded-[14px] bg-[#f4f0e8] p-[8.5px] shadow-[0_0_6px_1px_rgba(0,0,0,0.05),0_0_200px_rgba(0,0,0,0.08),0_15px_20px_-17px_rgba(0,0,0,0.13),0_7px_14px_-10px_rgba(0,0,0,0.08)] ipad:mt-6 ipad:rounded-[18px] laptop:mt-8">
+      <div className="relative overflow-hidden rounded-[7px] ipad:rounded-[11px]">
+        <Image
+          alt="Mirror Pro dashboard preview showing welcome banner and task metrics"
+          src="/section-5/product.png"
+          width={1424}
+          height={504}
+          priority
+          className="m-0 mx-auto block h-auto w-full p-0"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 flex items-center justify-center"
+        >
+          <div className="flex size-12 items-center justify-center rounded-full bg-white shadow-[0_8px_24px_rgba(0,0,0,0.18),0_2px_6px_rgba(0,0,0,0.08)] ipad:size-14">
+            <Image
+              alt=""
+              src="/section-5/play.svg"
+              width={28}
+              height={28}
+              className="ml-0.5 size-6 ipad:size-7"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Section5 = () => {
   return (
     <main className="min-h-screen overflow-x-hidden bg-white px-3 pt-2.5 text-[#010110]">
       <section
         aria-labelledby="onchat-hero-heading"
-        className="relative mx-auto w-full max-h-189 overflow-hidden rounded-[18px] bg-[url(/section-5/mesh-gradient.png)] bg-cover bg-center"
+        className="relative mx-auto w-full overflow-hidden rounded-[18px] bg-[url(/section-5/mesh-gradient.png)] bg-cover bg-center pb-10 desktop-sm:min-h-[50rem]"
       >
-        <div className="relative z-10 flex flex-col items-center px-1 pt-2 iphone:px-2 ipad:px-3 ipad:pt-2.5">
+        <div className="relative z-10 flex w-full flex-col items-center px-1 pt-2 iphone:px-2 ipad:px-3 ipad:pt-2.5">
           <header className="animate-hero-reveal flex w-full max-w-150.5 items-center justify-between gap-2 rounded-full border border-white bg-white px-2.5 py-1.5 shadow-[0_0_0.5px_rgba(0,0,0,0.5)] [animation-delay:0ms] ipad:gap-3 ipad:px-3 ipad:py-2">
             <a
               href="#main"
@@ -181,45 +213,22 @@ const Section5 = () => {
               <a
                 href="#trial"
                 className="relative inline-flex min-h-11.5 w-full shrink-0 items-center justify-center overflow-clip rounded-full border-3 border-solid border-[#3E3E3E] bg-linear-to-b from-[#292929] to-[#111] py-3.5 pr-5 pl-[19px] text-center text-[clamp(15px,2.5vw,16px)] font-medium leading-[1.1] tracking-[-0.01em] text-white transition-[opacity,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#010110] active:scale-[0.96] motion-reduce:active:scale-100 ipad:w-auto [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90"
-                style={{
-                  boxShadow:
-                    "0 0 0.225px 0.225px rgba(0,0,0,0.07), 0 0 0.225px 0.675px rgba(0,0,0,0.05), 0 2.698px 2.923px -1.349px rgba(0,0,0,0.25), 0 0.899px 3.598px 0.899px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 1px rgba(0,0,0,0.35)",
-                }}
               >
                 Start your free trial
               </a>
               <a
                 href="#demo"
-                className="relative inline-flex min-h-11.5 w-full shrink-0 items-center justify-center rounded-full border-3 border-solid border-white bg-linear-to-b from-[#f4f4f4] to-[#fefefe] py-3.5 pr-5 pl-[19px] text-center text-[clamp(15px,2.5vw,16px)] font-medium leading-[1.1] tracking-[-0.01em] text-[#161616] transition-[opacity,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#010110] active:scale-[0.96] motion-reduce:active:scale-100 ipad:w-auto [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90"
-                style={{
-                  boxShadow:
-                    "0 0 0.225px rgba(0,0,0,0.07), 0 0 0.225px rgba(0,0,0,0.05), 0 2.698px 2.923px rgba(0,0,0,0.25), 0 0.899px 3.598px rgba(0,0,0,0.12), inset 0 1px 0 #ffffff, inset 0 -1px 1px rgba(0,0,0,0.06)",
-                }}
+                className="relative inline-flex min-h-11.5 w-full shrink-0 items-center justify-center rounded-full border-3 border-solid border-white bg-linear-to-b from-[#f4f4f4] to-[#fefefe] py-3.5 pr-5 pl-[19px] text-center text-[clamp(15px,2.5vw,16px)] font-medium leading-[1.1] tracking-[-0.01em] text-[#161616] transition-[opacity,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#010110] active:scale-[0.96] motion-reduce:active:scale-100 ipad:w-auto [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90 shadow-[0_0_0.225px_rgba(0,0,0,0.07),0_0_0.225px_rgba(0,0,0,0.05),0_2.698px_2.923px_-1.349px_rgba(0,0,0,0.25),0_0.899px_3.598px_0.899px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.14),inset_0_-1px_1px_rgba(0,0,0,0.06)]"
               >
                 Book a demo
               </a>
             </div>
-
-            <div className="relative">
-              <div className="relative mt-8 w-[70dvw] max-w-210.25 overflow-hidden ipad:mt-12 lg:w-[824px] laptop:mt-14">
-                <div className="relative rounded-t-[14px] rounded-b-sm bg-white/40 px-2 pt-3 ipad:rounded-t-[18px]">
-                  <div className="relative overflow-hidden rounded-t-[10px] rounded-b-sm ipad:rounded-t-[14px]">
-                    <Image
-                      alt="Mirror Pro dashboard preview showing welcome banner and task metrics"
-                      src="/section-5/dashboard-preview.jpg"
-                      width={1024}
-                      height={368}
-                      priority
-                      className="m-0 block size-full -translate-y-0.5 p-0 object-cover object-top"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
+
+          <BrowserPreview />
         </div>
       </section>
-      <div className="relative z-10 -mt-1 flex flex-col items-center bg-white px-4 pt-10 pb-12 ipad:-mt-2 ipad:px-6 ipad:pt-14 ipad:pb-16 laptop:pt-16 laptop:pb-20">
+      <div className="relative z-10 -mt-6 flex flex-col items-center px-4 pt-10 pb-12 ipad:-mt-8 ipad:px-6 ipad:pt-14 ipad:pb-16 laptop:pt-16 laptop:pb-20">
         <TrustedBy logos={TRUSTED_LOGOS} />
       </div>
     </main>

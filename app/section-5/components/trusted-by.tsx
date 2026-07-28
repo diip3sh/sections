@@ -45,13 +45,9 @@ const TrustedBy = ({ logos }: TrustedByProps) => {
     ease: easeOutCubic,
   });
 
-  const initial = prefersReducedMotion
-    ? { opacity: 0 }
-    : { opacity: 0, y: 12 };
+  const initial = prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 12 };
 
-  const animate = prefersReducedMotion
-    ? { opacity: 1 }
-    : { opacity: 1, y: 0 };
+  const animate = prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 };
 
   return (
     <div className="flex w-full max-w-295.5 flex-col items-center gap-5 ipad:gap-6">
@@ -66,8 +62,10 @@ const TrustedBy = ({ logos }: TrustedByProps) => {
           aria-hidden="true"
           className="h-px min-w-0 flex-1 bg-linear-to-r from-[#4b4b4b]/0 to-[#4b4b4b]"
         />
-        <p className="shrink-0 text-center text-[0.8125rem] font-medium tracking-[-0.0125em] text-black/70 ipad:text-base">
-          More than 100+ companies trusted us
+        <p className="shrink-0 text-center text-[16px] font-medium tracking-[-0.0125em] text-black/70 ipad:text-base">
+          More than 100+
+          <br className="block ipad:hidden" />
+          companies trusted us
         </p>
         <span
           aria-hidden="true"

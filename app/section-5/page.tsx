@@ -44,7 +44,7 @@ const Annotation = () => {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute top-[-26px] -left-[165px] hidden h-[140px] w-[253px] select-none desktop-sm:block"
+      className="pointer-events-none absolute top-[-26px] -left-[165px] hidden h-[140px] w-[253px] select-none md:block"
     >
       <div className="absolute top-[23px] left-[73px] flex h-[36px] w-[80px] items-center justify-center">
         <div className="-scale-y-100 rotate-[83.54deg]">
@@ -53,12 +53,12 @@ const Annotation = () => {
             src="/section-5/annotation-arrow.svg"
             width={27}
             height={78}
-            className="h-[78px] w-[27px] max-w-none"
+            className="lg:h-[78px] lg:w-[27px] h-[54px] w-[18px] max-w-none"
           />
         </div>
       </div>
 
-      <p className="absolute bottom-10 -left-20 flex w-[212px] rotate-[-10.6deg] flex-col justify-center text-center font-tillana text-[18px] leading-[1.25] tracking-[-0.02em] text-[#144a58]">
+      <p className="absolute lg:bottom-10 bottom-12 -left-10 lg:-left-20 flex w-[212px] rotate-[-10.6deg] flex-col justify-center text-center font-tillana text-[12px] lg:text-[18px] leading-[1.25] tracking-[-0.02em] text-[#144a58]">
         <span>Tried hold</span>
         <span>free for 7 days</span>
       </p>
@@ -87,33 +87,61 @@ const MenuIcon = () => {
   );
 };
 
+const VideoPlayerButton = () => {
+  return (
+    <button
+      type="button"
+      aria-label="Play preview video"
+      className="absolute top-1/2 left-1/2 z-10 flex size-14 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-t border-[#bfbfbf] bg-linear-to-b from-[#eaeaea] to-white p-2.5 shadow-[inset_0_6px_13px_rgba(0,0,0,0.10)] transition-transform duration-200 ease will-change-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#010110] active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100 [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.04]"
+    >
+      <span className="relative flex size-full items-center justify-center overflow-hidden rounded-full bg-linear-to-b from-[#e0e0e0] to-white shadow-[0_4px_10px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.06),0_0_0_3px_rgba(255,255,255,0.65)]">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-full bg-white"
+        />
+        <Image
+          alt=""
+          aria-hidden="true"
+          src="/section-5/play.svg"
+          width={32}
+          height={32}
+          className="relative ml-px size-4"
+        />
+      </span>
+    </button>
+  );
+};
+
+const PREVIEW_IMAGE_CLASSNAME =
+  "m-0 mx-auto block w-full object-top p-0 h-[300px] md:h-[320px] ipad:h-auto [mask-image:linear-gradient(to_bottom,black_0%,black_68%,rgba(0,0,0,0.45)_84%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_68%,rgba(0,0,0,0.45)_84%,transparent_100%)]";
+
 const BrowserPreview = () => {
   return (
-    <div className="relative mx-auto mt-4 w-full min-w-0 max-w-[56rem] translate-y-14 self-center rounded-[14px] bg-[#f4f0e8] p-[8.5px] shadow-[0_0_6px_1px_rgba(0,0,0,0.05),0_0_200px_rgba(0,0,0,0.08),0_15px_20px_-17px_rgba(0,0,0,0.13),0_7px_14px_-10px_rgba(0,0,0,0.08)] ipad:mt-6 ipad:rounded-[18px] laptop:mt-8">
+    <div className="relative mx-auto mt-4 mb-[-72px] w-full min-w-0 max-w-[56rem] translate-y-6 self-center rounded-[14px] bg-[#f4f0e8] p-[8.5px] shadow-[0_0_6px_1px_rgba(0,0,0,0.05),0_0_200px_rgba(0,0,0,0.08),0_15px_20px_-17px_rgba(0,0,0,0.13),0_7px_14px_-10px_rgba(0,0,0,0.08)] ipad:mb-0 ipad:mt-6 ipad:translate-y-14 ipad:rounded-[18px] laptop:mt-8">
       <div className="relative overflow-hidden rounded-[7px] ipad:rounded-[11px]">
         <Image
-          alt="Mirror Pro dashboard preview showing welcome banner and task metrics"
-          src="/section-5/product.png"
-          width={1424}
-          height={504}
+          alt="Mirror Pro dashboard preview in a browser mockup"
+          src="/section-5/dashboard-preview.png"
+          width={2500}
+          height={1280}
           priority
-          className="m-0 mx-auto block h-auto w-full p-0"
+          className={`md:block hidden ${PREVIEW_IMAGE_CLASSNAME}`}
+        />
+        <Image
+          alt="Mirror Pro dashboard preview in a browser mockup"
+          src="/section-5/mobile-dashboard.png"
+          width={2500}
+          height={1280}
+          priority
+          className={`block md:hidden  ${PREVIEW_IMAGE_CLASSNAME}`}
         />
 
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 flex items-center justify-center"
-        >
-          <div className="flex size-12 items-center justify-center rounded-full bg-white shadow-[0_8px_24px_rgba(0,0,0,0.18),0_2px_6px_rgba(0,0,0,0.08)] ipad:size-14">
-            <Image
-              alt=""
-              src="/section-5/play.svg"
-              width={28}
-              height={28}
-              className="ml-0.5 size-6 ipad:size-7"
-            />
-          </div>
-        </div>
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-24 bg-linear-to-t from-[#f4f0e8] from-0% via-[#f4f0e8]/85 via-30% to-transparent ipad:h-28 laptop:h-32"
+        />
+
+        <VideoPlayerButton />
       </div>
     </div>
   );
@@ -124,7 +152,7 @@ const Section5 = () => {
     <main className="min-h-screen overflow-x-hidden bg-white px-3 pt-2.5 text-[#010110]">
       <section
         aria-labelledby="onchat-hero-heading"
-        className="relative mx-auto w-full overflow-hidden rounded-[18px] bg-[url(/section-5/mesh-gradient.png)] bg-cover bg-center pb-10 desktop-sm:min-h-[50rem]"
+        className="relative mx-auto w-full overflow-hidden rounded-[18px] bg-[url(/section-5/mesh-gradient.png)] bg-cover bg-center pb-0 ipad:pb-10 desktop-sm:min-h-[50rem]"
       >
         <div className="relative z-10 flex w-full flex-col items-center px-1 pt-2 iphone:px-2 ipad:px-3 ipad:pt-2.5">
           <header className="animate-hero-reveal flex w-full max-w-150.5 items-center justify-between gap-2 rounded-full border border-white bg-white px-2.5 py-1.5 shadow-[0_0_0.5px_rgba(0,0,0,0.5)] [animation-delay:0ms] ipad:gap-3 ipad:px-3 ipad:py-2">
@@ -192,7 +220,7 @@ const Section5 = () => {
 
           <div
             id="main"
-            className="mt-10 flex w-full max-w-162.75 scroll-mt-24 flex-col items-center gap-7 text-center iphone:mt-12 ipad:mt-16 ipad:gap-10 laptop:mt-20"
+            className="mt-[62px] flex w-full max-w-162.75 scroll-mt-24 flex-col items-center gap-7 text-center iphone:mt-12 ipad:mt-16 ipad:gap-10 laptop:mt-31.5"
           >
             <div className="flex w-full flex-col items-center gap-3 ipad:gap-3.5">
               <SpotlightReveal
@@ -200,7 +228,7 @@ const Section5 = () => {
                 text="Task Management Made Simple and Powerful"
                 blur={6}
                 delay={0.1}
-                className="max-w-20ch text-[clamp(26px,6.5vw,56px)] font-medium leading-[1.15] tracking-[-0.02em] text-balance text-[#010110] [text-shadow:0_5px_5px_rgba(0,0,0,0.05),0_1px_1px_rgba(0,0,0,0.16),0_1px_1px_rgba(255,255,255,0.6)] ipad:leading-[1.1]"
+                className="text-[32px] md:text-[44px] lg:text-[56px] font-medium leading-[1.15] tracking-[-0.02em] text-wrap text-[#010110] [text-shadow:0_5px_5px_rgba(0,0,0,0.05),0_1px_1px_rgba(0,0,0,0.16),0_1px_1px_rgba(255,255,255,0.6)] ipad:leading-[1.1]"
               />
               <p className="animate-hero-reveal max-w-118.75 px-1 text-[clamp(15px,2.5vw,16px)] font-medium leading-normal tracking-[-0.02em] text-pretty text-[#45545e] [animation-delay:200ms] ipad:px-0">
                 We optimize for the single statistic that matters: Amount of
@@ -208,7 +236,7 @@ const Section5 = () => {
               </p>
             </div>
 
-            <div className="animate-hero-reveal relative flex w-full max-w-80 flex-col items-stretch gap-3 [animation-delay:300ms] ipad:max-w-none ipad:w-auto ipad:flex-row ipad:items-center ipad:justify-center ipad:gap-5">
+            <div className="animate-hero-reveal relative flex w-full flex-col items-stretch gap-3 [animation-delay:300ms] ipad:w-auto ipad:flex-row ipad:items-center ipad:justify-center ipad:gap-5">
               <Annotation />
               <a
                 href="#trial"
@@ -228,7 +256,7 @@ const Section5 = () => {
           <BrowserPreview />
         </div>
       </section>
-      <div className="relative z-10 -mt-6 flex flex-col items-center px-4 pt-10 pb-12 ipad:-mt-8 ipad:px-6 ipad:pt-14 ipad:pb-16 laptop:pt-16 laptop:pb-20">
+      <div className="relative z-10 mt-0 flex flex-col items-center px-4 pt-13.5 md:pt-17.5 pb-12 ipad:px-6 ipad:pb-16 laptop:pb-20">
         <TrustedBy logos={TRUSTED_LOGOS} />
       </div>
     </main>

@@ -270,11 +270,11 @@ const FeatureTabVisual = ({
       </span>
 
       <span className="flex min-w-0 flex-col gap-1.25">
-        <span className="text-[15px] font-medium leading-[1.1] tracking-[-0.01em] text-[#1e1e1e] iphone:text-base">
+        <span className="text-[16px] font-medium leading-[1.1] tracking-[-0.01em] text-[#1e1e1e] iphone:text-base">
           {feature.title}
         </span>
         <span
-          className={`text-[12px] font-medium leading-[1.1] tracking-[-0.01em] iphone:text-[13px] ${
+          className={`text-[13px] font-medium leading-[1.1] tracking-[-0.01em] iphone:text-[13px] ${
             isActive
               ? "text-[#4c6a75]"
               : feature.id === "meetings"
@@ -457,14 +457,14 @@ const Section7 = () => {
           <header className="flex w-full max-w-180 flex-col items-center gap-3 text-center">
             <h1
               id="potential-heading"
-              className="animate-section-rise text-[clamp(2rem,4vw,2.5rem)] font-medium leading-[1.12] tracking-[-0.04em] text-[#010110] motion-reduce:animate-none [animation-delay:0ms]"
+              className="animate-section-rise text-wrap text-[clamp(2rem,4vw,2.5rem)] font-medium leading-[1.12] tracking-[-0.04em] text-[#010110] motion-reduce:animate-none [animation-delay:0ms]"
             >
               Unique Potential for you
             </h1>
-            <p className="animate-section-rise max-w-155 text-pretty text-[15px] font-medium leading-normal tracking-[-0.02em] text-[#45545e] iphone:text-base motion-reduce:animate-none [animation-delay:80ms]">
+            <p className="animate-section-rise max-w-155 text-pretty text-[16px] font-medium leading-normal tracking-[-0.02em] text-[#45545e] iphone:text-base motion-reduce:animate-none [animation-delay:80ms]">
               Stop juggling disconnected systems. Enlumen brings everything
-              <br className="hidden ipad:block" />
-              together into one intelligent, automated platform.
+              <br className="hidden ipad:block" /> together into one
+              intelligent, automated platform.
             </p>
           </header>
 

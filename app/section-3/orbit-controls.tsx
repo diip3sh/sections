@@ -19,6 +19,43 @@ const MOBILE_RINGS: OrbitRing[] = [
   { diameter: 416, positionY: 0 },
 ];
 
+const ORBIT_LINE_RINGS = 2;
+
+const ORBIT_LINE_DURATIONS = ["12s", "18s"] as const;
+
+/** Ring stroke thickness for the comet trail (px). */
+const ORBIT_LINE_WIDTH = 2.5;
+
+const OrbitLine = ({ duration }: { duration: string }) => {
+  const ringMask = `radial-gradient(farthest-side, transparent calc(100% - ${ORBIT_LINE_WIDTH}px), #000 calc(100% - ${ORBIT_LINE_WIDTH}px))`;
+
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-visible"
+      style={{
+        // Soft glow behind the globe — the line only reads when it enters light.
+        maskImage:
+          "radial-gradient(ellipse 72% 58% at 50% 38%, #000 0%, #000 42%, rgba(0,0,0,0.35) 68%, transparent 100%)",
+        WebkitMaskImage:
+          "radial-gradient(ellipse 72% 58% at 50% 38%, #000 0%, #000 42%, rgba(0,0,0,0.35) 68%, transparent 100%)",
+      }}
+    >
+      <div
+        className="absolute inset-0 rounded-full will-change-transform animate-globe-orbit motion-reduce:animate-none"
+        style={{
+          animationDuration: duration,
+          // Left → right: bright head leads, tail fades behind and blends into the ring.
+          background:
+            "conic-gradient(from 0deg, transparent 0deg, transparent 250deg, rgba(255,255,255,0.02) 280deg, rgba(255,255,255,0.08) 310deg, rgba(255,255,255,0.22) 335deg, rgba(255,255,255,0.55) 350deg, rgba(255,255,255,0.9) 357deg, #fff 360deg)",
+          maskImage: ringMask,
+          WebkitMaskImage: ringMask,
+        }}
+      />
+    </div>
+  );
+};
+
 const OrbitLayer = ({
   rings,
   className,
@@ -40,10 +77,18 @@ const OrbitLayer = ({
             width: `${ring.diameter}px`,
             height: `${ring.diameter}px`,
             marginTop: `${ring.positionY}px`,
-            opacity: 0.18 - index * 0.0375,
           }}
-          className={`absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white ${positionClass}`}
-        />
+          className={`absolute left-1/2 -translate-x-1/2 -translate-y-1/2 ${positionClass}`}
+        >
+          <div
+            className="absolute inset-0 rounded-full border border-dashed border-white"
+            style={{ opacity: 0.18 - index * 0.0375 }}
+          />
+
+          {index < ORBIT_LINE_RINGS ? (
+            <OrbitLine duration={ORBIT_LINE_DURATIONS[index]} />
+          ) : null}
+        </div>
       ))}
     </div>
   );

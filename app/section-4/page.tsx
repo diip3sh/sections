@@ -104,7 +104,7 @@ const FeatureItem = ({ label }: { label: string }) => {
           className="size-4.5"
         />
       </span>
-      <span className="min-w-0 flex-1 text-[15px] font-normal leading-normal text-[#b0b1b5]">
+      <span className="min-w-0 flex-1 text-[16px] font-normal leading-normal text-[#b0b1b5]">
         {label}
       </span>
     </li>
@@ -115,10 +115,10 @@ const Section4 = () => {
   const { isYearly, toggleBillingCycle } = useBillingCycle();
 
   return (
-    <main className="min-h-screen bg-[#0f0f0f] px-4 py-16 font-rethink text-[#f2f2f3] sm:px-6 sm:py-24">
+    <main className="min-h-screen bg-[#0f0f0f]  px-4 py-16 font-rethink text-[#f2f2f3] sm:px-6 sm:py-24">
       <section
         aria-labelledby="pricing-heading"
-        className="mx-auto flex w-full max-w-7xl flex-col items-center gap-10 laptop:gap-15"
+        className="flex w-full md:max-w-[570px] md:mx-auto flex-col items-center gap-10 laptop:gap-15"
       >
         <header className="flex w-full max-w-245 flex-col items-center gap-2.5 text-center">
           <span className="flex items-center gap-0.5 rounded-[42px] border border-[#1f1f1f] bg-[#141414] px-3 py-1.5">
@@ -130,7 +130,7 @@ const Section4 = () => {
               height={20}
               className="size-5"
             />
-            <span className="text-base font-medium leading-normal tracking-[0.02em] text-[#daf66f]">
+            <span className="text-[18px] font-medium leading-normal tracking-[0.02em] text-[#daf66f]">
               Pricing plans
             </span>
           </span>
@@ -138,7 +138,7 @@ const Section4 = () => {
           <div className="flex w-full flex-col items-center justify-center gap-2">
             <h1
               id="pricing-heading"
-              className="w-full text-[clamp(1.75rem,4vw,3.625rem)] font-bold leading-[1.2] tracking-[0.02em] text-[#f2f2f3]"
+              className="w-full text-[28px] text-balance text-center font-bold leading-[1.2] tracking-[0.02em] text-[#f2f2f3]"
             >
               Unlock Your Digital Potential with Outstand&apos;s Pricing Plans
             </h1>
@@ -212,7 +212,7 @@ const Section4 = () => {
               return (
                 <article
                   key={plan.name}
-                  className={`flex h-full w-full max-w-[369px] flex-col gap-7.5 overflow-clip rounded-2xl border bg-[#141414] p-7.5 ipad:max-w-none desktop-sm:w-[369px] desktop-sm:max-w-[369px] desktop-sm:shrink-0 ${
+                  className={`flex h-full w-full flex-col gap-7.5 overflow-clip rounded-2xl border bg-[#141414] p-6 ipad:max-w-none desktop-sm:w-[369px] desktop-sm:shrink-0 ${
                     plan.isPopular
                       ? "order-1 border-[#cef240] shadow-[0px_0px_0px_6px_#1a1a1a] ipad:col-span-2 desktop-sm:order-2 desktop-sm:col-span-1"
                       : isStarter
@@ -222,7 +222,7 @@ const Section4 = () => {
                 >
                   <div className="flex w-full flex-col gap-4">
                     <div className="flex w-full items-center gap-5">
-                      <h2 className="min-w-0 flex-1 text-[clamp(1.25rem,2vw,1.375rem)] font-semibold leading-normal text-[#f2f2f3]">
+                      <h2 className="min-w-0 flex-1 text-[20px] font-semibold leading-normal text-[#f2f2f3]">
                         {plan.name}
                       </h2>
 
@@ -248,19 +248,19 @@ const Section4 = () => {
                       className="h-px w-full bg-[#1f1f1f]"
                     />
 
-                    <p className="text-[15px] font-normal leading-normal text-[#96979c]">
+                    <p className="text-[17px] font-normal leading-normal text-[#96979c]">
                       {plan.description}
                     </p>
                   </div>
 
                   <div className="flex items-end leading-[0.73]">
                     {price === null ? (
-                      <p className="text-[38px] font-medium whitespace-nowrap text-[#cef240]">
+                      <p className="text-[36px] font-medium whitespace-nowrap text-[#cef240]">
                         Custom pricing
                       </p>
                     ) : (
                       <>
-                        <p className="text-[38px] font-medium tabular-nums text-[#cef240] transition-opacity duration-200 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none">
+                        <p className="text-[36px] font-medium tabular-nums text-[#cef240] transition-opacity duration-200 ease-[cubic-bezier(.215,.61,.355,1)] motion-reduce:transition-none">
                           ${price}
                         </p>
                         <p className="text-base font-medium text-[#96979c]">

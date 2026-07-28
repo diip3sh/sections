@@ -77,7 +77,7 @@ const Section3 = () => {
             <div className="flex flex-col items-center gap-4 sm:gap-5">
               <h1
                 id="global-presence-heading"
-                className="font-tight text-[clamp(2.125rem,8vw,2.75rem)] font-bold leading-[1.2] tracking-[-0.01em] text-balance text-white [text-shadow:0_8px_30px_rgba(255,255,255,0.25),0_4px_8px_rgba(255,255,255,0.05)] desktop-sm:text-[clamp(2.125rem,8vw,3.625rem)]"
+                className="font-tight text-[clamp(2.125rem,8vw,2.75rem)] font-bold leading-[1.2] tracking-[-0.01em] text-balance text-white [text-shadow:0_8px_30px_rgba(255,255,255,0.25),0_4px_8px_rgba(255,255,255,0.05)] ipad-landscape:text-[44px] desktop-sm:text-[clamp(2.125rem,8vw,3.625rem)]"
               >
                 Connecting Worldwide Teams
               </h1>
@@ -89,25 +89,29 @@ const Section3 = () => {
             </div>
           </header>
 
-          <div aria-hidden="true" className="hidden min-h-10 flex-1 sm:block" />
+          <div
+            aria-hidden="true"
+            className="hidden min-h-10 flex-1 ipad-landscape:block"
+          />
 
-          <ul className="pointer-events-auto mt-8 mb-16 grid w-full max-w-140 shrink-0 sm:my-16 desktop-sm:mt-0 ipad-landscape:max-w-none ipad-landscape:grid-cols-3 ipad-landscape:divide-x ipad-landscape:divide-[#18191b]">
+          <ul className="pointer-events-auto mt-8 mb-16 grid w-full max-w-140 shrink-0 sm:mt-10 sm:mb-16 desktop-sm:mt-0 ipad-landscape:max-w-none ipad-landscape:grid-cols-3 ipad-landscape:my-16">
             {METRICS.map((metric, index) => (
               <li
                 key={metric.value}
-                className={`flex w-full max-w-81.75 mx-auto flex-col self-center items-center gap-6 py-8 text-center ipad-landscape:max-w-none ipad-landscape:self-auto ipad-landscape:gap-6 ipad-landscape:px-6 ipad-landscape:py-0 ${
-                  index === 0
-                    ? "border-b border-[#18191b] ipad-landscape:border-b-0"
-                    : index === METRICS.length - 1
-                      ? "border-t border-[#18191b] ipad-landscape:border-t-0"
-                      : ""
-                }`}
+                className="relative flex w-full max-w-81.75 mx-auto flex-col self-center items-center gap-6 py-8 text-center ipad-landscape:max-w-none ipad-landscape:self-auto ipad-landscape:gap-6 ipad-landscape:px-6 ipad-landscape:py-0"
               >
-                <span className="bg-linear-to-br from-white to-white/50 bg-clip-text font-tight text-[clamp(2.125rem,34px,3.625rem)] font-semibold tabular-nums leading-[1.2] tracking-[-0.04em] text-transparent [text-shadow:0_8px_30px_rgba(255,255,255,0.25),0_4px_8px_rgba(255,255,255,0.05)]">
+                {index > 0 ? (
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-0 top-0 mx-auto h-px w-full bg-[#18191b] ipad-landscape:inset-x-auto ipad-landscape:left-0 ipad-landscape:top-1/2 ipad-landscape:h-12 ipad-landscape:w-px ipad-landscape:-translate-y-1/2"
+                  />
+                ) : null}
+
+                <span className="bg-linear-to-br from-white to-white/50 bg-clip-text font-tight text-[34px] font-semibold tabular-nums leading-[1.2] tracking-[-0.04em] text-transparent [text-shadow:0_8px_30px_rgba(255,255,255,0.25),0_4px_8px_rgba(255,255,255,0.05)] ipad-landscape:text-[44px] desktop-sm:text-[58px]">
                   {metric.value}
                 </span>
 
-                <span className="text-[15px] font-medium leading-normal text-[#6b707a] sm:text-[18px]">
+                <span className="text-[18px] font-medium leading-normal text-[#6b707a] ipad-landscape:max-w-[200px] desktop-sm:max-w-none">
                   {metric.label}
                 </span>
               </li>

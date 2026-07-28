@@ -378,10 +378,10 @@ const StepCard = ({
         </div>
 
         <div className="flex w-full flex-col items-center gap-1 text-center leading-normal">
-          <h3 className="font-tight text-[clamp(1.125rem,3.5vw,1.375rem)] font-medium text-[#1a1a1a]">
+          <h3 className="font-tight text-[18px] lg:text-[20px] xl:text-[22px] font-medium text-[#1a1a1a]">
             {title}
           </h3>
-          <p className="w-full text-pretty font-instrument text-[clamp(0.9375rem,2.8vw,1.0625rem)] leading-normal font-medium text-[#616161]">
+          <p className="w-full text-pretty font-instrument text-[16px] leading-normal font-medium text-[#616161]">
             {description}
           </p>
         </div>
@@ -414,14 +414,14 @@ const Section6 = () => {
 
           <h1
             id="steps-heading"
-            className="font-tight text-center text-[clamp(2rem,12vw,64px)] leading-[1.2] font-medium tracking-[-0.02em] text-balance text-[#0d0d0d]"
+            className="font-tight text-center text-[28px] lg:text-[56px] leading-[1.2] font-medium tracking-[-0.02em] text-balance text-[#0d0d0d]"
           >
             Steps to Start
           </h1>
         </header>
 
         <div className="flex w-full flex-col items-center gap-[clamp(2rem,5vw,3.125rem)]">
-          <div className="grid w-full max-w-[720px] grid-cols-1 items-stretch justify-items-center gap-5 iphone-max:gap-6 ipad:grid-cols-2 ipad:gap-6 laptop:grid-cols-3 laptop:gap-6">
+          <div className="grid w-full max-w-[720px] xl:max-w-none grid-cols-1 items-stretch justify-items-center gap-5 iphone-max:gap-6 ipad:grid-cols-2 ipad:gap-6 laptop:grid-cols-3 laptop:gap-6">
             {STEPS.map((step, index) => (
               <StepCard
                 key={step.step}
@@ -435,7 +435,7 @@ const Section6 = () => {
 
           <a
             href="#get-started"
-            className="inline-flex min-h-11 w-auto touch-manipulation items-center justify-center rounded-full bg-[#3385ff] px-6 py-4 font-instrument text-[clamp(0.9375rem,2.5vw,1.0625rem)] leading-normal font-semibold text-white transition-colors duration-200 ease [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3385ff] active:bg-[#2468d4] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#2a75e6]"
+            className="inline-flex min-h-11 w-auto touch-manipulation items-center justify-center rounded-full bg-[#3385ff] px-6 py-4 font-instrument text-[17px]leading-normal font-semibold text-white transition-colors duration-200 ease [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3385ff] active:bg-[#2468d4] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#2a75e6]"
           >
             Get Started Now
           </a>

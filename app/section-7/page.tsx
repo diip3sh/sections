@@ -457,7 +457,7 @@ const Section7 = () => {
           <header className="flex w-full max-w-180 flex-col items-center gap-3 text-center">
             <h1
               id="potential-heading"
-              className="animate-section-rise text-[clamp(1.75rem,4vw,2.5rem)] font-medium leading-[1.12] tracking-[-0.04em] text-[#010110] motion-reduce:animate-none [animation-delay:0ms]"
+              className="animate-section-rise text-[clamp(2rem,4vw,2.5rem)] font-medium leading-[1.12] tracking-[-0.04em] text-[#010110] motion-reduce:animate-none [animation-delay:0ms]"
             >
               Unique Potential for you
             </h1>

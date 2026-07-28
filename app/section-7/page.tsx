@@ -351,7 +351,7 @@ const FeaturePreview = ({ activeId }: { activeId: string }) => {
       id="feature-preview"
       role="tabpanel"
       aria-labelledby={`feature-tab-${activeId}`}
-      className="relative w-full min-w-0 flex-1 overflow-clip rounded-[17px] border border-solid border-[#dfe1e2] ipad-landscape:min-h-0"
+      className="relative aspect-[1018/570] w-full min-w-0 flex-1 overflow-clip rounded-[17px] border border-solid border-[#dfe1e2] ipad-landscape:aspect-auto ipad-landscape:min-h-0"
       style={{
         backgroundImage:
           "linear-gradient(135deg, #fffcf5 0%, #fdfdfd 32%, #f7fcff 68%, #f0f8ff 100%)",
@@ -367,17 +367,17 @@ const FeaturePreview = ({ activeId }: { activeId: string }) => {
         }}
       />
 
-      <div className="relative z-10 flex items-center justify-center p-3 iphone:p-4 ipad-landscape:absolute ipad-landscape:inset-0 ipad-landscape:p-5">
+      <div className="absolute inset-0 z-10 flex items-center justify-center p-3 iphone:p-4 ipad-landscape:p-5">
         <div
           key={activeFeature.id}
-          className="flex w-full items-center justify-center animate-hero-reveal motion-reduce:animate-none [animation-duration:500ms] [animation-timing-function:cubic-bezier(0.23,1,0.32,1)] ipad-landscape:h-full"
+          className="flex h-full w-full items-center justify-center animate-hero-reveal motion-reduce:animate-none [animation-duration:500ms] [animation-timing-function:cubic-bezier(0.23,1,0.32,1)]"
         >
           <Image
             alt={activeFeature.title}
             src={activeFeature.image}
             width={WIDGET_IMAGE_WIDTH}
             height={WIDGET_IMAGE_HEIGHT}
-            className="m-0 block h-auto w-full object-contain ipad-landscape:max-h-full"
+            className="m-0 block h-auto max-h-full w-full object-contain"
             sizes="(max-width: 1023px) 92vw, 640px"
             priority
           />
@@ -428,7 +428,7 @@ const Section7 = () => {
     <main className="min-h-screen bg-white text-[#010110] flex items-center justify-center">
       <section
         aria-labelledby="potential-heading"
-        className="relative mx-auto my-5 flex w-full max-w-[98dvw] flex-col items-center overflow-clip rounded-3xl px-4 py-16 sm:px-6 sm:py-20 ipad:px-10 ipad:py-24 laptop:px-[clamp(2rem,10vw,13.8rem)] laptop:py-25"
+        className="relative mx-auto my-[8px] flex w-full max-w-[97dvw] flex-col items-center overflow-clip rounded-3xl px-4 py-16 sm:px-6 sm:py-20 ipad:px-10 ipad:py-24 laptop:px-[clamp(2rem,10vw,13.8rem)] laptop:py-25"
       >
         <div
           aria-hidden="true"

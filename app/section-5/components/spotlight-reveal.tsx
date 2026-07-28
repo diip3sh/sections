@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "motion/react";
 
 type SpotlightRevealProps = {
@@ -8,51 +9,62 @@ type SpotlightRevealProps = {
   className?: string;
   blur?: number;
   delay?: number;
+  active?: boolean;
+  onComplete?: () => void;
 };
+
+const easeOutCubic = [0.215, 0.61, 0.355, 1] as const;
 
 const SpotlightReveal = ({
   text,
   id,
   className,
   blur = 6,
-  delay = 0.1,
+  delay = 0,
+  active = true,
+  onComplete,
 }: SpotlightRevealProps) => {
   const prefersReducedMotion = useReducedMotion();
   const words = text.split(" ");
+  const lastIndex = words.length - 1;
+  const completedRef = useRef(false);
+
+  useEffect(() => {
+    if (active) completedRef.current = false;
+  }, [active]);
+
+  const handleWordComplete = (index: number) => {
+    if (index !== lastIndex || completedRef.current) return;
+    completedRef.current = true;
+    onComplete?.();
+  };
 
   return (
     <h1 id={id} aria-label={text} className={className}>
       {words.map((word, index) => {
         const wordDelay = prefersReducedMotion ? 0 : delay + index * 0.06;
+        const hidden = prefersReducedMotion
+          ? { opacity: 0 }
+          : { opacity: 0, y: 12, filter: `blur(${blur}px)` };
+        const visible = prefersReducedMotion
+          ? { opacity: 1 }
+          : { opacity: 1, y: 0, filter: "blur(0px)" };
 
         return (
           <motion.span
             key={`${word}-${index}`}
             className="inline-block"
             aria-hidden="true"
-            initial={
-              prefersReducedMotion
-                ? { opacity: 0 }
-                : {
-                    opacity: 0,
-                    y: 12,
-                    filter: `blur(${blur}px)`,
-                  }
-            }
-            animate={
-              prefersReducedMotion
-                ? { opacity: 1 }
-                : {
-                    opacity: 1,
-                    y: 0,
-                    filter: "blur(0px)",
-                  }
-            }
+            initial={hidden}
+            animate={active ? visible : hidden}
             transition={{
               type: "tween",
               duration: prefersReducedMotion ? 0.2 : 0.4,
-              delay: wordDelay,
-              ease: [0.215, 0.61, 0.355, 1],
+              delay: active ? wordDelay : 0,
+              ease: easeOutCubic,
+            }}
+            onAnimationComplete={() => {
+              if (active) handleWordComplete(index);
             }}
           >
             {word}

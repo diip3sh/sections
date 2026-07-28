@@ -107,6 +107,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
   --font-tight: var(--font-inter-tight);
+  --font-clash: var(--font-clash-grotesk-family);
   --font-switzer: var(--font-switzer-family);
   --font-rethink: var(--font-rethink-sans);
   --font-geist: var(--font-geist-family);

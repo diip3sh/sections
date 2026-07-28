@@ -8,14 +8,17 @@ type TrustedLogo = {
   alt: string;
   width: number;
   height: number;
-  className: string;
 };
 
 type TrustedByProps = {
   logos: readonly TrustedLogo[];
+  active?: boolean;
 };
 
 const easeOutCubic = [0.215, 0.61, 0.355, 1] as const;
+
+/** Repeat so each half fills the viewport — required for a seamless -50% loop. */
+const MARQUEE_REPEAT = 3;
 
 const LogoItem = ({
   logo,
@@ -24,40 +27,65 @@ const LogoItem = ({
   logo: TrustedLogo;
   duplicate?: boolean;
 }) => (
-  <li className="shrink-0 opacity-80" aria-hidden={duplicate || undefined}>
+  <li
+    className="flex h-5.5 shrink-0 items-center opacity-80"
+    aria-hidden={duplicate || undefined}
+  >
     <Image
       alt={duplicate ? "" : logo.alt}
       src={logo.src}
       width={logo.width}
       height={logo.height}
-      className={logo.className}
+      className="h-full w-auto max-w-none object-contain"
     />
   </li>
 );
 
-const TrustedBy = ({ logos }: TrustedByProps) => {
+const MarqueeHalf = ({
+  logos,
+  duplicate = false,
+}: {
+  logos: readonly TrustedLogo[];
+  duplicate?: boolean;
+}) => (
+  <ul
+    className="flex shrink-0 items-center gap-x-6 pr-6 ipad:gap-x-10 ipad:pr-10"
+    aria-hidden={duplicate || undefined}
+  >
+    {Array.from({ length: MARQUEE_REPEAT }, (_, repeatIndex) =>
+      logos.map((logo) => (
+        <LogoItem
+          key={`${duplicate ? "b" : "a"}-${repeatIndex}-${logo.src}`}
+          logo={logo}
+          duplicate={duplicate || repeatIndex > 0}
+        />
+      )),
+    )}
+  </ul>
+);
+
+const TrustedBy = ({ logos, active = false }: TrustedByProps) => {
   const prefersReducedMotion = useReducedMotion();
 
-  const itemTransition = (delay: number) => ({
-    type: "tween" as const,
-    duration: prefersReducedMotion ? 0.2 : 0.3,
-    delay: prefersReducedMotion ? 0 : delay,
-    ease: easeOutCubic,
-  });
-
-  const initial = prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 12 };
-
-  const animate = prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 };
+  const hidden = prefersReducedMotion
+    ? { opacity: 0 }
+    : { opacity: 0, y: 24 };
+  const visible = prefersReducedMotion
+    ? { opacity: 1 }
+    : { opacity: 1, y: 0 };
 
   return (
-    <div className="flex w-full max-w-295.5 flex-col items-center gap-5 ipad:gap-6">
-      <motion.div
-        className="flex w-full max-w-150 items-center gap-3 ipad:gap-4"
-        initial={initial}
-        whileInView={animate}
-        viewport={{ once: true, amount: 0.4 }}
-        transition={itemTransition(0)}
-      >
+    <motion.div
+      className="flex w-full max-w-295.5 flex-col items-center gap-5 will-change-transform ipad:gap-6"
+      initial={hidden}
+      animate={active ? visible : hidden}
+      transition={{
+        type: "tween",
+        duration: prefersReducedMotion ? 0.2 : 0.35,
+        ease: easeOutCubic,
+      }}
+    >
+      <div className="flex w-full max-w-150 items-center gap-3 ipad:gap-4">
         <span
           aria-hidden="true"
           className="h-px min-w-0 flex-1 bg-linear-to-r from-[#4b4b4b]/0 to-[#4b4b4b]"
@@ -71,44 +99,33 @@ const TrustedBy = ({ logos }: TrustedByProps) => {
           aria-hidden="true"
           className="h-px min-w-0 flex-1 bg-linear-to-r from-[#4b4b4b] to-[#4b4b4b]/0"
         />
-      </motion.div>
+      </div>
 
       <div
         className="relative w-full overflow-hidden mask-[linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] motion-reduce:hidden desktop-sm:hidden"
         aria-label="Trusted brands"
         role="region"
       >
-        <ul className="flex w-max items-center gap-x-6 ipad:gap-x-10 animate-trusted-marquee will-change-transform motion-reduce:animate-none">
-          {logos.map((logo) => (
-            <LogoItem key={logo.src} logo={logo} />
-          ))}
-          {logos.map((logo) => (
-            <LogoItem key={`${logo.src}-duplicate`} logo={logo} duplicate />
-          ))}
-        </ul>
+        <div className="flex w-max items-center animate-trusted-marquee will-change-transform motion-reduce:animate-none">
+          <MarqueeHalf logos={logos} />
+          <MarqueeHalf logos={logos} duplicate />
+        </div>
       </div>
 
       <ul className="hidden w-full flex-wrap items-center justify-center gap-x-6 gap-y-4 motion-reduce:flex ipad:gap-x-10 laptop:gap-x-14 desktop-sm:flex">
-        {logos.map((logo, index) => (
-          <motion.li
-            key={logo.src}
-            className="opacity-80"
-            initial={initial}
-            whileInView={animate}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={itemTransition(0.1 + index * 0.1)}
-          >
+        {logos.map((logo) => (
+          <li key={logo.src} className="flex h-5.5 items-center opacity-80">
             <Image
               alt={logo.alt}
               src={logo.src}
               width={logo.width}
               height={logo.height}
-              className={logo.className}
+              className="h-full w-auto max-w-none object-contain"
             />
-          </motion.li>
+          </li>
         ))}
       </ul>
-    </div>
+    </motion.div>
   );
 };
 

@@ -294,7 +294,7 @@ const Section2 = () => {
               return (
                 <article
                   key={plan.name}
-                  className={`flex min-w-0 w-full max-w-90.5 flex-col rounded-[20px] bg-[#edeae8] ipad:max-w-[359px] ipad-landscape:max-w-90.5 ${CARD_OUTLINE_SHADOW} ${
+                  className={`flex min-w-0 w-full flex-col rounded-[20px] bg-[#EAE4E2] ipad:max-w-[450px] ipad-landscape:max-w-90.5 ${CARD_OUTLINE_SHADOW} ${
                     plan.isPopular ? "border-2 border-transparent" : ""
                   }`}
                   style={
@@ -302,7 +302,7 @@ const Section2 = () => {
                       ? {
                           backgroundClip: "padding-box, border-box",
                           backgroundImage:
-                            "linear-gradient(#edeae8, #edeae8), linear-gradient(90deg, #fe2e2e 0%, #f3661c 26%, #cf6954 44%, #a752a5 58%, #9348ce 70%, #c31bf6 88%, #e89ef4 100%)",
+                            "linear-gradient(#EAE4E2, #EAE4E2), linear-gradient(90deg, #fe2e2e 0%, #f3661c 26%, #cf6954 44%, #a752a5 58%, #9348ce 70%, #c31bf6 88%, #e89ef4 100%)",
                           backgroundOrigin: "padding-box, border-box",
                         }
                       : undefined
@@ -355,7 +355,7 @@ const Section2 = () => {
                     </div>
                   </div>
 
-                  <ul className="flex flex-1 flex-col gap-3 rounded-b-[18px] p-7.5 text-[15px] font-medium leading-normal iphone:text-[17px]">
+                  <ul className="flex flex-1 flex-col gap-3 rounded-b-[18px] p-5 text-[15px] font-medium leading-normal android-sm:p-6 iphone:p-7.5 iphone:text-[17px]">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-center gap-2">
                         <Image
@@ -384,9 +384,10 @@ const Section2 = () => {
           </div>
 
           <div className="w-full ipad-landscape:px-18.5">
-            <div className="mx-auto flex w-full flex-col items-center gap-5 rounded-[10px] border border-[#ded8d3] bg-[#e9e5e2] p-5 ipad:max-w-89.75 ipad-landscape:max-w-none ipad-landscape:flex-row ipad-landscape:items-center ipad-landscape:justify-between ipad-landscape:gap-12.5 ipad-landscape:py-2.5 ipad-landscape:px-5">
-              <p className="text-center text-[17px] font-medium leading-normal text-[#1a1a1a] ipad-landscape:text-left">
+            <div className="mx-auto flex w-full flex-col items-center gap-5 rounded-[10px] border border-[#dcd6d0] bg-[#E8E4E2] p-5 ipad:max-w-[450px] ipad-landscape:max-w-none ipad-landscape:flex-row ipad-landscape:items-center ipad-landscape:justify-between ipad-landscape:gap-12.5 ipad-landscape:py-2.5 ipad-landscape:px-5">
+              <p className="text-center text-[16px] font-medium leading-normal text-[#1a1a1a] ipad-landscape:text-left">
                 We just launched our startup program -{" "}
+                <br className="ipad-landscape:hidden" />
                 <span
                   className="bg-clip-text font-semibold text-transparent"
                   style={{

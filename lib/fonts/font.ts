@@ -6,6 +6,7 @@ import {
   Inter,
   Inter_Tight,
   Manrope,
+  Playfair_Display,
   Rethink_Sans,
   Space_Grotesk,
   Tillana,
@@ -62,6 +63,13 @@ export const baskervville = Baskervville({
   variable: "--font-baskervville-family",
   subsets: ["latin"],
   weight: ["400"],
+  style: ["normal", "italic"],
+});
+
+export const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair-display-family",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
 });
 

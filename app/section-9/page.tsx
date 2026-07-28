@@ -29,11 +29,7 @@ type WaitlistRevealProps = HTMLMotionProps<"div"> & {
   delay: number;
 };
 
-const WaitlistReveal = ({
-  delay,
-  children,
-  ...props
-}: WaitlistRevealProps) => {
+const WaitlistReveal = ({ delay, children, ...props }: WaitlistRevealProps) => {
   const reveal = useWaitlistReveal(delay);
 
   return (
@@ -72,7 +68,7 @@ const Navbar = () => {
   return (
     <nav
       aria-label="Primary"
-      className="relative flex items-center gap-0 rounded-full bg-white py-1.5 pr-1.5 pl-1.5 shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_1px_2px_-1px_rgba(0,0,0,0.06),0_2px_4px_0_rgba(0,0,0,0.04)] ipad-landscape:gap-4 ipad-landscape:pl-6 ipad-landscape:pr-6"
+      className="relative flex w-full max-w-[400px] items-center justify-between rounded-full bg-white py-1.5 pr-1.5 pl-1.5 shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_1px_2px_-1px_rgba(0,0,0,0.06),0_2px_4px_0_rgba(0,0,0,0.04)] ipad:max-w-[500px] ipad-landscape:w-auto ipad-landscape:max-w-none ipad-landscape:justify-start ipad-landscape:gap-4 ipad-landscape:pl-6 ipad-landscape:pr-6"
     >
       <a
         href="#top"
@@ -102,7 +98,7 @@ const Navbar = () => {
             alt=""
             width={20}
             height={20}
-            className="size-5 shrink-0 rotate-180"
+            className="size-5 shrink-0"
             aria-hidden="true"
           />
         </a>
@@ -128,7 +124,31 @@ const Navbar = () => {
 };
 
 const BrandMark = () => (
-  <div className="relative flex shrink-0 items-start gap-2.5 rounded-full border border-solid border-[#8b47eb] p-1.5">
+  <div className="relative -mt-2 flex size-[98px] shrink-0 -translate-y-2 items-center justify-center motion-reduce:translate-y-0 ipad:size-[110px] ipad:-mt-3 ipad:-translate-y-3">
+    {/* Soft static orbit rings */}
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-[6px] rounded-full border border-solid border-[#c7bbf6]/55"
+    />
+
+    {/* Soft glowing trail that orbits the logo */}
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 will-change-transform animate-logo-orbit motion-reduce:animate-none"
+    >
+      <div
+        className="absolute inset-0 rounded-full opacity-90 blur-[1px]"
+        style={{
+          background:
+            "conic-gradient(from 210deg, transparent 0deg, transparent 250deg, rgba(168,117,240,0.15) 280deg, rgba(139,71,235,0.55) 310deg, #8b47eb 330deg, rgba(199,187,246,0.75) 345deg, transparent 360deg)",
+          maskImage:
+            "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))",
+          WebkitMaskImage:
+            "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))",
+        }}
+      />
+    </div>
+
     <div
       aria-hidden="true"
       className="pointer-events-none absolute bottom-[-6.5px] left-1/2 h-[254px] w-[219px] -translate-x-1/2"
@@ -141,20 +161,15 @@ const BrandMark = () => (
         className="size-full max-w-none"
       />
     </div>
-    <div className="relative overflow-clip rounded-full border-t-[1.5px] border-solid border-[#c7bbf6] bg-linear-to-b from-[#a875f0] to-[#8b47eb] p-3 shadow-[0_-1px_0_0_#ab7af0]">
-      <div className="relative size-12.5 overflow-clip ipad:size-15">
-        <span className="absolute inset-[23.33%_5.83%_23.33%_7.5%]">
-          <Image
-            src="/section-9/logo-white.svg"
-            alt=""
-            width={52}
-            height={32}
-            className="size-full object-contain"
-            aria-hidden="true"
-          />
-        </span>
-      </div>
-    </div>
+
+    <Image
+      src="/section-9/company-logo.png"
+      alt="Replex"
+      width={84}
+      height={85}
+      className="relative size-[74px] rounded-full object-cover ipad:size-[84px]"
+      priority
+    />
   </div>
 );
 
@@ -183,7 +198,7 @@ const WaitlistForm = () => {
   };
 
   return (
-    <div className="relative w-full max-w-[662px]">
+    <div className="relative w-full max-w-[411px] ipad-landscape:max-w-[520px]">
       <Image
         src="/section-9/connector.svg"
         alt=""
@@ -201,11 +216,11 @@ const WaitlistForm = () => {
         aria-hidden="true"
       />
 
-      <div className="rounded-3xl bg-linear-to-b from-white/80 to-white/0 p-1.5 [mask-image:linear-gradient(to_bottom,black_0%,black_83%,rgba(0,0,0,0.45)_88%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_72%,rgba(0,0,0,0.45)_88%,transparent_100%)] [mask-size:100%_100%] [mask-repeat:no-repeat]">
+      <div className="rounded-3xl bg-linear-to-b from-white/50 to-white/0 p-1.5 backdrop-blur-[2px] [mask-image:linear-gradient(to_bottom,black_0%,black_83%,rgba(0,0,0,0.45)_88%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_72%,rgba(0,0,0,0.45)_88%,transparent_100%)] [mask-size:100%_100%] [mask-repeat:no-repeat]">
         <form
           onSubmit={handleSubmit}
           noValidate
-          className="relative flex w-full flex-col items-center gap-7.5 overflow-clip rounded-[20px] border border-solid border-[#ede8fc] bg-[#f8f6fe] p-6 iphone:p-8 ipad:p-10"
+          className="relative flex w-full flex-col items-center gap-7.5 overflow-clip rounded-[20px] border border-solid border-white/60 bg-[#f8f6fe]/55 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] backdrop-blur-[16px] backdrop-saturate-150 iphone:p-8 ipad:p-10"
         >
           <div
             aria-hidden="true"
@@ -220,12 +235,12 @@ const WaitlistForm = () => {
             <h2 className="w-full text-[22px] font-semibold text-[#200c50]">
               Join the waitlist
             </h2>
-            <p className="w-full text-[17px] font-medium text-[#72758d]">
+            <p className="w-full text-[15px] font-medium text-[#72758d] ipad-landscape:text-[17px]">
               Sign up now for early notification upon launch.
             </p>
           </div>
 
-          <div className="flex w-full flex-col items-stretch gap-4 ipad:flex-row ipad:items-start">
+          <div className="flex w-full flex-col items-stretch gap-3 iphone:gap-4 ipad-landscape:flex-row ipad-landscape:items-start">
             <label className="sr-only" htmlFor="waitlist-email">
               Email address
             </label>
@@ -245,14 +260,14 @@ const WaitlistForm = () => {
                 }
               }}
               disabled={isSubmitting}
-              className="min-h-11 w-full min-w-0 flex-1 touch-manipulation rounded-full border border-solid border-[#e2dbfa] bg-[#f4f1fd] px-6 py-4 text-[18px] font-medium leading-normal text-[#200c50] placeholder:text-[#72758d] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b47eb] disabled:opacity-70"
+              className="min-h-11 w-full min-w-0 flex-1 touch-manipulation rounded-full border border-solid border-[#e2dbfa] bg-[#f4f1fd]/80 px-6 py-4 text-center text-[18px] font-medium leading-normal text-[#200c50] placeholder:text-[#72758d] transition-colors duration-200 ease disabled:opacity-70 focus-visible:ring-0 focus-visible:outline-0 ipad-landscape:text-left"
               aria-invalid={status === "error"}
               aria-describedby="waitlist-status"
             />
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex min-h-11 shrink-0 touch-manipulation items-center justify-center overflow-clip rounded-full bg-[#8b47eb] px-6 py-4 text-[17px] font-bold leading-normal whitespace-nowrap text-white transition-[opacity,transform] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b47eb] active:scale-[0.96] disabled:opacity-70 motion-reduce:active:scale-100 [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90 cursor-pointer"
+              className="inline-flex min-h-11 w-full shrink-0 touch-manipulation items-center justify-center overflow-clip rounded-full bg-[#8b47eb] px-6 py-4 text-[17px] font-bold leading-normal whitespace-nowrap text-white transition-[opacity,transform] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b47eb] active:scale-[0.96] disabled:opacity-70 motion-reduce:active:scale-100 ipad-landscape:w-auto [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90 cursor-pointer"
             >
               {isSubmitting ? "Joining…" : "Join Waitlist"}
             </button>
@@ -283,7 +298,7 @@ const WaitlistForm = () => {
 };
 
 const SocialLinks = () => (
-  <ul className="flex items-start gap-2.5">
+  <ul className="-mt-10 flex items-start gap-2.5">
     {SOCIAL_LINKS.map((link) => (
       <li key={link.label}>
         <a
@@ -291,7 +306,7 @@ const SocialLinks = () => (
           target="_blank"
           rel="noopener noreferrer"
           aria-label={link.label}
-          className="inline-flex size-14 touch-manipulation items-center justify-center rounded-full border border-solid border-[#ede9fc] bg-white p-3.5 transition-[opacity,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b47eb] active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100 [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-0.5 [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90"
+          className="inline-flex size-14 touch-manipulation items-center justify-center rounded-full border border-solid border-[#ede9fc] bg-white p-3.5 will-change-transform transition-transform duration-300 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b47eb] active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100 [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-1.5"
         >
           <span className="relative size-7 overflow-clip">
             <Image
@@ -364,11 +379,17 @@ const Section9 = () => {
       className="min-h-screen bg-[#f8f6fe] font-manrope text-[#19093e]"
     >
       <div className="relative mx-auto flex w-full max-w-[1835px] flex-col items-center px-2 pt-10 iphone:px-2 ipad:pt-12 ipad-landscape:px-12.5 laptop:pt-[54px]">
+        {/* Mobile / tablet: separate floating navbar */}
+        <div className="relative z-40 mb-4 flex w-full justify-center px-2 ipad-landscape:hidden">
+          <Navbar />
+        </div>
+
         <section
           aria-labelledby="waitlist-heading"
           className="relative w-full rounded-tl-[40px] rounded-tr-[40px] rounded-br-3xl rounded-bl-3xl bg-linear-to-b from-white to-white/0 p-1.5 ipad:rounded-tl-[70px] ipad:rounded-tr-[70px] ipad:rounded-br-[40px] ipad:rounded-bl-[40px]"
         >
-          <div className="absolute top-0 left-1/2 z-40 -translate-x-1/2 -translate-y-1/2">
+          {/* Desktop: overlapping navbar on section edge */}
+          <div className="absolute top-0 left-1/2 z-40 hidden -translate-x-1/2 -translate-y-1/2 ipad-landscape:block">
             <Navbar />
           </div>
 
@@ -376,12 +397,7 @@ const Section9 = () => {
             aria-hidden="true"
             className="pointer-events-none absolute bottom-0 left-1/2 h-70 w-full -translate-x-1/2 bg-[#f8f6fe] mask-[linear-gradient(to_bottom,black_0%,black_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_60%,transparent_100%)]"
           />
-          <div
-            className="relative z-10 flex w-full flex-col items-center gap-8 overflow-clip rounded-tl-[36px] rounded-tr-[36px] bg-cover bg-top bg-no-repeat px-4 pt-20 pb-16 iphone:gap-10 iphone:px-6 ipad:rounded-tl-[64px] ipad:rounded-tr-[64px] ipad:px-10 ipad:pt-30 ipad:pb-20"
-            style={{
-              backgroundImage: "url('/section-9/background.png')",
-            }}
-          >
+          <div className="relative z-10 flex w-full flex-col items-center gap-8 overflow-clip rounded-tl-[36px] rounded-tr-[36px] bg-[url('/section-9/mobile-background.png')] bg-cover bg-top bg-no-repeat px-4 pt-20 pb-16 iphone:gap-10 iphone:px-6 ipad:rounded-tl-[64px] ipad:rounded-tr-[64px] ipad:px-10 ipad:pt-30 ipad:pb-20">
             <HeroAtmosphere />
 
             <div className="relative z-10 flex w-full max-w-210 flex-col items-center gap-3.5">
@@ -389,19 +405,21 @@ const Section9 = () => {
 
               <div className="flex w-full flex-col items-center gap-4 text-center ipad:gap-4">
                 <div className="mt-2 flex w-full flex-col items-center gap-11.75 ipad:mt-0">
-                  <div className="flex w-full flex-col items-center gap-4 px-0 ipad:px-8">
+                  <div className="flex w-full max-w-none flex-col items-center gap-4 px-0">
                     <motion.h1
                       id="waitlist-heading"
-                      className="w-full text-[clamp(2rem,5vw,3.625rem)] font-bold leading-[1.2] text-balance text-[#19093e]"
+                      className="w-full max-w-none text-[28px] font-bold leading-[1.2] text-[#19093e] ipad-landscape:px-8 ipad-landscape:text-[clamp(2rem,5vw,3.625rem)] ipad-landscape:text-balance"
                       {...headingReveal}
                     >
-                      Blessings Unveiled through Waitlist{" "}
-                      <span className="font-baskervville font-normal italic">
-                        Patience!
+                      Be the First to get update
+                      <br />
+                      by joining our{" "}
+                      <span className="font-playfair font-normal italic">
+                        Waitlist!
                       </span>
                     </motion.h1>
                     <motion.p
-                      className="max-w-160 text-pretty text-[clamp(16px,2vw,17px)] font-medium leading-normal text-[#2b106a]"
+                      className="max-w-160 text-balance text-[clamp(16px,2vw,17px)] font-medium leading-normal text-[#2b106a]"
                       {...descriptionReveal}
                     >
                       Be first to experience Replex. Join our waitlist for

@@ -14,7 +14,7 @@ const TOGGLE_BORDER_STYLE = {
   backgroundClip: "padding-box, border-box",
   backgroundOrigin: "padding-box, border-box",
   backgroundImage:
-    "linear-gradient(transparent, transparent), conic-gradient(from 210deg, #ff2f2f 0deg, #ff7a1a 55deg, #f5c542 110deg, #2e6bff 180deg, #a752a5 250deg, #d511fd 300deg, #ff2f2f 360deg)",
+    "linear-gradient(transparent, transparent), linear-gradient(90deg, rgb(255, 47, 47) 0%, rgb(239, 123, 22) 35.8783%, rgb(138, 67, 225) 69.922%, rgb(213, 17, 253) 100%)",
 } as const;
 
 export const BillingToggle = ({
@@ -29,7 +29,7 @@ export const BillingToggle = ({
       aria-checked={isYearly}
       aria-label="Toggle yearly billing"
       onClick={onChange}
-      className={`relative h-6.5 w-11.5 shrink-0 cursor-pointer rounded-full border-2 border-transparent shadow-[0_0_0_1px_#fff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111] ${className ?? ""}`}
+      className={`relative h-[28px] w-11.5 shrink-0 cursor-pointer rounded-full border-2 border-transparent shadow-[0_0_0_1px_#fff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111] ${className ?? ""}`}
       style={TOGGLE_BORDER_STYLE}
     >
       <span

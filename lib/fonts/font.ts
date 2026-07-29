@@ -10,6 +10,7 @@ import {
   Manrope,
   Outfit,
   Playfair_Display,
+  Red_Hat_Display,
   Rethink_Sans,
   Space_Grotesk,
   Tillana,
@@ -111,4 +112,10 @@ export const outfit = Outfit({
   variable: "--font-outfit-family",
   subsets: ["latin"],
   weight: ["400", "500"],
+});
+
+export const redHatDisplay = Red_Hat_Display({
+  variable: "--font-redhat-family",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });

@@ -160,9 +160,9 @@ const BrandMark = () => (
       />
     </div>
 
-    <div
+    {/* <div
       aria-hidden="true"
-      className="pointer-events-none absolute bottom-[-6.5px] left-1/2 h-[254px] w-[219px] -translate-x-1/2"
+      className="hidden lg:blockpointer-events-none absolute bottom-[-6.5px] left-1/2 h-[254px] w-[219px] -translate-x-1/2"
     >
       <Image
         src="/section-9/logo-glow.svg"
@@ -171,7 +171,7 @@ const BrandMark = () => (
         height={255}
         className="size-full max-w-none"
       />
-    </div>
+    </div> */}
 
     <div
       className="relative z-10 flex size-[60px] items-center justify-center rounded-full shadow-[0_-1px_0_0_#AB7AF0] lg:size-[70px]"
@@ -413,7 +413,7 @@ const Section9 = () => {
             aria-hidden="true"
             className="pointer-events-none absolute bottom-0 left-1/2 h-70 w-full -translate-x-1/2 bg-[#f8f6fe] mask-[linear-gradient(to_bottom,black_0%,black_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_60%,transparent_100%)]"
           />
-          <div className="relative z-10 flex w-full flex-col items-center gap-8 overflow-clip rounded-tl-[36px] rounded-tr-[36px] bg-[url('/section-9/mobile-background.png')] bg-top bg-no-repeat px-4 pt-20 pb-16 iphone:gap-10 iphone:px-6 md:bg-[url('/section-9/tablet-background.png')] lg:bg-[url('/section-9/desktop-background.png')] bg-contain ipad:rounded-tl-[64px] ipad:rounded-tr-[64px] ipad:px-10 ipad:pt-30 ipad:pb-20">
+          <div className="relative z-10 flex w-full flex-col items-center gap-8 overflow-clip rounded-tl-[36px] rounded-tr-[36px] bg-[url('/section-9/mobile-background.png')] bg-top bg-no-repeat px-4 pt-20 pb-16 iphone:gap-10 iphone:px-6 md:bg-[url('/section-9/tablet-background.png')] xl:bg-[url('/section-9/desktop-background.png')] bg-contain xl:bg-cover ipad:rounded-tl-[64px] ipad:rounded-tr-[64px] ipad:px-10 ipad:pt-30 ipad:pb-20">
             {/* <HeroAtmosphere /> */}
 
             <div className="relative z-10 flex w-full max-w-210 flex-col items-center gap-3.5">
@@ -428,9 +428,9 @@ const Section9 = () => {
                       {...headingReveal}
                     >
                       Be the First to get update
-                      <br />
+                      <br className="hidden md:block" />
                       by joining our{" "}
-                      <span className="font-playfair font-normal italic">
+                      <span className="font-playfair italic font-bold">
                         Waitlist!
                       </span>
                     </motion.h1>

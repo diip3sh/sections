@@ -22,8 +22,8 @@ type PricingPlan = {
 };
 
 const ELITE_PRICES = {
-  monthlyPrice: "$59",
-  yearlyPrice: "$590",
+  monthlyPrice: "$599",
+  yearlyPrice: "$999",
 } as const;
 
 const PRICING_PLANS: PricingPlan[] = [
@@ -31,8 +31,8 @@ const PRICING_PLANS: PricingPlan[] = [
     id: "basic",
     name: "Basic",
     description: "Perfect for small teams and startups.",
-    monthlyPrice: "$10",
-    yearlyPrice: "$100",
+    monthlyPrice: "$100",
+    yearlyPrice: "$250",
     features: [
       { text: "Task Management" },
       { text: "AI Summary" },
@@ -44,8 +44,8 @@ const PRICING_PLANS: PricingPlan[] = [
     id: "pro",
     name: "Pro",
     description: "Ideal for growing teams and projects.",
-    monthlyPrice: "$25",
-    yearlyPrice: "$250",
+    monthlyPrice: "$250",
+    yearlyPrice: "$500",
     features: [
       { text: "Everything in Basic +", isGroupLabel: true },
       { text: "Team Collaboration" },
@@ -60,8 +60,8 @@ const PRICING_PLANS: PricingPlan[] = [
     id: "enterprise",
     name: "Enterprise",
     description: "Built for large organizations needs.",
-    monthlyPrice: "$49",
-    yearlyPrice: "$39",
+    monthlyPrice: "$499",
+    yearlyPrice: "$699",
     features: [
       { text: "Everything in Pro +", isGroupLabel: true },
       { text: "SAML sso" },
@@ -262,7 +262,7 @@ const PlanColumn = ({
           <h3 className="text-[clamp(22px,22px,22px)] font-semibold text-[#1b1f22]">
             {plan.name}
           </h3>
-          <p className="text-[17px] xl:text-[18px] font-medium text-[#5b6971]">
+          <p className="text-[17px] xl:text-[18px] font-medium text-[#]">
             {plan.description}
           </p>
         </div>
@@ -437,7 +437,7 @@ const Section8 = () => {
               >
                 Affordable Pricing Plans
               </h1>
-              <p className="text-pretty text-[18px] xl:text-[20px] max-w-md xl:max-w-153 mx-auto font-medium leading-normal text-[#5b6971]">
+              <p className="text-pretty text-[18px] xl:text-[20px] max-w-md xl:max-w-153 mx-auto font-medium leading-normal text-[#5b6970]">
                 Explore flexible pricing plans designed to suit businesses of
                 all sizes, ensuring maximum value and productivity.
               </p>

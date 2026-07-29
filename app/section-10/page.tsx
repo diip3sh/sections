@@ -193,7 +193,7 @@ const StoreButton = ({
     target="_blank"
     rel="noopener noreferrer"
     aria-label={ariaLabel}
-    className="inline-flex w-[195px] h-[65px] xl:h-[68px] xl:w-[192px] touch-manipulation items-center justify-center gap-2.5 rounded-full border border-solid border-[#dee5ed] bg-[#f5f7fa] px-6 transition-[background-color,border-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#333] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#eef2f7]"
+    className="inline-flex w-[195px] h-[65px] xl:h-[68px] xl:w-[192px] py-3 touch-manipulation items-center justify-center gap-2.5 rounded-full border border-solid border-[#dee5ed] bg-[#f5f7fa] px-6 transition-[background-color,border-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#333] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#eef2f7]"
   >
     <span className="relative size-8 shrink-0 overflow-clip">
       <Image
@@ -264,7 +264,7 @@ const Footer = () => (
       </nav>
 
       <div className="relative flex flex-col items-center gap-6 border-t border-solid border-[#dee5ed] px-4 py-6 ipad:flex-row ipad:justify-between ipad:gap-0 ipad:px-7.5 ipad:py-7.5">
-        <p className="order-2 text-base xl:text-[18px] font-medium leading-normal text-[#666] ipad:order-1">
+        <p className="order-2 text-base xl:text-[18px] font-medium leading-normal text-[#262626] ipad:order-1">
           Template by Origin
         </p>
 
@@ -294,7 +294,7 @@ const Footer = () => (
 
         <a
           href="#privacy"
-          className="order-3 text-base xl:text-[18px] font-medium leading-normal text-[#666] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#666] [@media(hover:hover)_and_(pointer:fine)]:hover:text-[#333]"
+          className="order-3 text-base xl:text-[18px] font-medium leading-normal text-[#262626] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#262626] [@media(hover:hover)_and_(pointer:fine)]:hover:text-[#333]"
         >
           Privacy Policy
         </a>

@@ -102,6 +102,16 @@
   }
 }
 
+/** Slow ambient rotation for concentric hero rings */
+@keyframes ring-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /** Slow tunnel drift toward vanishing point */
 @keyframes tunnel-drift {
   from {
@@ -143,6 +153,7 @@
   --font-space: var(--font-space-grotesk-family);
   --font-audiowide: var(--font-audiowide-family);
   --font-outfit: var(--font-outfit-family);
+  --font-redhat: var(--font-redhat-family);
 
   --animate-hero-reveal: hero-reveal 300ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
   --animate-section-rise: section-rise 500ms cubic-bezier(0.23, 1, 0.32, 1) both;
@@ -153,6 +164,7 @@
   --animate-shine-infinite: shine-infinite 1.4s linear infinite;
   --animate-logo-orbit: logo-orbit 14s linear infinite;
   --animate-globe-orbit: globe-orbit 14s linear infinite;
+  --animate-ring-rotate: ring-rotate 32s linear infinite;
   --animate-tunnel-drift: tunnel-drift 18s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite alternate;
   --animate-tunnel-fade-in: tunnel-fade-in 700ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
 
@@ -258,6 +270,13 @@
   }
 
   @keyframes globe-orbit {
+    from,
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes ring-rotate {
     from,
     to {
       transform: none;

@@ -58,7 +58,7 @@ const MenuIcon = () => (
 const Navbar = () => (
   <nav
     aria-label="Primary"
-    className="relative z-30 mx-auto flex w-full max-w-[995px] items-center justify-between overflow-clip rounded-full border border-solid border-[#dee5ed] bg-white py-3.5 pr-3.5 pl-5 ipad:max-w-[450px] ipad-landscape:max-w-[995px]"
+    className="relative z-30 h-[81px] lg:h-[85px] mx-auto flex w-full max-w-[995px] items-center justify-between overflow-clip rounded-full border border-solid border-[#dee5ed] bg-white py-3.5 pr-3.5 pl-5 lg:max-w-[800px]"
   >
     <a
       href="#top"
@@ -99,7 +99,7 @@ const Navbar = () => (
         <li key={link.label}>
           <a
             href={link.href}
-            className="inline-flex items-center text-base font-medium leading-normal whitespace-nowrap text-[#333] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] [@media(hover:hover)_and_(pointer:fine)]:hover:text-[#1d1d1d]"
+            className="inline-flex items-center text-[17px] font-medium leading-normal whitespace-nowrap text-[#333] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] [@media(hover:hover)_and_(pointer:fine)]:hover:text-[#1d1d1d]"
           >
             {link.label}
           </a>
@@ -109,15 +109,15 @@ const Navbar = () => (
 
     <a
       href="#template"
-      className="hidden shrink-0 touch-manipulation items-center overflow-clip rounded-full bg-[#923cf6] px-5 py-4 text-base font-semibold leading-normal whitespace-nowrap text-white transition-[background-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] motion-reduce:transition-none ipad-landscape:inline-flex [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#8129e0] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]"
+      className="text-[17px] hidden shrink-0 touch-manipulation items-center overflow-clip rounded-full bg-[#923cf6] px-5 py-4 text-base font-semibold leading-normal whitespace-nowrap text-white transition-[background-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] motion-reduce:transition-none ipad-landscape:inline-flex [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#8129e0] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]"
     >
-      Get Template
+      Join Waitlist
     </a>
 
     <button
       type="button"
       aria-label="Open menu"
-      className="inline-flex size-14 shrink-0 touch-manipulation items-center justify-center overflow-clip rounded-full bg-[#923cf6] transition-[background-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] motion-reduce:transition-none ipad-landscape:hidden [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#8129e0] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]"
+      className="inline-flex h-[53px] w-[64px] shrink-0 touch-manipulation items-center justify-center overflow-clip rounded-full bg-[#923cf6] transition-[background-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] motion-reduce:transition-none ipad-landscape:hidden [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#8129e0] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]"
     >
       <MenuIcon />
     </button>
@@ -130,10 +130,10 @@ const AnnouncementBadge = () => (
     className="inline-flex touch-manipulation items-center gap-1 overflow-clip rounded-full border border-solid border-[#dee5ed] bg-[#f1f4f8] py-1.5 pr-3 pl-1.5 shadow-[0_0_0_3px_white,0_4px_2px_rgba(140,150,169,0.25),0_8px_17.2px_rgba(140,150,169,0.1)] transition-[background-color,border-color,transform] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#923cf6] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#e8edf4] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]"
   >
     <span className="inline-flex items-center gap-2">
-      <span className="inline-flex items-center justify-center overflow-clip rounded-full bg-[#923cf6] px-3 py-[5px] text-[15px] font-semibold leading-normal text-white">
+      <span className="inline-flex items-center justify-center overflow-clip rounded-full bg-[#923cf6] px-3 py-[5px] text-[16px] font-semibold leading-normal text-white">
         New
       </span>
-      <span className="text-center text-base font-medium leading-normal whitespace-nowrap text-[#262626]">
+      <span className="text-center text-[17px] font-medium leading-normal whitespace-nowrap text-[#262626]">
         Build your connections now
       </span>
     </span>
@@ -173,8 +173,8 @@ const BrandLogoItem = ({
 );
 
 const TrustedBy = () => (
-  <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center gap-7.5 px-5">
-    <p className="text-center text-lg font-medium leading-normal text-[#1d1d1d]">
+  <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center gap-7.5 px-0 md:px-5">
+    <p className="text-center text-[16px] lg:text-[18px] font-medium leading-normal text-[#1d1d1d]">
       Trusted by 1000+ businesses across the world
     </p>
 
@@ -412,8 +412,8 @@ const TABLET_PHONE = {
   /** Caps at header → top of post image (ref ≈525 @ 473w) */
   cropHeight: 525,
 } as const;
-/** Matches --breakpoint-desktop-sm — 3-phone layout from here up */
-const DESKTOP_MIN_WIDTH = 1280;
+/** Matches Tailwind `lg` (1024px) — 3-phone layout from here up */
+const DESKTOP_MIN_WIDTH = 1024;
 
 /** Figma 3049:7876 — artboard scaled to container width. */
 const PhoneShowcase = () => {
@@ -649,7 +649,7 @@ const Section11 = () => {
             }}
           />
 
-          <div className="relative z-10 flex flex-col items-center px-5 pt-[30px] android-sm:px-8 ipad:px-10">
+          <div className="relative z-10 flex flex-col items-center px-4 pt-[30px] ipad:px-10">
             {/* 1. Navbar */}
             <div className="w-full animate-page-reveal will-change-transform">
               <Navbar />
@@ -666,11 +666,10 @@ const Section11 = () => {
                 </div>
 
                 <div className="flex w-full animate-page-reveal flex-col items-center justify-center gap-5 px-0 text-center will-change-transform ipad:px-[clamp(1rem,6vw,6.25rem)] [animation-delay:140ms]">
-                  <h1 className="font-urbanist text-[clamp(2rem,5.5vw,4.25rem)] font-bold leading-[1.2] text-[#0d0d0d] text-balance text-center ipad:text-[38px] ipad-landscape:text-[clamp(2rem,5.5vw,4.25rem)]">
-                    Empower Your Social Connections with
-                    <br className="block ipad-landscape:hidden" /> Capable
+                  <h1 className="font-urbanist text-wrap md:mx-auto md:max-w-[450px] lg:max-w-[750px] xl:max-w-[945px] text-[38px] lg:text-[58px] xl:text-[68px] font-bold leading-[46px] lg:leading-[120%] text-[#0d0d0d] text-center">
+                    Empower Your Social Connections with Capable
                   </h1>
-                  <p className="max-w-md text-[clamp(1rem,2.2vw,1.25rem)] font-medium leading-normal text-[#666] ipad:text-[18px] ipad-landscape:text-[clamp(1rem,2.2vw,1.25rem)] text-pretty">
+                  <p className="max-w-md text-[18px] xl:text-[20px] lg:max-w-[550px] mx-auto font-medium leading-normal text-[#666] text-pretty">
                     Join Capable to build authentic connections and share your
                     passions effortlessly.
                   </p>

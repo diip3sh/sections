@@ -70,7 +70,7 @@ const ShadowWash = ({
   <div
     aria-hidden="true"
     data-shadow-wash=""
-    className={`absolute bg-center bg-cover bg-no-repeat mix-blend-multiply ${className}`}
+    className={`absolute bg-center bg-cover bg-no-repeat mix-blend-multiply opacity-30 ${className}`}
     style={{
       left,
       top,

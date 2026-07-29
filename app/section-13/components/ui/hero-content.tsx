@@ -35,10 +35,10 @@ export const HeroContent = ({
     <div
       className={[
         "pointer-events-none relative z-20 flex w-full shrink-0 flex-col items-center gap-6 pt-10",
-        /* Tablet — in-flow, Figma: ~34px under nav (=130 from frame), w 454, gap 32 */
+        /* Tablet — in-flow */
         "ipad:w-[454px] ipad:gap-8 ipad:pt-[34px]",
-        /* Desktop — bottom split absolute */
-        "desktop-sm:absolute desktop-sm:bottom-[52px] desktop-sm:left-[52px] desktop-sm:right-[52px] desktop-sm:w-auto desktop-sm:flex-row desktop-sm:items-end desktop-sm:justify-between desktop-sm:gap-8 desktop-sm:pt-0",
+        /* Desktop — in-flow at bottom of flex stack (after ring via order) */
+        "desktop-sm:order-2 desktop-sm:mt-auto desktop-sm:w-full desktop-sm:flex-row desktop-sm:items-end desktop-sm:justify-between desktop-sm:gap-8 desktop-sm:pt-0",
       ].join(" ")}
     >
       <div className="pointer-events-auto flex w-full max-w-[370px] flex-col items-center gap-3 ipad:max-w-none ipad:gap-4 desktop-sm:max-w-[464px] desktop-sm:items-start desktop-sm:gap-0">
@@ -51,14 +51,14 @@ export const HeroContent = ({
 
         <motion.p
           {...reveal(0.22)}
-          className="w-full max-w-[370px] text-center font-tight text-[16px] leading-[1.4] tracking-[-0.32px] text-white/60 text-pretty ipad:max-w-[420px] ipad:text-[18px] ipad:tracking-[-0.36px] desktop-sm:hidden"
+          className="w-full max-w-92.5 text-center font-tight text-[16px] leading-[1.4] tracking-[-0.32px] text-white/60 text-pretty ipad:max-w-105 ipad:text-[18px] ipad:tracking-[-0.36px] desktop-sm:hidden"
         >
           Experience music through the artists behind every hit, every genre,
           and every unforgettable moment.
         </motion.p>
       </div>
 
-      <div className="pointer-events-auto flex w-full max-w-[370px] flex-col gap-4 ipad:max-w-none ipad:items-center desktop-sm:max-w-[436px] desktop-sm:items-stretch desktop-sm:gap-8">
+      <div className="pointer-events-auto flex w-full max-w-92.5 flex-col gap-4 ipad:max-w-none ipad:items-center desktop-sm:max-w-109 desktop-sm:items-stretch desktop-sm:gap-8">
         <motion.p
           {...reveal(0.22)}
           className="hidden text-left font-tight text-[17px] leading-[25.5px] tracking-[-0.34px] text-white/60 text-pretty desktop-sm:block"
@@ -69,7 +69,7 @@ export const HeroContent = ({
 
         <motion.div
           {...reveal(0.32)}
-          className="flex w-full flex-col gap-4 ipad:w-auto ipad:flex-row ipad:items-center ipad:justify-center ipad:gap-4 desktop-sm:flex-row desktop-sm:flex-wrap desktop-sm:items-center desktop-sm:gap-6"
+          className="flex w-full flex-col gap-4 ipad:w-auto ipad:flex-row ipad:items-center ipad:justify-start ipad:gap-4 desktop-sm:flex-row desktop-sm:flex-wrap desktop-sm:items-center desktop-sm:gap-6"
         >
           <Button
             variant="glass"

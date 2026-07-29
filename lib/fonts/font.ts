@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import {
+  Audiowide,
   Baskervville,
   Geist,
   Instrument_Sans,
@@ -7,6 +8,7 @@ import {
   Inter,
   Inter_Tight,
   Manrope,
+  Outfit,
   Playfair_Display,
   Rethink_Sans,
   Space_Grotesk,
@@ -97,4 +99,16 @@ export const clash = localFont({
   src: "./clash-grotesk.ttf",
   variable: "--font-clash-grotesk-family",
   display: "swap",
+});
+
+export const audiowide = Audiowide({
+  variable: "--font-audiowide-family",
+  subsets: ["latin"],
+  weight: ["400"],
+});
+
+export const outfit = Outfit({
+  variable: "--font-outfit-family",
+  subsets: ["latin"],
+  weight: ["400", "500"],
 });

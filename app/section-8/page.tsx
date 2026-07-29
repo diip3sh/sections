@@ -153,7 +153,7 @@ const FeatureItem = ({
         aria-hidden="true"
       />
       <span
-        className={`min-w-0 flex-1 text-[clamp(17px,1.5vw,18px)] leading-normal text-pretty ${
+        className={`min-w-0 flex-1 text-[17px] xl:text-[18px] leading-normal text-pretty ${
           isGroupLabel ? "font-semibold" : "font-medium"
         } ${
           tone === "dark"
@@ -180,7 +180,7 @@ const CtaButton = ({ variant }: { variant: ButtonVariant }) => {
   return (
     <a
       href="#get-started"
-      className={`relative inline-flex shrink-0 touch-manipulation items-center justify-center gap-1.5 overflow-clip rounded-lg px-5 py-3.5 text-[17px] font-semibold leading-[1.5] whitespace-nowrap text-white transition-[transform,background-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1b1f22] active:scale-[0.98] motion-reduce:active:scale-100 motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90 ${
+      className={`relative inline-flex w-full xl:w-auto shrink-0 touch-manipulation items-center justify-center gap-1.5 overflow-clip rounded-lg px-5 py-3.5 text-[17px] font-semibold leading-[1.5] whitespace-nowrap text-white transition-[transform,background-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1b1f22] active:scale-[0.98] motion-reduce:active:scale-100 motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90 ${
         variant === "muted" ? "bg-[#444d55]" : "bg-[#1b1f22]"
       }`}
     >
@@ -191,7 +191,7 @@ const CtaButton = ({ variant }: { variant: ButtonVariant }) => {
         }`}
       />
       <span className="relative z-10 inline-flex items-center gap-1.5">
-        <span>Get started</span>
+        <span className="text-[16px] xl:text-[17px]">Get started</span>
         <span className="relative size-[18px] shrink-0 overflow-visible">
           <Image
             src={arrowSrc}
@@ -222,14 +222,14 @@ const PriceRow = ({
 }) => (
   <div className="flex items-baseline gap-2 whitespace-nowrap">
     <span
-      className={`text-[clamp(34px,5vw,50px)] font-bold leading-none ${
+      className={`text-[34px] xl:text-[48px] font-bold leading-none ${
         dark ? "text-white" : "text-[#1b1f22]"
       }`}
     >
       {price}
     </span>
     <span
-      className={`text-[clamp(18px,2vw,18px)] font-medium leading-normal ${
+      className={`text-[17px] xl:text-[18px] font-medium leading-normal ${
         dark ? "text-[#8e9ca4]" : "text-[#5b6971]"
       }`}
     >
@@ -262,7 +262,7 @@ const PlanColumn = ({
           <h3 className="text-[clamp(22px,22px,22px)] font-semibold text-[#1b1f22]">
             {plan.name}
           </h3>
-          <p className="text-[clamp(18px,2vw,18px)] font-medium text-[#5b6971]">
+          <p className="text-[17px] xl:text-[18px] font-medium text-[#5b6971]">
             {plan.description}
           </p>
         </div>
@@ -350,11 +350,11 @@ const ElitePlan = ({
         <div className="flex w-full flex-col gap-1 leading-normal">
           <h3
             id="elite-heading"
-            className="text-[clamp(22px,22px,22px)] font-semibold text-white"
+            className="text-[18px] xl:text-[20px] font-semibold text-white"
           >
             Elite
           </h3>
-          <p className="text-[clamp(18px,2vw,18px)] font-medium text-[#8e9ca4]">
+          <p className="text-[17px] xl:text-[18px] font-medium text-[#8e9ca4]">
             Built for Large organizations needs.
           </p>
         </div>
@@ -430,14 +430,14 @@ const Section8 = () => {
             <div className="flex w-full max-w-200 flex-col items-center gap-4">
               <h1
                 id="pricing-heading"
-                className="w-full bg-center bg-cover bg-clip-text bg-no-repeat text-[clamp(34px,5vw,58px)] font-bold leading-[1.2] text-transparent tracking-tight"
+                className="w-full bg-center bg-cover bg-clip-text bg-no-repeat text-[34px] xl:text-[58px] font-bold leading-[1.2] text-transparent tracking-tight"
                 style={{
                   backgroundImage: "url(/section-8/heading-fill.png)",
                 }}
               >
                 Affordable Pricing Plans
               </h1>
-              <p className="max-w-160 text-pretty text-[clamp(18px,2.5vw,20px)] font-medium leading-normal text-[#5b6971]">
+              <p className="text-pretty text-[18px] xl:text-[20px] max-w-md xl:max-w-153 mx-auto font-medium leading-normal text-[#5b6971]">
                 Explore flexible pricing plans designed to suit businesses of
                 all sizes, ensuring maximum value and productivity.
               </p>

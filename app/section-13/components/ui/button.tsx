@@ -24,7 +24,7 @@ export const Button = ({
       >
         <button
           type={type}
-          className={`${BASE_CLASS} h-[40px] w-full rounded-[8px] border border-white/40 bg-[linear-gradient(180deg,rgba(30,30,30,0.9)_0%,rgba(12,12,12,0.95)_100%)] px-6 shadow-[inset_0_0_8px_rgba(248,248,248,0.25)] cursor-pointer`}
+          className={`${BASE_CLASS} h-[40px] w-full rounded-[8px] border border-white/40 bg-[linear-gradient(180deg,rgba(30,30,30,0.9)_0%,rgba(12,12,12,0.95)_100%)] px-6 shadow-[inset_0_0_8px_rgba(248,248,248,0.25)] cursor-pointer hover:border-white/30 transition-all duration-200 ease`}
           {...props}
         >
           {children}

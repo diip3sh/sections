@@ -141,6 +141,8 @@
   --font-baskervville: var(--font-baskervville-family);
   --font-playfair: var(--font-playfair-display-family);
   --font-space: var(--font-space-grotesk-family);
+  --font-audiowide: var(--font-audiowide-family);
+  --font-outfit: var(--font-outfit-family);
 
   --animate-hero-reveal: hero-reveal 300ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
   --animate-section-rise: section-rise 500ms cubic-bezier(0.23, 1, 0.32, 1) both;

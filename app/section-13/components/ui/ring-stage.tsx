@@ -4,74 +4,126 @@ import { motion, useReducedMotion } from "motion/react";
 import CircleImage from "../originkit/ring-gallery";
 import { VinylDisc } from "./vinyl-disc";
 
+import artist01 from "../../assets/portraits/artist-01.png";
+import artist02 from "../../assets/portraits/artist-02.png";
+import artist03 from "../../assets/portraits/artist-03.png";
+import artist04 from "../../assets/portraits/artist-04.png";
+import artist05 from "../../assets/portraits/artist-05.png";
+import artist06 from "../../assets/portraits/artist-06.png";
+import artist07 from "../../assets/portraits/artist-07.png";
+import artist08 from "../../assets/portraits/artist-08.png";
+import artist09 from "../../assets/portraits/artist-09.png";
+
 /** ease-out-cubic */
 const EASE_OUT = [0.215, 0.61, 0.355, 1] as const;
 
 const RING_IMAGES = [
   {
     image: {
-      src: "/section-13/portraits/artist-01.png",
+      src: artist01.src,
       alt: "Artist portrait",
     },
     focusY: 30,
   },
   {
     image: {
-      src: "/section-13/portraits/artist-02.png",
+      src: artist02.src,
       alt: "Artist portrait",
     },
     focusY: 25,
   },
   {
     image: {
-      src: "/section-13/portraits/artist-03.png",
+      src: artist03.src,
       alt: "Artist portrait",
     },
     focusY: 35,
   },
   {
     image: {
-      src: "/section-13/portraits/artist-04.png",
+      src: artist04.src,
       alt: "Artist portrait",
     },
     focusY: 20,
   },
   {
     image: {
-      src: "/section-13/portraits/artist-05.png",
+      src: artist05.src,
       alt: "Artist portrait",
     },
     focusY: 40,
   },
+  // {
+  //   image: {
+  //     src: artist06.src,
+  //     alt: "Artist portrait",
+  //   },
+  //   focusY: 30,
+  // },
   {
     image: {
-      src: "/section-13/portraits/artist-06.png",
-      alt: "Artist portrait",
-    },
-    focusY: 30,
-  },
-  {
-    image: {
-      src: "/section-13/portraits/artist-07.png",
+      src: artist07.src,
       alt: "Artist portrait",
     },
     focusY: 25,
   },
   {
     image: {
-      src: "/section-13/portraits/artist-08.png",
+      src: artist08.src,
       alt: "Artist portrait",
     },
     focusY: 35,
   },
   {
     image: {
-      src: "/section-13/portraits/artist-09.png",
+      src: artist09.src,
       alt: "Artist portrait",
     },
     focusY: 30,
   },
 ] as const;
+
+type RingImage = (typeof RING_IMAGES)[number];
+
+/**
+ * Not random. Originkit `repeat` concatenates the list N times
+ * ([1..9, 1..9, 1..9]), so the same portrait reappears every 9 slots.
+ * We expand with a rotating offset per cycle so the same src never sits
+ * next to itself at cycle seams, then pass `repeat: 1`.
+ */
+const expandRingImages = (images: readonly RingImage[], times: number) => {
+  const list = [...images];
+  const count = list.length;
+  if (count === 0) return [];
+
+  const out: RingImage[] = [];
+  const rounds = Math.max(1, Math.round(times));
+
+  for (let round = 0; round < rounds; round++) {
+    const offset = (round * 3) % count;
+    const cycle = Array.from(
+      { length: count },
+      (_, i) => list[(i + offset) % count],
+    );
+
+    if (out.length > 0) {
+      const prevSrc = out[out.length - 1]?.image.src;
+      if (cycle[0]?.image.src === prevSrc) {
+        const swapAt = cycle.findIndex((item) => item.image.src !== prevSrc);
+        if (swapAt > 0) {
+          const [moved] = cycle.splice(swapAt, 1);
+          cycle.unshift(moved);
+        }
+      }
+    }
+
+    out.push(...cycle);
+  }
+
+  return out;
+};
+
+const RING_CARDS = expandRingImages(RING_IMAGES, 3);
 
 type RingLayerProps = {
   cardWidth: number;
@@ -98,12 +150,12 @@ const RingLayer = ({
           radiusX: ringRadius,
           radiusY: ringRadius,
           tilt: true,
-          repeat: 3,
+          repeat: 1,
         }}
         direction="anticlockwise"
         drag={true}
         transition={{ type: "tween", ease: "linear", duration: 28 }}
-        images={[...RING_IMAGES]}
+        images={[...RING_CARDS]}
       />
     </div>
   </>
@@ -139,7 +191,7 @@ export const RingStage = () => {
         </motion.div>
       </div>
 
-      {/* Tablet — in-flow flex child; centered; page can grow so nothing clips */}
+      {/* Tablet — in-flow flex child; centered */}
       <div
         className="pointer-events-none relative mx-auto hidden w-[612px] shrink-0 justify-center ipad:flex desktop-sm:hidden"
         aria-hidden="true"
@@ -154,9 +206,9 @@ export const RingStage = () => {
         </motion.div>
       </div>
 
-      {/* Desktop — absolute center */}
+      {/* Desktop / wide — in-flow flex child; centered (no absolute → no nav overlap) */}
       <div
-        className="pointer-events-none absolute left-1/2 top-[calc(50%-16px)] z-10 hidden -translate-x-1/2 -translate-y-1/2 desktop-sm:block"
+        className="pointer-events-none relative mx-auto hidden w-[770px] shrink-0 items-center justify-center desktop-sm:flex"
         aria-hidden="true"
       >
         <motion.div {...motionProps} className="relative size-[770px]">

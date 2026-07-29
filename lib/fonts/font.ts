@@ -3,6 +3,7 @@ import {
   Baskervville,
   Geist,
   Instrument_Sans,
+  Instrument_Serif,
   Inter,
   Inter_Tight,
   Manrope,
@@ -51,6 +52,13 @@ export const instrumentSans = Instrument_Sans({
   variable: "--font-instrument-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+});
+
+export const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif-family",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
 });
 
 export const manrope = Manrope({

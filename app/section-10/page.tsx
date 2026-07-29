@@ -76,8 +76,9 @@ type PhoneMockupProps = {
 };
 
 /**
- * Upright Mobile.svg frame with screen clipped to the Figma placeholder.
- * Screen rotates with the frame — do not counter-rotate the image.
+ * Mobile.svg frame with Vector screen layered on top.
+ * (The SVG’s inner fill is solid #1D1D1B — content behind it is invisible,
+ * so the screenshot must sit above the frame, clipped to the screen inset.)
  */
 const PhoneMockup = ({
   screen,
@@ -86,10 +87,21 @@ const PhoneMockup = ({
   className = "",
 }: PhoneMockupProps) => (
   <div className={`relative overflow-clip ${className}`}>
-    {/* Screen behind frame — shows through Mobile.svg hole */}
+    {/* Device chrome */}
+    <Image
+      src="/section-10/Mobile.svg"
+      alt=""
+      aria-hidden="true"
+      width={235}
+      height={476}
+      priority
+      className="pointer-events-none absolute inset-0 size-full object-fill"
+    />
+
+    {/* Screen content — on top of the solid SVG fill, inset to the display area */}
     <div
       aria-hidden="true"
-      className="absolute inset-[1.4%_4.2%_1.4%_4.2%] overflow-hidden bg-white"
+      className="absolute inset-[2.1%_4.9%_2.1%_4.9%] z-[1] rounded-[6%] overflow-clip  bg-[#1d1d1b]"
     >
       <Image
         src={screen}
@@ -101,22 +113,32 @@ const PhoneMockup = ({
       />
     </div>
 
-    {/* Frame + Dynamic Island on top */}
+    {/* Dynamic Island overlays the screen */}
     <Image
-      src="/section-10/Mobile.svg"
+      src="/section-10/dynamic-island.svg"
       alt=""
       aria-hidden="true"
-      width={235}
-      height={476}
+      width={52}
+      height={16}
       priority
-      className="pointer-events-none absolute inset-0 z-10 size-full object-fill"
+      className="pointer-events-none absolute top-[3%] left-1/2 z-[2] w-[22.1%] -translate-x-1/2"
     />
   </div>
 );
 
+const PHONES_STAGE_W = 506.68;
+const PHONES_STAGE_H = 528.892;
+
+/** Convert design-px → % of stage (so the cluster scales with container width). */
+const stageX = (px: number) => `${(px / PHONES_STAGE_W) * 100}%`;
+const stageY = (px: number) => `${(px / PHONES_STAGE_H) * 100}%`;
+
 const PhonesHero = () => (
-  <div className="pointer-events-none absolute top-0 left-1/2 z-10 -translate-x-1/2 overflow-hidden">
-    <div className="relative h-[528.892px] w-[506.68px] origin-bottom scale-[0.58] android-sm:scale-[0.72] iphone:scale-[0.85] ipad:scale-100">
+  <div className="pointer-events-none relative z-10 mx-auto w-full max-w-[506.68px]">
+    <div
+      className="relative w-full mask-b-from-20% mask-b-to-80%"
+      style={{ aspectRatio: `${PHONES_STAGE_W} / ${PHONES_STAGE_H}` }}
+    >
       {/* Dot grid behind phones */}
       <div
         aria-hidden="true"
@@ -135,48 +157,75 @@ const PhonesHero = () => (
       />
 
       {/* Left phone — flip-in after center */}
-      <div className="absolute bottom-0 left-[calc(50%-102.85px)] z-[1] flex h-[451.104px] w-[300.972px] -translate-x-1/2 items-center justify-center [perspective:900px]">
-        <div className="origin-bottom animate-phone-flip-in-x will-change-transform motion-reduce:animate-none [transform-style:preserve-3d] [animation-delay:280ms]">
-          <div className="flex-none rotate-[-14.52deg]">
+      <div
+        className="absolute bottom-0 z-[1] flex -translate-x-1/2 items-center justify-center [perspective:900px]"
+        style={{
+          left: `calc(50% - ${stageX(102.85)})`,
+          width: stageX(300.972),
+          height: stageY(451.104),
+        }}
+      >
+        <div className="flex size-full origin-bottom items-center justify-center animate-phone-flip-in-x will-change-transform motion-reduce:animate-none [transform-style:preserve-3d] [animation-delay:280ms]">
+          <div
+            className="relative rotate-[-14.52deg]"
+            style={{
+              width: `${(203.908 / 300.972) * 100}%`,
+              aspectRatio: "203.908 / 413.181",
+            }}
+          >
             <PhoneMockup
               screen="/section-10/Vector2.png"
               screenWidth={362}
               screenHeight={788}
-              className="h-[413.181px] w-[203.908px]"
+              className="size-full"
             />
           </div>
         </div>
       </div>
 
       {/* Right phone — flip-in after center */}
-      <div className="absolute bottom-0 left-[calc(50%+102.84px)] z-[1] flex h-[451.108px] w-[300.987px] -translate-x-1/2 items-center justify-center [perspective:900px]">
-        <div className="origin-bottom animate-phone-flip-in-x will-change-transform motion-reduce:animate-none [transform-style:preserve-3d] [animation-delay:360ms]">
-          <div className="flex-none rotate-[14.52deg]">
+      <div
+        className="absolute bottom-0 z-[1] flex -translate-x-1/2 items-center justify-center [perspective:900px]"
+        style={{
+          left: `calc(50% + ${stageX(102.84)})`,
+          width: stageX(300.987),
+          height: stageY(451.108),
+        }}
+      >
+        <div className="flex size-full origin-bottom items-center justify-center animate-phone-flip-in-x will-change-transform motion-reduce:animate-none [transform-style:preserve-3d] [animation-delay:360ms]">
+          <div
+            className="relative rotate-[14.52deg]"
+            style={{
+              width: `${(203.908 / 300.987) * 100}%`,
+              aspectRatio: "203.908 / 413.181",
+            }}
+          >
             <PhoneMockup
               screen="/section-10/Vector3.png"
               screenWidth={362}
               screenHeight={788}
-              className="h-[413.181px] w-[203.908px]"
+              className="size-full"
             />
           </div>
         </div>
       </div>
 
       {/* Center phone — slide up first */}
-      <div className="absolute bottom-[21.82px] left-1/2 z-10 -translate-x-1/2 animate-phone-slide-up will-change-transform motion-reduce:animate-none [animation-delay:0ms]">
+      <div
+        className="absolute left-1/2 z-10 -translate-x-1/2 animate-phone-slide-up will-change-transform motion-reduce:animate-none [animation-delay:0ms]"
+        style={{
+          bottom: stageY(21.82),
+          width: stageX(234.606),
+          aspectRatio: "234.606 / 475.386",
+        }}
+      >
         <PhoneMockup
           screen="/section-10/Vector.png"
           screenWidth={417}
           screenHeight={906}
-          className="h-[475.386px] w-[234.606px]"
+          className="size-full"
         />
       </div>
-
-      {/* Soft white bottom fade — dissolves phones into the page (no hard edge) */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[55%] bg-linear-to-t from-white from-[20%] via-white/70 via-[55%] to-transparent to-[100%] ipad:h-[65%] ipad:from-[12%] ipad:via-[42%]"
-      />
     </div>
   </div>
 );
@@ -263,12 +312,13 @@ const Footer = () => (
         ))}
       </nav>
 
-      <div className="relative flex flex-col items-center gap-6 border-t border-solid border-[#dee5ed] px-4 py-6 ipad:flex-row ipad:justify-between ipad:gap-0 ipad:px-7.5 ipad:py-7.5">
-        <p className="order-2 text-base xl:text-[18px] font-medium leading-normal text-[#262626] ipad:order-1">
+      <div className="relative flex flex-col items-center gap-6 border-t border-solid border-[#dee5ed] px-4 py-6 ipad-landscape:flex-row ipad-landscape:justify-between ipad-landscape:gap-0 ipad-landscape:px-7.5 ipad-landscape:py-7.5">
+        <p className="order-2 text-base xl:text-[18px] font-medium leading-normal text-[#262626] ipad-landscape:order-1">
           Template by Origin
         </p>
 
-        <div className="order-1 flex items-center justify-center gap-2.5 ipad:absolute ipad:top-1/2 ipad:left-1/2 ipad:order-0 ipad:-translate-x-1/2 ipad:-translate-y-1/2">
+        <div className="order-1 flex items-center justify-center gap-2.5 ipad-landscape:absolute ipad-landscape:top-1/2 ipad-landscape:left-1/2 ipad-landscape:order-0 ipad-landscape:-translate-x-1/2 ipad-landscape:-translate-y-1/2 md:max-w-[530px] mx-auto">
+          {" "}
           {SOCIAL_LINKS.map((social) => (
             <a
               key={social.label}
@@ -309,40 +359,25 @@ const Section10 = () => {
       aria-label="Download Capable"
       className="relative w-full overflow-hidden bg-white text-[#0d0d0d]"
     >
-      <a
-        href="#download"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-[#262626] focus:px-4 focus:py-2 focus:text-white"
-      >
-        Skip to content
-      </a>
-
-      <div className="relative mx-auto flex w-full max-w-[1440px] flex-col items-center px-5 pt-[clamp(5rem,14vw,16.25rem)] pb-10 android-sm:px-8 ipad:px-[119px] ipad:pb-16">
+      <div className="relative mx-auto flex w-full flex-col items-center px-4 pt-8 pb-10 android-sm:pt-10 ipad:px-[119px] ipad:pt-12 ipad:pb-16">
         <div
           id="download"
-          className="flex w-full max-w-[1201px] scroll-mt-8 flex-col items-center gap-[clamp(3.5rem,8vw,6.25rem)]"
+          className="flex w-full max-w-[1201px]  flex-col items-center gap-[clamp(3.5rem,8vw,6.25rem)]"
         >
-          <div className="relative flex w-full max-w-[795px] flex-col items-center gap-10 pt-[clamp(20.5rem,52vw,23.75rem)] android-sm:pt-[clamp(24.5rem,56vw,27rem)] iphone:pt-[clamp(29rem,60vw,32rem)] ipad:pt-[23.75rem]">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 z-0"
-              style={{
-                backgroundImage:
-                  "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 1013.7 586.55' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='1'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(5.2218e-7 -58.655 68.122 6.0647e-7 507.62 586.55)'><stop stop-color='rgba(255,255,255,0)' offset='0.085153'/><stop stop-color='rgba(255,255,255,1)' offset='1'/></radialGradient></defs></svg>\")",
-              }}
-            />
+          <div className="relative flex w-full flex-col items-center gap-0 pt-10">
             <PhonesHero />
 
-            <div className="relative z-20 flex w-full animate-hero-reveal flex-col items-center gap-5 px-0 pt-2 text-center motion-reduce:animate-none android-sm:pt-4 iphone:pt-6 ipad:px-12.5 ipad:pt-0 [animation-delay:80ms]">
-              <h1 className="font-urbanist text-[30px] lg:text-[45px] xl:text-[58px] lg:mt-20 font-bold leading-[1.2] text-[#0d0d0d] text-pretty">
+            <div className="relative z-20 -mt-14 flex w-full animate-hero-reveal flex-col items-center gap-5 px-0 pt-8 md:pt-6 text-center motion-reduce:animate-none android-sm:-mt-16 ipad:-mt-20 [animation-delay:80ms]">
+              <h1 className="font-urbanist text-[30px] font-bold leading-[1.2] text-[#0d0d0d] text-pretty lg:text-[45px] xl:text-[58px]">
                 Download Capable and Connect Today
               </h1>
-              <p className="w-full lg:max-w-[650px] mx-auto text-base xl:text-[18px] font-medium leading-normal text-[#666] text-pretty bg-white">
+              <p className="mx-auto w-full text-base font-medium leading-normal text-[#666] text-pretty lg:max-w-[650px] xl:text-[18px]">
                 Download Capable now to start connecting with like-minded people
                 and enjoy a seamless social experience!
               </p>
             </div>
 
-            <div className="relative z-20 flex w-full animate-hero-reveal flex-col items-center justify-center gap-4 motion-reduce:animate-none iphone:items-center iphone:gap-5 lg:flex-row lg:gap-5 [animation-delay:160ms]">
+            <div className="relative z-20 flex w-full animate-hero-reveal flex-col items-center justify-center gap-4 motion-reduce:animate-none iphone:items-center iphone:gap-5 lg:flex-row lg:gap-5 [animation-delay:160ms] pt-10">
               {STORE_BUTTONS.map((button) => (
                 <StoreButton key={button.label} {...button} />
               ))}

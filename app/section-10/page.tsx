@@ -115,7 +115,7 @@ const PhoneMockup = ({
 );
 
 const PhonesHero = () => (
-  <div className="pointer-events-none absolute top-0 left-1/2 z-10 -translate-x-1/2">
+  <div className="pointer-events-none absolute top-0 left-1/2 z-10 -translate-x-1/2 overflow-hidden">
     <div className="relative h-[528.892px] w-[506.68px] origin-bottom scale-[0.58] android-sm:scale-[0.72] iphone:scale-[0.85] ipad:scale-100">
       {/* Dot grid behind phones */}
       <div
@@ -172,10 +172,10 @@ const PhonesHero = () => (
         />
       </div>
 
-      {/* Soft white bottom fade — linear-gradient overlay (to top) */}
+      {/* Soft white bottom fade — dissolves phones into the page (no hard edge) */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[70%] bg-linear-to-t from-white from-[12%] via-white/85 via-[42%] to-transparent to-[78%]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[55%] bg-linear-to-t from-white from-[20%] via-white/70 via-[55%] to-transparent to-[100%] ipad:h-[65%] ipad:from-[12%] ipad:via-[42%]"
       />
     </div>
   </div>
@@ -193,7 +193,7 @@ const StoreButton = ({
     target="_blank"
     rel="noopener noreferrer"
     aria-label={ariaLabel}
-    className="inline-flex w-[195px] min-h-17 touch-manipulation items-center justify-center gap-2.5 rounded-full border border-solid border-[#dee5ed] bg-[#f5f7fa] px-6 transition-[background-color,border-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#333] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#eef2f7]"
+    className="inline-flex w-[195px] h-[65px] xl:h-[68px] xl:w-[192px] touch-manipulation items-center justify-center gap-2.5 rounded-full border border-solid border-[#dee5ed] bg-[#f5f7fa] px-6 transition-[background-color,border-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#333] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#eef2f7]"
   >
     <span className="relative size-8 shrink-0 overflow-clip">
       <Image
@@ -207,7 +207,9 @@ const StoreButton = ({
     </span>
     <span className="flex flex-col items-start justify-center font-medium leading-[1.5]">
       <span className="text-[13px] text-[#262626]">{eyebrow}</span>
-      <span className="whitespace-nowrap text-[18px] text-[#333]">{label}</span>
+      <span className="whitespace-nowrap text-[16px] xl:text-[18px] text-[#333]">
+        {label}
+      </span>
     </span>
   </a>
 );
@@ -230,7 +232,7 @@ const Footer = () => (
             aria-hidden="true"
           />
         </span>
-        <span className="text-base font-medium leading-normal whitespace-nowrap text-[#262626]">
+        <span className="text-base xl:text-[18px] font-medium leading-normal whitespace-nowrap text-[#262626]">
           hello@capable.com
         </span>
       </a>
@@ -246,14 +248,14 @@ const Footer = () => (
           <a
             key={link.label}
             href={link.href}
-            className="group relative inline-flex min-h-11 touch-manipulation items-center justify-center overflow-clip rounded-full border border-solid border-[#dee5ed] bg-[#f5f7fa] px-5 py-3.5 text-base font-medium leading-normal whitespace-nowrap text-[#333] transition-[background-color,border-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#333] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#eef2f7]"
+            className="group relative inline-flex min-h-[52px] xl:min-h-[55px] touch-manipulation items-center justify-center overflow-clip rounded-full border border-solid border-[#dee5ed] bg-[#f5f7fa] px-5 py-3.5 text-base font-medium leading-normal whitespace-nowrap text-[#333] transition-[background-color,border-color] duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#333] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:border-[#c9d3e0] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#eef2f7]"
           >
-            <span className="translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:group-hover:-translate-y-[150%]">
+            <span className="translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:group-hover:-translate-y-[150%] xl:text-[18px]">
               {link.label}
             </span>
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 flex items-center justify-center translate-y-[150%] transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-y-0"
+              className="pointer-events-none absolute inset-0 flex items-center justify-center translate-y-[150%] transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-y-0 xl:text-[18px]"
             >
               {link.label}
             </span>
@@ -262,7 +264,7 @@ const Footer = () => (
       </nav>
 
       <div className="relative flex flex-col items-center gap-6 border-t border-solid border-[#dee5ed] px-4 py-6 ipad:flex-row ipad:justify-between ipad:gap-0 ipad:px-7.5 ipad:py-7.5">
-        <p className="order-2 text-base font-medium leading-normal text-[#666] ipad:order-1">
+        <p className="order-2 text-base xl:text-[18px] font-medium leading-normal text-[#666] ipad:order-1">
           Template by Origin
         </p>
 
@@ -292,7 +294,7 @@ const Footer = () => (
 
         <a
           href="#privacy"
-          className="order-3 text-base font-medium leading-normal text-[#666] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#666] [@media(hover:hover)_and_(pointer:fine)]:hover:text-[#333]"
+          className="order-3 text-base xl:text-[18px] font-medium leading-normal text-[#666] transition-colors duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#666] [@media(hover:hover)_and_(pointer:fine)]:hover:text-[#333]"
         >
           Privacy Policy
         </a>
@@ -331,22 +333,16 @@ const Section10 = () => {
             <PhonesHero />
 
             <div className="relative z-20 flex w-full animate-hero-reveal flex-col items-center gap-5 px-0 pt-2 text-center motion-reduce:animate-none android-sm:pt-4 iphone:pt-6 ipad:px-12.5 ipad:pt-0 [animation-delay:80ms]">
-              {/* Soft white mask over phone bottoms — android-sm / iphone */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 bottom-full h-20 android-sm:h-24 iphone:h-28 ipad:hidden"
-              />
-              <h1 className="font-urbanist text-[30px] font-bold leading-[1.2] text-[#0d0d0d] ipad:text-[38px] ipad-landscape:text-[clamp(2.5rem,6.5vw,3.625rem)]">
-                Download Capable and
-                <br className="ipad-landscape:hidden" /> Connect Today
+              <h1 className="font-urbanist text-[30px] lg:text-[45px] xl:text-[58px] lg:mt-20 font-bold leading-[1.2] text-[#0d0d0d] text-pretty">
+                Download Capable and Connect Today
               </h1>
-              <p className="w-full text-base font-medium leading-normal text-[#666] text-pretty ipad:text-[clamp(1rem,2.5vw,1.125rem)] ipad-landscape:max-w-[695px]">
+              <p className="w-full lg:max-w-[650px] mx-auto text-base xl:text-[18px] font-medium leading-normal text-[#666] text-pretty bg-white">
                 Download Capable now to start connecting with like-minded people
                 and enjoy a seamless social experience!
               </p>
             </div>
 
-            <div className="relative z-20 flex w-full animate-hero-reveal flex-col items-center justify-center gap-4 motion-reduce:animate-none iphone:items-center iphone:gap-5 ipad:flex-row [animation-delay:160ms]">
+            <div className="relative z-20 flex w-full animate-hero-reveal flex-col items-center justify-center gap-4 motion-reduce:animate-none iphone:items-center iphone:gap-5 lg:flex-row lg:gap-5 [animation-delay:160ms]">
               {STORE_BUTTONS.map((button) => (
                 <StoreButton key={button.label} {...button} />
               ))}

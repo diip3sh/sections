@@ -1,8 +1,6 @@
 "use client";
 
-import { useDialKit } from "dialkit";
 import { motion, useReducedMotion } from "motion/react";
-import { useRef } from "react";
 import SpiralImages from "../originkit/spiral-image";
 import { HeroContent } from "./hero-content";
 
@@ -17,7 +15,19 @@ const PORTRAIT_IMAGES = [
 ];
 
 const CLUSTER_POSITION =
-  "absolute inset-x-0 top-[30.7%] flex -translate-y-[100px] justify-center android-sm:-translate-y-[110px] ipad:-translate-y-[120px] desktop-sm:-translate-y-[130px]";
+  "absolute inset-x-0 top-[96px] flex justify-center ipad:top-[191px] desktop-sm:top-[30.7%] desktop-sm:-translate-y-[130px]";
+
+/**
+ * Figma mobile Group 2147240540 on iPhone 16/17 Pro (402×874):
+ *   x: -384 · y: -116 · w: 858 · h: 881
+ * Tablet+ stays full-bleed / free (canvas-centered).
+ */
+const SPIRAL_FRAME =
+  "absolute z-20 left-[-384px] top-[-116px] h-[881px] w-[858px] ipad:inset-0 ipad:h-auto ipad:w-auto";
+
+/** Figma lens: mobile 150 · tablet 201 · desktop fluid */
+const LENS_BOX =
+  "size-[150px] w-[150px] h-[150px] shrink-0 ipad:size-[201px] ipad:w-[201px] ipad:h-[201px] desktop-sm:size-[clamp(140px,13.3vw,201px)] desktop-sm:w-[clamp(140px,13.3vw,201px)] desktop-sm:h-[clamp(140px,13.3vw,201px)]";
 
 type SpiralStageProps = {
   onExplorePeople: () => void;
@@ -29,54 +39,32 @@ export const SpiralStage = ({
   onViewStories,
 }: SpiralStageProps) => {
   const reduceMotion = useReducedMotion();
-  const lensRef = useRef<HTMLDivElement>(null);
-
-  const dial = useDialKit(
-    "Spiral Images",
-    {
-      turns: [1.2, 0.1, 5, 0.1],
-      speed: [-1, -5, 5, 0.1],
-      spacing: [10, 1, 30, 0.5],
-      spread: [7, 1, 15, 0.1],
-      curve: [0.5, 0.15, 2, 0.05],
-      imageSize: [261, 40, 400, 1],
-      sizeFalloff: [3, 0, 8, 0.1],
-      fadeIn: [0, 0, 50, 1],
-      fadeOut: [6, 0, 50, 1],
-      radius: [6, 0, 20, 0.5],
-      clockwise: true,
-      rotationMode: {
-        type: "select",
-        options: [
-          { value: "outward", label: "Outward (Figma)" },
-          { value: "tangent", label: "Tangent" },
-        ],
-        default: "outward",
-      },
-      rotationOffset: [0, -360, 180, 1],
-      startAngle: [0, -1000, 180, 1],
-      position: {
-        followLens: true,
-        x: [50, 0, 100, 0.1],
-        y: [30.7, 0, 100, 0.1],
-        offsetX: [0, -400, 400, 1],
-        offsetY: [0, -400, 400, 1],
-      },
-    },
-    { id: "section-15-spiral", persist: true },
-  );
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[2]">
       {/*
         Layer order (back → front):
-        1. Lens (z-10) — spiral origin
-        2. Spiral images (z-20) — appear to emerge from the lens
-        3. Hero copy (z-30) — stays readable above the spiral
+        1. Spiral images (z-20) — Figma frame on mobile, free on ipad+
+        2. Lens + glow pedestal (z-25)
+        3. Hero copy (z-30)
       */}
 
-      {/* Lens — under spiral */}
-      <div className={`${CLUSTER_POSITION} z-10`}>
+      {/* Spiral — mobile uses Figma absolute frame; ipad+ full-bleed */}
+      <motion.div
+        className={SPIRAL_FRAME}
+        initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={
+          reduceMotion
+            ? { duration: 0 }
+            : { type: "tween", duration: 0.55, ease: EASE_OUT, delay: 0.12 }
+        }
+      >
+        <SpiralImages images={PORTRAIT_IMAGES} />
+      </motion.div>
+
+      {/* Lens — Figma 1:456: glow inset behind transparent lens PNG */}
+      <div className={`${CLUSTER_POSITION} z-[25]`}>
         <motion.div
           className="relative flex w-full max-w-[1512px] flex-col items-center px-4"
           initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
@@ -88,8 +76,7 @@ export const SpiralStage = ({
           }
         >
           <motion.div
-            ref={lensRef}
-            className="relative flex shrink-0 items-center justify-center"
+            className={`relative overflow-visible ${LENS_BOX}`}
             initial={
               reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }
             }
@@ -100,19 +87,33 @@ export const SpiralStage = ({
                 : { type: "tween", duration: 0.45, ease: EASE_OUT, delay: 0.24 }
             }
           >
-            <img
-              src="/section-15/lens/lens-glow.svg"
-              alt=""
-              className="pointer-events-none absolute size-[clamp(160px,13.3vw,242px)] object-contain opacity-90"
+            {/* Ellipse 48438 — left 8 top 5 size 182 in 201 frame, bleed -16.48% */}
+            <div
               aria-hidden="true"
-              draggable={false}
-            />
+              className="pointer-events-none absolute z-0"
+              style={{
+                left: `${(8 / 201) * 100}%`,
+                top: `${(5 / 201) * 100}%`,
+                width: `${(182 / 201) * 100}%`,
+                height: `${(182 / 201) * 100}%`,
+              }}
+            >
+              <div className="absolute inset-[-16.48%]">
+                <img
+                  src="/section-15/lens/lens-glow.svg"
+                  alt=""
+                  className="block size-full max-w-none"
+                  draggable={false}
+                />
+              </div>
+            </div>
+
             <img
               src="/section-15/lens/camera-lens.png"
               alt=""
               width={201}
               height={201}
-              className="relative size-[clamp(140px,13.3vw,201px)] object-contain"
+              className="absolute inset-0 z-[1] size-full object-cover"
               aria-hidden="true"
               draggable={false}
             />
@@ -120,54 +121,17 @@ export const SpiralStage = ({
         </motion.div>
       </div>
 
-      {/* Spiral — above lens; params live via DialKit */}
-      <motion.div
-        className="absolute inset-0 z-20"
-        initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={
-          reduceMotion
-            ? { duration: 0 }
-            : { type: "tween", duration: 0.55, ease: EASE_OUT, delay: 0.12 }
-        }
-      >
-        <SpiralImages
-          images={PORTRAIT_IMAGES}
-          turns={dial.turns}
-          speed={dial.speed}
-          spacing={dial.spacing}
-          spread={dial.spread}
-          curve={dial.curve}
-          imageSize={dial.imageSize}
-          sizeAttenuation={dial.sizeFalloff}
-          fadeIn={dial.fadeIn}
-          fadeOut={dial.fadeOut}
-          cornerRadius={dial.radius}
-          clockwise={dial.clockwise}
-          rotationMode={dial.rotationMode as "outward" | "tangent"}
-          rotationOffset={dial.rotationOffset}
-          startAngle={dial.startAngle}
-          centerX={dial.position.x / 100}
-          centerY={dial.position.y / 100}
-          originRef={dial.position.followLens ? lensRef : undefined}
-          originOffsetX={dial.position.offsetX}
-          originOffsetY={dial.position.offsetY}
-        />
-      </motion.div>
-
-      {/* Copy — above spiral */}
+      {/* Copy — above spiral; spacer = lens + 14px gap (Figma) */}
       <div className={`${CLUSTER_POSITION} z-30`}>
         <div className="relative flex w-full max-w-[1512px] flex-col items-center px-4">
           <div
-            className="size-[clamp(140px,13.3vw,201px)] shrink-0"
+            className={`mb-[14px] desktop-sm:mb-1 ${LENS_BOX}`}
             aria-hidden="true"
           />
-          <div className="relative mt-1">
-            <HeroContent
-              onExplorePeople={onExplorePeople}
-              onViewStories={onViewStories}
-            />
-          </div>
+          <HeroContent
+            onExplorePeople={onExplorePeople}
+            onViewStories={onViewStories}
+          />
         </div>
       </div>
     </div>

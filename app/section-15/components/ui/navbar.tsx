@@ -33,13 +33,13 @@ export const Navbar = ({ onViewStories }: NavbarProps) => {
 
   return (
     <nav aria-label="Primary" className="absolute inset-x-0 top-0 z-40 w-full">
-      <div className="mx-auto flex w-full max-w-[1512px] items-center justify-between px-5 pt-9 android-sm:px-8 ipad:px-12 desktop-sm:px-[130px] desktop-sm:pt-9">
+      <div className="mx-auto flex w-full max-w-[1512px] items-center justify-between px-4 py-6 android-sm:px-8 ipad:px-12 ipad:py-8 desktop-sm:px-[130px] desktop-sm:py-9">
         <a
           href="#"
           aria-label="47 Studio home"
           className="inline-flex min-h-11 cursor-pointer items-center touch-manipulation focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black [-webkit-tap-highlight-color:transparent]"
         >
-          <span className="font-redhat text-[clamp(24px,2.1vw,32px)] font-bold leading-6 text-black">
+          <span className="font-redhat text-[21px] font-bold leading-4 text-black ipad:text-[32px] ipad:leading-6 desktop-sm:text-[clamp(24px,2.1vw,32px)]">
             / 47 Studio
           </span>
         </a>
@@ -65,7 +65,7 @@ export const Navbar = ({ onViewStories }: NavbarProps) => {
             variant="nav"
             aria-label="View Stories"
             onClick={onViewStories}
-            className="hidden min-w-[44px] desktop-sm:inline-flex"
+            className="!hidden min-w-[44px] desktop-sm:!inline-flex"
           >
             View Stories
           </Button>
@@ -75,15 +75,16 @@ export const Navbar = ({ onViewStories }: NavbarProps) => {
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMenuOpen}
             onClick={handleToggleMenu}
-            className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-full border border-black/10 bg-black/[0.02] touch-manipulation transition-opacity duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black desktop-sm:hidden [-webkit-tap-highlight-color:transparent] [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-80"
+            className="inline-flex size-11 cursor-pointer items-center justify-center touch-manipulation transition-opacity duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black desktop-sm:hidden [-webkit-tap-highlight-color:transparent] [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-80"
           >
             <span className="sr-only">{isMenuOpen ? "Close" : "Menu"}</span>
             <span
               aria-hidden="true"
-              className="flex w-5 flex-col items-center justify-center gap-1"
+              className="flex size-6 flex-col items-center justify-center gap-[5px] ipad:size-8 ipad:gap-1.5"
             >
-              <span className="block h-0.5 w-5 rounded-full bg-black" />
-              <span className="block h-0.5 w-5 rounded-full bg-black" />
+              <span className="block h-0.5 w-full rounded-full bg-black" />
+              <span className="block h-0.5 w-full rounded-full bg-black" />
+              <span className="block h-0.5 w-full rounded-full bg-black" />
             </span>
           </button>
         </div>

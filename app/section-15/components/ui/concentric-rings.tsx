@@ -7,11 +7,11 @@ import { PixelBackground } from "./pixel-background";
 /** ease-out-cubic */
 const EASE_OUT = [0.215, 0.61, 0.355, 1] as const;
 
-/** Matches ring-outer.svg */
-const OUTER_SIZE = "clamp(680px, 92.9vw, 1404px)";
+/** Mobile ≈838 · tablet ≈1224 · desktop max 1404 */
+const OUTER_SIZE = "clamp(838px, 164.5vw, 1404px)";
 
-/** Matches ring-inner.svg */
-const INNER_SIZE = "clamp(250px, 34.1vw, 516px)";
+/** Mobile ≈412 · tablet/desktop 516 */
+const INNER_SIZE = "clamp(412px, 69.4vw, 516px)";
 
 const OUTER_RING = {
   src: "/section-15/rings/ring-outer.svg",
@@ -32,14 +32,14 @@ const INNER_RING = {
 const SOFT_RINGS = [
   {
     src: "/section-15/rings/ring-outer-soft.png",
-    size: "clamp(720px, 97.8vw, 1479px)",
+    size: "clamp(884px, 173vw, 1479px)",
     opacity: "opacity-[0.1]",
     direction: "reverse" as const,
     duration: "40s",
   },
   {
     src: "/section-15/rings/ring-inner-soft.png",
-    size: "clamp(260px, 35.3vw, 534px)",
+    size: "clamp(426px, 71.8vw, 534px)",
     opacity: "opacity-[0.12]",
     direction: "reverse" as const,
     duration: "28s",
@@ -62,7 +62,7 @@ const RingLayer = ({
   reduceMotion: boolean | null;
 }) => (
   <div
-    className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ${opacity}`}
+    className={`absolute left-1/2 top-[var(--ring-cy,50%)] -translate-x-1/2 -translate-y-1/2 ${opacity}`}
     style={{ width: size, height: size } as CSSProperties}
   >
     <div
@@ -84,15 +84,17 @@ const RingLayer = ({
 );
 
 /**
- * Pixel field sits strictly between the hard rings (inset from both strokes)
- * so the cream PixelCard fill cannot paint over the tick marks.
+ * Pixel field sits in the annulus between hard rings.
+ * Radii = half of INNER_SIZE / OUTER_SIZE, slightly inset so ticks stay clear.
+ * Center MUST match RingLayer (`--ring-cy`) — previously 50% 50% so the
+ * mask missed the ring gap on mobile/tablet.
  */
-const PIXEL_INNER_EDGE = "clamp(132px, 17.6vw, 266px)";
-const PIXEL_OUTER_EDGE = "clamp(328px, 44.8vw, 686px)";
+const PIXEL_INNER_EDGE = "clamp(210px, 35.5vw, 262px)"; // ≥ INNER_SIZE / 2
+const PIXEL_OUTER_EDGE = "clamp(412px, 81vw, 690px)"; // ≤ OUTER_SIZE / 2
 
 const PIXEL_ANNULUS_MASK: CSSProperties = {
-  WebkitMaskImage: `radial-gradient(circle at 50% 50%, transparent ${PIXEL_INNER_EDGE}, #000 ${PIXEL_INNER_EDGE}, #000 ${PIXEL_OUTER_EDGE}, transparent ${PIXEL_OUTER_EDGE})`,
-  maskImage: `radial-gradient(circle at 50% 50%, transparent ${PIXEL_INNER_EDGE}, #000 ${PIXEL_INNER_EDGE}, #000 ${PIXEL_OUTER_EDGE}, transparent ${PIXEL_OUTER_EDGE})`,
+  WebkitMaskImage: `radial-gradient(circle at 50% var(--ring-cy, 50%), transparent ${PIXEL_INNER_EDGE}, #000 ${PIXEL_INNER_EDGE}, #000 ${PIXEL_OUTER_EDGE}, transparent ${PIXEL_OUTER_EDGE})`,
+  maskImage: `radial-gradient(circle at 50% var(--ring-cy, 50%), transparent ${PIXEL_INNER_EDGE}, #000 ${PIXEL_INNER_EDGE}, #000 ${PIXEL_OUTER_EDGE}, transparent ${PIXEL_OUTER_EDGE})`,
   WebkitMaskRepeat: "no-repeat",
   maskRepeat: "no-repeat",
   WebkitMaskSize: "100% 100%",
@@ -104,7 +106,7 @@ export const ConcentricRings = () => {
 
   return (
     <div
-      className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center"
+      className="pointer-events-none absolute inset-0 z-[1] [--ring-cy:300px] ipad:[--ring-cy:450px] desktop-sm:[--ring-cy:50%]"
       aria-hidden="true"
     >
       <motion.div

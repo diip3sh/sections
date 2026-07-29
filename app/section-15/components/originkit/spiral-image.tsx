@@ -1,28 +1,79 @@
 "use client";
 
 // Spiral Images — Originkit
-// Lituus spiral: r = a · θ^(-1/2)
 // Props set in the preview:
-//   turns: 1.2
-//   speed: -1
+//   turns: 1.5
+//   speed: -3
 //   spacing: 10
-//   spread: 7
-//   curve: 0.5  (classic lituus exponent)
-//   imageSize: 261
-//   sizeAttenuation (Size Falloff): 3
-//   fadeIn: 0
-//   fadeOut: 6
-//   cornerRadius (Radius): 6
+//   spread: 10
+//   imageSize: 267
+//   sizeAttenuation: 4
+//   fadeOut: 18
+//   cornerRadius: 2
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
 const TWO_PI = Math.PI * 2;
 
+// 14 stable seeded images (used when no Content is set).
 const DEFAULT_IMAGES = [
-  { src: "/section-15/portraits/portrait-01.png" },
-  { src: "/section-15/portraits/portrait-02.png" },
-  { src: "/section-15/portraits/portrait-03.png" },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/5f084e5a-2e3f-4239-be1a-5084a6dcef00/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/3b42034b-897e-456d-cb00-1f2cf0aa4700/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/c84f3e45-635f-4eaa-4e24-730098b55500/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/9652cf81-4644-4471-1122-4e40ef6e2600/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/1640f8fe-2cb1-4026-88e3-10dd0019f400/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/20fd03c3-49d6-408c-3ac9-8c5a6ed2b500/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/4b1ec233-9a09-4483-1adb-404a93094100/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/8fd4d2a3-a363-4658-d6ee-84790bc8f300/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/3ad8e2bd-dc38-49ba-d186-1a5ab1428d00/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/93ba867c-59af-4b58-8021-c0c0fbce8300/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/6c99279a-d77b-4fe0-a32a-a674adced100/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/6ab26fe4-5016-4c65-01e8-b3a71ea08200/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/9d2dbaa2-7b61-4bf9-4830-2c93e4706000/w=800",
+  },
+  {
+    src: "https://imagedelivery.net/IEUjvl3YUlxY-MrTpOAWDQ/4d1fe81d-5289-4e08-b381-03e4e9efed00/w=800",
+  },
 ];
+
+/** Preview defaults from Originkit */
+const COMPONENT_DEFAULTS = {
+  images: DEFAULT_IMAGES,
+  turns: 1.5,
+  speed: -3,
+  spacing: 10,
+  spread: 10,
+  imageSize: 267,
+  sizeAttenuation: 4,
+  fadeIn: 20,
+  fadeOut: 18,
+  cornerRadius: 2,
+} as const;
 
 type SpiralImage = {
   src?: string;
@@ -39,65 +90,30 @@ type SpiralImagesProps = {
   fadeIn?: number;
   fadeOut?: number;
   cornerRadius?: number;
-  /** Horizontal center as fraction of width (0–1). Default 0.5. */
-  centerX?: number;
-  /** Vertical center as fraction of height (0–1). Default 0.5. */
-  centerY?: number;
-  /**
-   * When set, spiral terminus tracks this element's center each frame
-   * (relative to the spiral canvas container). Use for the camera lens.
-   */
-  originRef?: React.RefObject<HTMLElement | null>;
-  /** Extra px offset applied after origin / center resolution. */
-  originOffsetX?: number;
-  originOffsetY?: number;
-  /**
-   * Lituus exponent in r = a · θ^(-curve).
-   * Classic lituus uses 0.5 (r = a / √θ). Higher = tighter toward center.
-   */
-  curve?: number;
-  /**
-   * Card orientation:
-   * - outward: top of each image points away from hub (Figma)
-   * - tangent: image follows the spiral path direction
-   */
-  rotationMode?: "outward" | "tangent";
-  /** Extra rotation in degrees applied after mode. */
-  rotationOffset?: number;
-  /** Rotates the whole spiral path in degrees (0 = starts on +X / right of lens). */
-  startAngle?: number;
-  /** When true, spiral winds clockwise (Figma). */
-  clockwise?: boolean;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 };
 
 /**
  * Spiral Images
- * Images flow along a lituus spiral (r = a · θ^(-1/2)) into the center.
+ * Images flow along an Archimedean spiral from the outer edge into the center
+ * (a "vortex" / whirl), rotating to follow the spiral's tangent and fading in
+ * and out at the ends. Canvas2D — no workers, no WebGL.
  */
-const SpiralImages = ({
-  images = DEFAULT_IMAGES,
-  turns = 3.5,
-  speed = 2,
-  spacing = 5,
-  spread = 6,
-  sizeAttenuation = 2,
-  imageSize = 200,
-  fadeIn = 20,
-  fadeOut = 0,
-  cornerRadius = 5,
-  centerX = 0.5,
-  centerY = 0.5,
-  originRef,
-  originOffsetX = 0,
-  originOffsetY = 0,
-  curve = 0.5,
-  rotationMode = "outward",
-  rotationOffset = 0,
-  startAngle = 0,
-  clockwise = true,
-  style = {},
-}: SpiralImagesProps) => {
+const SpiralImages = (props: SpiralImagesProps) => {
+  const {
+    images = COMPONENT_DEFAULTS.images,
+    turns = COMPONENT_DEFAULTS.turns,
+    speed = COMPONENT_DEFAULTS.speed,
+    spacing = COMPONENT_DEFAULTS.spacing,
+    spread = COMPONENT_DEFAULTS.spread,
+    sizeAttenuation = COMPONENT_DEFAULTS.sizeAttenuation,
+    imageSize = COMPONENT_DEFAULTS.imageSize,
+    fadeIn = COMPONENT_DEFAULTS.fadeIn,
+    fadeOut = COMPONENT_DEFAULTS.fadeOut,
+    cornerRadius = COMPONENT_DEFAULTS.cornerRadius,
+    style = {},
+  } = props;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef(0);
@@ -105,13 +121,15 @@ const SpiralImages = ({
   const lastRef = useRef(0);
   const imgsRef = useRef<(HTMLImageElement | null)[]>([]);
 
-  const items: SpiralImage[] = images.length > 0 ? images : DEFAULT_IMAGES;
+  const items: SpiralImage[] =
+    images.length > 0 ? images : [...COMPONENT_DEFAULTS.images];
 
   const srcKey = items.map((im) => im?.src || "").join("|");
   useEffect(() => {
     imgsRef.current = items.map((im) => {
       if (!im?.src) return null;
       const el = new Image();
+      el.crossOrigin = "anonymous";
       el.src = im.src;
       return el;
     });
@@ -143,24 +161,15 @@ const SpiralImages = ({
     const ro = new ResizeObserver(resize);
     ro.observe(container);
 
-    const wind = clockwise ? -1 : 1;
-    const startRad = (startAngle * Math.PI) / 180;
-    const offsetRad = (rotationOffset * Math.PI) / 180;
-    // Classic lituus: r = a · θ^(-1/2). `curve` dials the exponent (default 0.5).
-    const exponent = Math.max(0.05, curve);
-    // θ must stay > 0 (lituus singular at 0)
-    const thetaMin = 0.35;
-    const thetaSpan = Math.max(turns, 0.01) * TWO_PI;
-
+    // Archimedean spiral (linear radius) → every turn is equally spaced.
+    // n in [0,1] → outer edge (n=0) to center (n=1).
     const spiral = (n: number, R: number) => {
-      const theta = thetaMin + n * thetaSpan;
-      // a chosen so outer edge (n=0) lands at radius R
-      const a = R * Math.pow(thetaMin, exponent);
-      const rad = a * Math.pow(theta, -exponent);
-      const ang = startRad + wind * (theta - thetaMin);
+      const ang = n * turns * TWO_PI;
+      const rad = R * (1 - n);
       return { x: rad * Math.cos(ang), y: -rad * Math.sin(ang) };
     };
 
+    // Arc-length reparameterization so equal arc steps → equal visual spacing.
     const M = 2000;
     const cum = new Float32Array(M + 1);
     let prev = spiral(0, 1);
@@ -220,24 +229,9 @@ const SpiralImages = ({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
 
-      // Prefer live origin (camera lens) over static fractions
-      let cx = w * centerX;
-      let cy = h * centerY;
-      const origin = originRef?.current;
-      if (origin && container) {
-        const cr = container.getBoundingClientRect();
-        const or = origin.getBoundingClientRect();
-        if (cr.width > 0 && cr.height > 0) {
-          cx = or.left + or.width / 2 - cr.left;
-          cy = or.top + or.height / 2 - cr.top;
-        }
-      }
-      cx += originOffsetX;
-      cy += originOffsetY;
-
-      // Radius from spiral center to farthest edge so outer cards fill the frame
-      const edgeDist = Math.max(cx, w - cx, cy, h - cy);
-      const R = edgeDist * 0.92 * (1 + (spread - 1) * 0.12);
+      const cx = w / 2;
+      const cy = h / 2;
+      const R = 0.48 * Math.min(w, h) * (1 + (spread - 1) * 0.18);
       const els = imgsRef.current;
       const nImgs = els.length || 1;
 
@@ -269,11 +263,7 @@ const SpiralImages = ({
             : 1;
 
         const p2 = spiral(Math.min(n + 0.001, 1), R);
-        // Figma: tops point away from hub. Tangent follows the path instead.
-        const angle =
-          (rotationMode === "tangent"
-            ? Math.atan2(p2.y - p.y, p2.x - p.x)
-            : Math.atan2(p.y, p.x) + Math.PI / 2) + offsetRad;
+        const angle = Math.atan2(p2.y - p.y, p2.x - p.x);
 
         const el = els[imgIdx];
         const ready = el && el.complete && el.naturalWidth > 0;
@@ -324,16 +314,6 @@ const SpiralImages = ({
     fadeIn,
     fadeOut,
     cornerRadius,
-    centerX,
-    centerY,
-    originRef,
-    originOffsetX,
-    originOffsetY,
-    curve,
-    rotationMode,
-    rotationOffset,
-    startAngle,
-    clockwise,
   ]);
 
   return (
@@ -351,5 +331,7 @@ const SpiralImages = ({
     </div>
   );
 };
+
+SpiralImages.displayName = "Spiral Images";
 
 export default SpiralImages;

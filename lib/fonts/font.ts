@@ -119,3 +119,9 @@ export const redHatDisplay = Red_Hat_Display({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
+
+export const HelveticaNeueNormal = localFont({
+  src: "./helvetica-medium.ttf",
+  variable: "--font-helvetica-neue-family",
+  display: "swap",
+});

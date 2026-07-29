@@ -1,7 +1,5 @@
 "use client";
 
-import { DialRoot } from "dialkit";
-import "dialkit/styles.css";
 import { ConcentricRings } from "./concentric-rings";
 import { Navbar } from "./navbar";
 import { SpiralStage } from "./spiral-stage";
@@ -28,9 +26,6 @@ export const Section15Hero = () => {
       />
 
       <Navbar onViewStories={handleViewStories} />
-
-      {/* Outside pointer-events-none layers so the panel stays interactive */}
-      <DialRoot position="top-right" defaultOpen />
     </section>
   );
 };

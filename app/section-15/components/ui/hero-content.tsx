@@ -11,6 +11,10 @@ type HeroContentProps = {
   onViewStories: () => void;
 };
 
+/**
+ * Hero copy + CTAs — Figma Frame 8305 (1:1641) desktop;
+ * mobile/tablet scales from 1:1028 / 1:441.
+ */
 export const HeroContent = ({
   onExplorePeople,
   onViewStories,
@@ -32,34 +36,35 @@ export const HeroContent = ({
         };
 
   return (
-    <div className="pointer-events-none relative z-20 flex w-full max-w-[423px] flex-col items-center gap-6 px-4">
-      <div className="flex w-full flex-col items-center gap-4 text-center">
+    <div className="pointer-events-none relative z-20 flex w-full max-w-[370px] flex-col items-center gap-4 px-0 ipad:max-w-[423px] ipad:gap-6">
+      {/* Frame 8303 — gap 16px (Figma) */}
+      <div className="flex w-full flex-col items-center gap-2 text-center ipad:gap-4">
         <motion.h1
           {...reveal(0.28)}
-          className="pointer-events-auto w-full font-sans max-w-[423px] desktop-sm:text-[40px] font-medium leading-[1.15] tracking-[-1.6px] text-balance"
+          className="pointer-events-auto w-full max-w-[370px] font-helvetica-neue text-[32px] desktop-sm:text-[40px] font-medium leading-tight tracking-[-1.28px] text-balance ipad:max-w-[423px] ipad:text-[40px] ipad:tracking-[-1.6px]"
         >
-          <span className="text-black/40">Meet the People Behind </span>
+          <span className="text-black/40">Meet People Behind </span>
           <span className="text-black">Every Great Idea.</span>
         </motion.h1>
 
         <motion.p
           {...reveal(0.36)}
-          className="pointer-events-auto max-w-[360px] font-sans text-[15px] leading-[1.45] tracking-[-0.6px] text-black/40 text-pretty"
+          className="pointer-events-auto w-full max-w-[312px] font-sans text-[14px] leading-normal tracking-[-0.56px] text-black/40 text-pretty ipad:max-w-none ipad:text-[15px] ipad:tracking-[-0.6px]"
         >
           Connect with creators, professionals, and communities shaping the
           future together.
         </motion.p>
       </div>
 
+      {/* Frame 8395 — gap 24px (Figma) */}
       <motion.div
         {...reveal(0.48)}
-        className="pointer-events-auto flex w-full flex-col items-center justify-center gap-6 android-sm:flex-row ipad:gap-6"
+        className="pointer-events-auto flex flex-row flex-wrap items-center justify-center gap-4 ipad:gap-6"
       >
         <Button
           variant="primary"
           aria-label="Explore People"
           onClick={onExplorePeople}
-          className="w-full min-w-[160px] px-6 android-sm:w-auto"
         >
           Explore People
         </Button>
@@ -67,7 +72,6 @@ export const HeroContent = ({
           variant="secondary"
           aria-label="View Stories"
           onClick={onViewStories}
-          className="w-full min-w-[160px] px-6 android-sm:w-auto"
         >
           View Stories
         </Button>

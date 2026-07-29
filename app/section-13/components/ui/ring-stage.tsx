@@ -94,7 +94,12 @@ const RingLayer = ({
         cardWidth={cardWidth}
         cardHeight={cardHeight}
         rounded={14}
-        ring={{ radiusX: ringRadius, radiusY: ringRadius, tilt: true, repeat: 3 }}
+        ring={{
+          radiusX: ringRadius,
+          radiusY: ringRadius,
+          tilt: true,
+          repeat: 3,
+        }}
         direction="anticlockwise"
         drag={true}
         transition={{ type: "tween", ease: "linear", duration: 28 }}
@@ -119,9 +124,9 @@ export const RingStage = () => {
 
   return (
     <>
-      {/* Mobile — flows below CTAs; section overflow crops bottom */}
+      {/* Mobile — in-flow flex child; centered */}
       <div
-        className="pointer-events-none relative mx-auto w-[370px] shrink-0 ipad:hidden"
+        className="pointer-events-none relative flex w-full shrink-0 items-center justify-center ipad:hidden"
         aria-hidden="true"
       >
         <motion.div {...motionProps} className="relative size-[370px]">

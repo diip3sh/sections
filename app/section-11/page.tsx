@@ -207,7 +207,7 @@ type PhoneMockupProps = {
   style?: CSSProperties;
 };
 
-/** Upright Mobile.svg frame — screen fills the Figma placeholder exactly. */
+/** Mobile.svg frame — Vector + Dynamic Island layered above the solid SVG fill. */
 const PhoneMockup = ({
   screen,
   screenWidth,
@@ -216,14 +216,21 @@ const PhoneMockup = ({
   style,
 }: PhoneMockupProps) => (
   <div className={`relative overflow-clip ${className}`} style={style}>
-    {/*
-      White fill + Vector behind the SVG hole.
-      Vectors have transparent rounded corners — white backing prevents gaps.
-      Inset matches Figma screen placeholder (2.36% / 5.65%).
-    */}
+    {/* Device chrome */}
+    <Image
+      src="/section-10/Mobile.svg"
+      alt=""
+      aria-hidden="true"
+      width={235}
+      height={476}
+      priority
+      className="pointer-events-none absolute inset-0 size-full object-fill"
+    />
+
+    {/* Screen content — above the solid SVG fill, clipped to the display inset */}
     <div
       aria-hidden="true"
-      className="absolute inset-[1.4%_4.2%_1.4%_4.2%] overflow-hidden bg-white"
+      className="absolute inset-[2.1%_4.9%_2.1%_4.9%] z-[1] overflow-clip rounded-[6%] bg-[#1d1d1b]"
     >
       <Image
         src={screen}
@@ -234,14 +241,16 @@ const PhoneMockup = ({
         className="pointer-events-none size-full max-w-none object-cover object-top"
       />
     </div>
+
+    {/* Dynamic Island overlays the screen */}
     <Image
-      src="/section-10/Mobile.svg"
+      src="/section-10/dynamic-island.svg"
       alt=""
       aria-hidden="true"
-      width={235}
-      height={476}
+      width={52}
+      height={16}
       priority
-      className="pointer-events-none absolute inset-0 z-10 size-full object-fill"
+      className="pointer-events-none absolute top-[3%] left-1/2 z-[2] w-[22.1%] -translate-x-1/2"
     />
   </div>
 );
@@ -477,12 +486,11 @@ const PhoneShowcase = () => {
     >
       <div
         aria-hidden="true"
-        className="absolute top-0 left-0"
+        className="absolute top-0 left-0 origin-top-left will-change-transform"
         style={{
           width: artboard.width,
           height: artboard.height,
           transform: `scale(${scale})`,
-          transformOrigin: "top left",
         }}
       >
         {/* Left phone — desktop only */}
@@ -686,8 +694,8 @@ const Section11 = () => {
               </div>
             </div>
 
-            {/* Phone showcase — Figma 3049:7876 */}
-            <div className="relative z-10 mt-[clamp(1.5rem,4vw,2.75rem)] -mx-5 w-[calc(100%+2.5rem)] android-sm:-mx-8 android-sm:w-[calc(100%+4rem)] ipad:-mx-10 ipad:w-[calc(100%+5rem)]">
+            {/* Phone showcase — scales to padded content width, capped at artboard */}
+            <div className="relative z-10 mx-auto mt-[clamp(1.5rem,4vw,2.75rem)] w-full max-w-[1440px]">
               <PhoneShowcase />
             </div>
           </div>

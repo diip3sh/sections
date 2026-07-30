@@ -10,9 +10,9 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 const BASE_CLASS =
   "inline-flex cursor-pointer touch-manipulation items-center justify-center whitespace-nowrap font-sans text-[15px] font-medium leading-none tracking-[-0.6px] transition-[opacity,transform] duration-200 ease [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:scale-[0.98] motion-reduce:active:scale-100 [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90";
 
-/** Mobile CTA height 18px; Figma tablet/desktop frame is 42px */
+/** Figma tablet/desktop CTA frame is 42px — keep the same on mobile (18px was a bad export) */
 const CTA_SIZE =
-  "h-[18px] min-h-[18px] px-4 py-0 ipad:h-[42px] ipad:min-h-[42px] ipad:px-6 ipad:py-3";
+  "h-[42px] min-h-[42px] px-5 py-3 ipad:px-6";
 
 export const Button = ({
   variant = "primary",
@@ -25,7 +25,7 @@ export const Button = ({
     return (
       <button
         type={type}
-        className={`${BASE_CLASS} min-h-11 rounded-[36px] bg-black px-5 py-2.5 text-white shadow-[0_4px_12px_rgba(0,0,0,0.12)] ${className}`}
+        className={`${BASE_CLASS} min-h-11 rounded-[36px] bg-black px-5 py-3 text-white shadow-[0_4px_12px_rgba(0,0,0,0.12)] ${className}`}
         {...props}
       >
         {children}

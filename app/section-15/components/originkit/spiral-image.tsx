@@ -1,17 +1,18 @@
 "use client";
 
 // Spiral Images — Originkit
-// Props set in the preview:
+// Controls (preview):
 //   turns: 1.5
 //   speed: -3
 //   spacing: 10
-//   spread: 10
+//   spread: 10 (md+ 768px) · spreadMobile: 6 (< md)
 //   imageSize: 267
-//   sizeAttenuation: 4
+//   sizeAttenuation (Size Falloff): 4
+//   fadeIn: 20
 //   fadeOut: 18
-//   cornerRadius: 2
+//   cornerRadius (Radius): 2
 
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 const TWO_PI = Math.PI * 2;
 
@@ -61,19 +62,25 @@ const DEFAULT_IMAGES = [
   },
 ];
 
-/** Preview defaults from Originkit */
+/** Originkit control defaults — single source of truth for the spiral */
 const COMPONENT_DEFAULTS = {
   images: DEFAULT_IMAGES,
   turns: 1.5,
   speed: -3,
-  spacing: 5,
+  spacing: 10,
+  /** md+ (768px / --breakpoint-ipad) */
   spread: 10,
+  /** < md */
+  spreadMobile: 15,
   imageSize: 267,
   sizeAttenuation: 4,
   fadeIn: 20,
   fadeOut: 18,
   cornerRadius: 2,
 } as const;
+
+/** Matches Tailwind `md` / `--breakpoint-ipad` */
+const MD_MIN = 768;
 
 type SpiralImage = {
   src?: string;
@@ -85,6 +92,8 @@ type SpiralImagesProps = {
   speed?: number;
   spacing?: number;
   spread?: number;
+  /** Spread below md (768px). Defaults to `spreadMobile` in COMPONENT_DEFAULTS. */
+  spreadMobile?: number;
   sizeAttenuation?: number;
   imageSize?: number;
   fadeIn?: number;
@@ -106,6 +115,7 @@ const SpiralImages = (props: SpiralImagesProps) => {
     speed = COMPONENT_DEFAULTS.speed,
     spacing = COMPONENT_DEFAULTS.spacing,
     spread = COMPONENT_DEFAULTS.spread,
+    spreadMobile = COMPONENT_DEFAULTS.spreadMobile,
     sizeAttenuation = COMPONENT_DEFAULTS.sizeAttenuation,
     imageSize = COMPONENT_DEFAULTS.imageSize,
     fadeIn = COMPONENT_DEFAULTS.fadeIn,
@@ -113,6 +123,18 @@ const SpiralImages = (props: SpiralImagesProps) => {
     cornerRadius = COMPONENT_DEFAULTS.cornerRadius,
     style = {},
   } = props;
+
+  const [activeSpread, setActiveSpread] = useState(spread);
+
+  useEffect(() => {
+    const media = window.matchMedia(`(min-width: ${MD_MIN}px)`);
+    const update = () => {
+      setActiveSpread(media.matches ? spread : spreadMobile);
+    };
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, [spread, spreadMobile]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -231,7 +253,7 @@ const SpiralImages = (props: SpiralImagesProps) => {
 
       const cx = w / 2;
       const cy = h / 2;
-      const R = 0.48 * Math.min(w, h) * (1 + (spread - 1) * 0.18);
+      const R = 0.48 * Math.min(w, h) * (1 + (activeSpread - 1) * 0.18);
       const els = imgsRef.current;
       const nImgs = els.length || 1;
 
@@ -308,7 +330,7 @@ const SpiralImages = (props: SpiralImagesProps) => {
     turns,
     speed,
     spacing,
-    spread,
+    activeSpread,
     sizeAttenuation,
     imageSize,
     fadeIn,

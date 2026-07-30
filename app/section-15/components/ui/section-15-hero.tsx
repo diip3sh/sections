@@ -20,10 +20,16 @@ export const Section15Hero = () => {
     >
       <ConcentricRings />
 
-      <SpiralStage
-        onExplorePeople={handleExplorePeople}
-        onViewStories={handleViewStories}
-      />
+      {/*
+        Clip wrapper must be the containing block for SpiralStage.
+        Absolute inset-0 against <section> skips this div’s overflow-hidden.
+      */}
+      <div className="absolute inset-0 z-[2] w-full wide-lg:left-1/2 wide-lg:right-auto wide-lg:max-w-[1440px] wide-lg:-translate-x-1/2 wide-lg:overflow-hidden wide-lg:mask-x-from-80% wide-lg:mask-x-to-90%">
+        <SpiralStage
+          onExplorePeople={handleExplorePeople}
+          onViewStories={handleViewStories}
+        />
+      </div>
 
       <Navbar onViewStories={handleViewStories} />
     </section>

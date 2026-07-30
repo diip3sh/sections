@@ -41,7 +41,7 @@ export const SpiralStage = ({
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-[2]">
+    <div className="pointer-events-none relative h-full w-full">
       {/*
         Layer order (back → front):
         1. Spiral images (z-20) — Figma frame on mobile, free on ipad+

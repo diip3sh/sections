@@ -1,7 +1,15 @@
 // Sticker Peel — Originkit
 // Using component defaults.
 
-import { useEffect, useRef, useState, useCallback } from "react";
+"use client";
+
+import {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  type CSSProperties,
+} from "react";
 const RenderTarget = {
   current: () => "preview",
   canvas: "canvas",
@@ -230,7 +238,7 @@ export default function StickerPeeling(__props: {
   backColor?: string;
   shadowEnabled?: boolean;
   shadow?: { opacity?: number; color?: string; x?: number; y?: number };
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }) {
   const {
     image,

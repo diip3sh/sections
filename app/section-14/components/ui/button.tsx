@@ -9,7 +9,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const BASE_CLASS =
-  "relative inline-flex w-full touch-manipulation items-center justify-center overflow-clip rounded-[12px] border-[0.6px] border-solid px-6 font-clash text-[16px] leading-[21px] capitalize transition-[opacity,transform] duration-200 ease [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.97] motion-reduce:active:scale-100 [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90";
+  "group relative inline-flex w-full touch-manipulation items-center justify-center overflow-clip rounded-[12px] border-[0.6px] border-solid px-6 font-clash text-[16px] leading-[21px] capitalize transition-[opacity,transform] duration-200 ease [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.97] motion-reduce:active:scale-100 [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90 cursor-pointer";
 
 export const Button = ({
   variant = "primary",

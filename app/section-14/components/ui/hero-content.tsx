@@ -6,6 +6,25 @@ import { Button } from "./button";
 /** ease-out-cubic */
 const EASE_OUT = [0.215, 0.61, 0.355, 1] as const;
 
+const ArrowIcon = ({ className }: { className?: string }) => (
+  <svg
+    width={15}
+    height={15}
+    viewBox="0 0 15 15"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    aria-hidden="true"
+  >
+    <path
+      d="M3.64645 11.3536C3.45118 11.1583 3.45118 10.8417 3.64645 10.6465L10.2929 4L6 4C5.72386 4 5.5 3.77614 5.5 3.5C5.5 3.22386 5.72386 3 6 3L11.5 3C11.6326 3 11.7598 3.05268 11.8536 3.14645C11.9473 3.24022 12 3.36739 12 3.5L12 9.00001C12 9.27615 11.7761 9.50001 11.5 9.50001C11.2239 9.50001 11 9.27615 11 9.00001V4.70711L4.35355 11.3536C4.15829 11.5488 3.84171 11.5488 3.64645 11.3536Z"
+      fill="currentColor"
+      fillRule="evenodd"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
 type HeroContentProps = {
   onGetStarted: () => void;
   onLaunchDemo: () => void;
@@ -80,21 +99,12 @@ export const HeroContent = ({
           onClick={onGetStarted}
           icon={
             <span
-              className="relative size-[19px] shrink-0 overflow-clip rounded-[1.727px]"
+              className="relative size-5 shrink-0 overflow-hidden"
               aria-hidden="true"
             >
-              <span className="absolute top-[2.35px] left-[1.82px] flex h-[15.555px] w-[15.488px] items-center justify-center">
-                <span className="flex-none rotate-[-45.9deg]">
-                  <span className="relative block h-[9.479px] w-[12.475px]">
-                    <img
-                      src="/section-14/arrow-icon.svg"
-                      alt=""
-                      width={14}
-                      height={11}
-                      className="absolute inset-[-7.69%_-5.84%] block size-full max-w-none"
-                    />
-                  </span>
-                </span>
+              <span className="absolute top-0 left-0 size-5 transition-transform duration-200 ease will-change-transform motion-reduce:transition-none motion-reduce:will-change-auto [@media(hover:hover)_and_(pointer:fine)]:group-hover:-translate-y-5 [@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-x-4">
+                <ArrowIcon className="absolute top-0 left-0 size-5" />
+                <ArrowIcon className="absolute top-5 -left-4 size-5" />
               </span>
             </span>
           }

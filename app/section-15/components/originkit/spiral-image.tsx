@@ -66,7 +66,7 @@ const COMPONENT_DEFAULTS = {
   images: DEFAULT_IMAGES,
   turns: 1.5,
   speed: -3,
-  spacing: 10,
+  spacing: 5,
   spread: 10,
   imageSize: 267,
   sizeAttenuation: 4,

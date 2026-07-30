@@ -2,137 +2,192 @@
 
 import StickerPeeling from "../originkit/sticker-peel";
 
+/** Desktop Figma artboard — X/Y are in these units */
+const DESKTOP_W = 1440;
+const DESKTOP_H = 892;
+
+/** sticker-peel control defaults (from Originkit panel) */
+const PEEL = {
+  hoverPeel: 45,
+  pressPeel: 64,
+  curlRotation: 240,
+  backColor: "#000000",
+  shadowEnabled: true,
+  shadow: {
+    opacity: 30,
+    color: "#000000",
+    x: -300,
+    y: 140,
+  },
+  transition: {
+    type: "tween" as const,
+    duration: 0.6,
+    ease: "easeInOut" as const,
+  },
+};
+
+type Point = { x: number; y: number };
+
 type StickerConfig = {
   id: string;
   src: string;
-  /** Percent of 1440 frame width */
-  left: string;
-  /** Percent of 892 frame height */
-  top: string;
-  rotate?: number;
-  width?: number;
-  height?: number;
-  /** Square size shorthand when width === height */
-  size?: number;
-  curlRotation?: number;
+  width: number;
+  height: number;
   label: string;
-  /** Translate X by -50% (centered stickers) */
+  /** Peel curl direction in degrees (sticker-peel `curlRotation`) */
+  curlRotation?: number;
+  /** Position is the horizontal center (translateX -50%) */
   centerX?: boolean;
+  x: number;
+  y: number;
+  frameW: number;
+  frameH: number;
 };
 
-/** Figma artboard 1440×892 — positions as % of frame */
-const STICKERS: StickerConfig[] = [
-  {
-    // Post-it-1 · node 1:2268 — x:165.89 y:224 w:104.44 h:117.37 · rotate 1.96°
-    id: "tl",
-    src: "/section-17/portraits/sticker-tl.png",
-    left: `${(165.89 / 1440) * 100}%`,
-    top: `${(224 / 892) * 100}%`,
-    rotate: 1.96,
-    width: 104,
-    height: 117,
-    curlRotation: 200,
-    label: "Creator portrait — top left",
-  },
-  {
-    id: "tr",
-    src: "/section-17/portraits/sticker-tr.png",
-    left: "81.6%",
-    top: "26.5%",
-    rotate: -3,
-    size: 101,
-    curlRotation: 260,
-    label: "Creator portrait — top right",
-  },
-  {
-    id: "mr",
-    src: "/section-17/portraits/sticker-mr.png",
-    left: "74.7%",
-    top: "60.3%",
-    rotate: 4,
-    size: 101,
-    curlRotation: 220,
-    label: "Creator portrait — middle right",
-  },
-  {
-    id: "bl",
-    src: "/section-17/portraits/sticker-bl.png",
-    left: "18.4%",
-    top: "60.3%",
-    rotate: -2,
-    size: 101,
-    curlRotation: 280,
-    label: "Creator portrait — bottom left",
-  },
-  {
-    id: "bc",
-    src: "/section-17/portraits/sticker-bc.png",
-    left: "50%",
-    top: "83.1%",
-    rotate: 1,
-    size: 101,
-    curlRotation: 240,
-    centerX: true,
-    label: "Creator portrait — bottom center",
-  },
-];
+type StickerId = "tl" | "tr" | "mr" | "bl" | "bc";
 
-const Star = ({ className }: { className?: string }) => (
-  <img
-    src="/section-17/decor/star.svg"
-    alt=""
-    width={22}
-    height={36}
-    className={className}
-    aria-hidden="true"
-  />
+/** desktop-sm (1280) … below wide-lg (1600) */
+const DESKTOP_SM_POSITIONS: Record<StickerId, Point> = {
+  tl: { x: 74, y: 283 },
+  tr: { x: 1266, y: 288 },
+  mr: { x: 1153, y: 527 },
+  bl: { x: 191, y: 645 },
+  bc: { x: 720, y: 844 },
+};
+
+/** wide-lg (1600) and above */
+const WIDE_LG_POSITIONS: Record<StickerId, Point> = {
+  tl: { x: 93, y: 241 },
+  tr: { x: 1411, y: 236 },
+  mr: { x: 1355, y: 601 },
+  bl: { x: 0, y: 661 },
+  bc: { x: 720, y: 857 },
+};
+
+const DESKTOP_STICKERS: Omit<StickerConfig, "x" | "y" | "frameW" | "frameH">[] =
+  [
+    {
+      id: "tl",
+      src: "/section-17/portraits/sticker-tl.png",
+      width: 101,
+      height: 108,
+      curlRotation: 300,
+      label: "Creator portrait — top left",
+    },
+    {
+      id: "tr",
+      src: "/section-17/portraits/sticker-tr.png",
+      width: 101,
+      height: 108,
+      curlRotation: 230,
+      label: "Creator portrait — top right",
+    },
+    {
+      id: "mr",
+      src: "/section-17/portraits/sticker-mr.png",
+      width: 101,
+      height: 108,
+      curlRotation: 230,
+      label: "Creator portrait — middle right",
+    },
+    {
+      id: "bl",
+      src: "/section-17/portraits/sticker-bl.png",
+      width: 101,
+      height: 108,
+      curlRotation: 300,
+      label: "Creator portrait — bottom left",
+    },
+    {
+      id: "bc",
+      src: "/section-17/portraits/sticker-bc.png",
+      width: 101,
+      height: 108,
+      centerX: true,
+      label: "Creator portrait — bottom center",
+    },
+  ];
+
+const StickerNode = ({
+  src,
+  width,
+  height,
+  label,
+  centerX,
+  curlRotation,
+  x,
+  y,
+  frameW,
+  frameH,
+}: StickerConfig) => (
+  <div
+    className="pointer-events-auto absolute"
+    style={{
+      left: `${(x / frameW) * 100}%`,
+      top: `${(y / frameH) * 100}%`,
+      width,
+      height,
+      transform: centerX ? "translateX(-50%)" : undefined,
+    }}
+  >
+    <StickerPeeling
+      image={{ src }}
+      imageWidth={width}
+      imageHeight={height}
+      hoverPeel={PEEL.hoverPeel}
+      pressPeel={PEEL.pressPeel}
+      curlRotation={curlRotation ?? PEEL.curlRotation}
+      backColor={PEEL.backColor}
+      shadowEnabled={PEEL.shadowEnabled}
+      shadow={PEEL.shadow}
+      transition={PEEL.transition}
+      style={{ cursor: "pointer" }}
+    />
+    <span className="sr-only">{label}</span>
+  </div>
+);
+
+const DesktopStickers = ({
+  positions,
+}: {
+  positions: Record<StickerId, Point>;
+}) => (
+  <>
+    {DESKTOP_STICKERS.map((sticker) => {
+      const pos = positions[sticker.id as StickerId];
+
+      return (
+        <StickerNode
+          key={sticker.id}
+          {...sticker}
+          x={pos.x}
+          y={pos.y}
+          frameW={DESKTOP_W}
+          frameH={DESKTOP_H}
+        />
+      );
+    })}
+  </>
 );
 
 export const StickerStage = () => {
   return (
-    <div
-      className="pointer-events-none absolute inset-0 z-10 hidden desktop-sm:block"
-      aria-label="Interactive creator stickers"
-    >
-      {STICKERS.map((sticker) => {
-        const width = sticker.width ?? sticker.size ?? 101;
-        const height = sticker.height ?? sticker.size ?? 101;
-        const tx = sticker.centerX ? "-50%" : "0";
+    <>
+      {/* desktop-sm … below wide-lg — mobile/iPad stickers live in CtaStickers */}
+      <div
+        className="pointer-events-none absolute inset-0 z-40 hidden desktop-sm:block wide-lg:hidden"
+        aria-label="Creator portraits"
+      >
+        <DesktopStickers positions={DESKTOP_SM_POSITIONS} />
+      </div>
 
-        return (
-          <div
-            key={sticker.id}
-            className="pointer-events-auto absolute"
-            style={{
-              left: sticker.left,
-              top: sticker.top,
-              width,
-              height,
-              transform: `translate(${tx}, 0) rotate(${sticker.rotate ?? 0}deg)`,
-              willChange: "transform",
-            }}
-          >
-            <StickerPeeling
-              image={{ src: sticker.src }}
-              imageWidth={width}
-              imageHeight={height}
-              curlRotation={sticker.curlRotation ?? 240}
-              hoverPeel={48}
-              pressPeel={68}
-              backColor="#f0ece6"
-              shadowEnabled
-              shadow={{ opacity: 28, color: "#000000", x: -40, y: 60 }}
-              transition={{
-                type: "tween",
-                duration: 0.45,
-                ease: [0.215, 0.61, 0.355, 1],
-              }}
-              style={{ cursor: "pointer" }}
-            />
-            <span className="sr-only">{sticker.label}</span>
-          </div>
-        );
-      })}
-    </div>
+      {/* wide-lg and above */}
+      <div
+        className="pointer-events-none absolute inset-0 z-40 hidden wide-lg:block"
+        aria-label="Creator portraits"
+      >
+        <DesktopStickers positions={WIDE_LG_POSITIONS} />
+      </div>
+    </>
   );
 };

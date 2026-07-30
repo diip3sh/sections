@@ -18,12 +18,14 @@ const CLUSTER_POSITION =
   "absolute inset-x-0 top-[96px] flex justify-center ipad:top-[191px] desktop-sm:top-[30.7%] desktop-sm:-translate-y-[130px]";
 
 /**
- * Figma mobile Group 2147240540 on iPhone 16/17 Pro (402×874):
- *   x: -384 · y: -116 · w: 858 · h: 881
- * Tablet+ stays full-bleed / free (canvas-centered).
+ * Mobile: spiral canvas origin (w/2, h/2) must sit on the lens center
+ * so portraits come out of the lens — not the old Figma bbox offset
+ * (left -384 / top -116 put the vortex far left & below the lens).
+ *   lens top 96 + half of 150 = 171
+ * Tablet+: full-bleed / free (canvas-centered in the stage).
  */
 const SPIRAL_FRAME =
-  "absolute z-20 left-[-384px] top-[-116px] h-[881px] w-[858px] ipad:inset-0 ipad:h-auto ipad:w-auto";
+  "absolute z-20 left-1/2 top-[calc(96px+75px)] h-[881px] w-[858px] -translate-x-1/2 -translate-y-1/2 ipad:inset-0 ipad:left-auto ipad:top-auto ipad:h-auto ipad:w-auto ipad:translate-none";
 
 /** Figma lens: mobile 150 · tablet 201 · desktop fluid */
 const LENS_BOX =

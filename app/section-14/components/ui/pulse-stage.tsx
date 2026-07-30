@@ -30,8 +30,8 @@ export const PulseStage = () => {
       <WaveBg
         shape="line"
         type="vertical"
-        speed={34}
-        gap={22}
+        speed={14}
+        gap={34}
         scale={2}
         backgroundColor="#0b0b0b"
         lineColor="#585858"

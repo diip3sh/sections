@@ -2,9 +2,9 @@
  * Full-bleed Figma grid backgrounds — no max-width.
  *
  * Frames:
- * - Mobile: 402 × 779  → /section-17/bg/mobile-bg.svg
- * - iPad: 744 × 1133   → /section-17/bg/ipad-bg.svg
- * - Desktop: 1440 × 892 → /section-17/bg/desktop-bg.svg
+ * - Mobile: 402 × 779  → /section-17/bg/mobile-bg.png
+ * - iPad: 744 × 1133   → /section-17/bg/ipad-bg.png
+ * - Desktop: 1440 × 892 → /section-17/bg/desktop-bg.png
  *
  * Breakpoints match globals.css (`ipad` 768px, `desktop-sm` 1280px).
  */
@@ -18,14 +18,34 @@ export const GridBackground = () => {
         {/* desktop-sm and above */}
         <source
           media="(min-width: 1280px)"
-          srcSet="/section-17/bg/desktop-bg.svg"
+          srcSet="/section-17/bg/desktop-bg.png"
         />
         {/* ipad → below desktop-sm */}
         <source
           media="(min-width: 768px)"
-          srcSet="/section-17/bg/ipad-bg.svg"
+          srcSet="/section-17/bg/ipad-bg.png"
         />
         {/* mobile default */}
+        <img
+          src="/section-17/bg/mobile-bg.png"
+          alt=""
+          width={402}
+          height={779}
+          className="size-full object-cover object-top"
+          decoding="async"
+        />
+      </picture>
+
+      {/* SVG backgrounds (kept for reference)
+      <picture className="absolute inset-0 block size-full">
+        <source
+          media="(min-width: 1280px)"
+          srcSet="/section-17/bg/desktop-bg.svg"
+        />
+        <source
+          media="(min-width: 768px)"
+          srcSet="/section-17/bg/ipad-bg.svg"
+        />
         <img
           src="/section-17/bg/mobile-bg.svg"
           alt=""
@@ -35,6 +55,7 @@ export const GridBackground = () => {
           decoding="async"
         />
       </picture>
+      */}
     </div>
   );
 };

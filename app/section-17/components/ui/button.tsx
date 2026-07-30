@@ -32,12 +32,12 @@ export const Button = ({
   return (
     <button
       type={type}
-      className={`${BASE_CLASS} relative overflow-hidden border border-solid border-[#f74406] text-white shadow-[0_7px_8px_rgba(0,0,0,0.18),0_28px_14px_rgba(0,0,0,0.16),0_64px_19px_rgba(0,0,0,0.09),0_114px_23px_rgba(0,0,0,0.03),0_178px_25px_rgba(0,0,0,0)] ${className}`}
+      className={`${BASE_CLASS} relative border border-solid border-[#f74406] text-white shadow-[0_8px_20px_rgba(0,0,0,0.18),0_16px_40px_rgba(0,0,0,0.12)] ${className}`}
       {...props}
     >
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 rounded-[36px] bg-linear-to-b from-[#ff9874] to-[#f74000]"
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit] bg-linear-to-b from-[#ff9874] to-[#f74000]"
       />
       <span className="relative z-1">{children}</span>
       <span

@@ -31,7 +31,7 @@ export const Section14Hero = () => {
             onLaunchDemo={handleLaunchDemo}
           />
 
-          <div className="my-[31px] w-full ">
+          <div className="mt-[31px] mb-[34px] w-full ">
             <PulseStage />
           </div>
         </div>

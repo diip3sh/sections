@@ -1,70 +1,85 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import CircularText from "../originkit/text-ring";
+import { useEffect, useRef, useState } from "react";
+import CurvedLoop from "../originkit/curved-marquee";
 
-/** Matches `--breakpoint-desktop-sm` in globals.css */
-const DESKTOP_SM_MQ = "(min-width: 1280px)";
+const VIEWBOX_WIDTH = 1440;
+
+/** Change this to tune the bow — viewBox height / top space scales with it */
+const CURVE_AMOUNT = -120;
 
 /**
- * Upper arc of “2 Months Free - Annually” above the headline.
- * Edges fade via alpha mask so the ring blends into the grid.
+ * Arc sits in normal flow above the headline.
+ * Width from parent column; font + curve drive a growing SVG so nothing clips.
  */
 export const TextArc = () => {
-  const [mounted, setMounted] = useState(false);
-  const [fontSize, setFontSize] = useState("13px");
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
 
   useEffect(() => {
-    setMounted(true);
+    const root = rootRef.current;
+    if (!root) return;
 
-    const mql = window.matchMedia(DESKTOP_SM_MQ);
-    const syncFontSize = () => {
-      setFontSize(mql.matches ? "15.6px" : "13px");
+    const sync = (nextWidth: number) => {
+      const rounded = Math.round(nextWidth);
+      setWidth((prev) => (prev === rounded ? prev : rounded));
     };
 
-    syncFontSize();
-    mql.addEventListener("change", syncFontSize);
-    return () => mql.removeEventListener("change", syncFontSize);
+    sync(root.getBoundingClientRect().width);
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      sync(entry.contentRect.width);
+    });
+
+    observer.observe(root);
+    return () => observer.disconnect();
   }, []);
 
-  const edgeMask =
-    "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)";
+  const visualPx = width > 0 ? Math.min(16, Math.max(9, width * 0.024)) : 11;
+  const fontSize =
+    width > 0 ? Math.round(visualPx * (VIEWBOX_WIDTH / width)) : 36;
+
+  // Approximate reserved height so layout doesn't jump before mount
+  const fontSizePx = fontSize;
+  const upward = Math.max(0, -CURVE_AMOUNT);
+  const reserveH = Math.max(fontSizePx * 1.8, fontSizePx * 1.8 + upward);
 
   return (
     <div
-      className="pointer-events-none relative mx-auto -mb-2 h-[72px] w-full max-w-[680px] overflow-hidden desktop-sm:h-[88px]"
+      ref={rootRef}
+      className="pointer-events-none w-full overflow-visible"
       aria-hidden="true"
-      style={{
-        maskImage: edgeMask,
-        WebkitMaskImage: edgeMask,
-        maskMode: "alpha",
-        WebkitMaskSize: "100% 100%",
-        maskSize: "100% 100%",
-        maskRepeat: "no-repeat",
-        WebkitMaskRepeat: "no-repeat",
-      }}
     >
-      {mounted ? (
-        <div className="absolute top-0 left-1/2 size-[560px] -translate-x-1/2 desktop-sm:size-[680px]">
-          <CircularText
-            words={["2 Months Free - Annually"]}
-            separator="   "
-            diameter={680}
-            color="#010101"
-            onHover="pause"
-            hoverSpeed={8}
-            transition={{ type: "tween", duration: 48, ease: "linear" }}
-            font={{
-              fontFamily: "var(--font-helvetica-neue-family), Helvetica Neue, sans-serif",
-              fontWeight: 500,
-              fontSize,
-              letterSpacing: "0.01em",
-              lineHeight: "1em",
-            }}
-            style={{ width: "100%", height: "100%" }}
-          />
-        </div>
-      ) : null}
+      {width > 0 ? (
+        <CurvedLoop
+          text="2 Months Free - Annually"
+          direction="left"
+          baseVelocity={10}
+          curveAmount={-646}
+          gap={5}
+          draggable={false}
+          fade
+          fadePercent={50}
+          color="#010101"
+          font={{
+            fontFamily:
+              "var(--font-helvetica-neue-family), Helvetica Neue, sans-serif",
+            fontWeight: 500,
+            fontSize,
+            letterSpacing: "0.16em",
+            lineHeight: "1em",
+            textAlign: "left",
+          }}
+          style={{ width: "100%", height: "auto" }}
+        />
+      ) : (
+        <div
+          className="w-full"
+          style={{ aspectRatio: `${VIEWBOX_WIDTH} / ${reserveH}` }}
+        />
+      )}
     </div>
   );
 };

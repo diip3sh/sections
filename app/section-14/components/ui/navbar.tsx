@@ -67,7 +67,7 @@ export const Navbar = () => {
   return (
     <nav aria-label="Primary" className="relative z-30 w-full">
       {/* Mobile / tablet */}
-      <div className="flex w-full items-center justify-between py-4 desktop-sm:hidden ipad:max-w-160 mx-auto">
+      <div className="flex w-full items-center px-4 ipad:px-0 justify-between py-4 desktop-sm:hidden ipad:max-w-160 mx-auto">
         <Logo />
 
         <button

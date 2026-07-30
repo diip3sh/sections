@@ -32,7 +32,7 @@ export const HeroContent = ({ onGetStarted }: HeroContentProps) => {
       <div className="flex w-full flex-col items-center gap-4 text-white desktop-sm:items-start desktop-sm:gap-6">
         <motion.p
           {...reveal(0.1)}
-          className="w-full font-sans text-[14px] font-normal leading-[1.2] tracking-[-0.42px] desktop-sm:font-tight desktop-sm:text-[18px] desktop-sm:font-light desktop-sm:leading-5 desktop-sm:tracking-[-0.54px]"
+          className="w-full font-sans text-[14px] ipad:text-[18px] font-normal leading-[1.2] tracking-[-0.42px] desktop-sm:font-tight desktop-sm:text-[18px] desktop-sm:font-light desktop-sm:leading-5 desktop-sm:tracking-[-0.54px]"
         >
           Let’s build something Great
         </motion.p>
@@ -40,14 +40,14 @@ export const HeroContent = ({ onGetStarted }: HeroContentProps) => {
         <div className="flex w-full flex-col items-center gap-2 desktop-sm:items-start desktop-sm:gap-6">
           <motion.h1
             {...reveal(0.18)}
-            className="w-full max-w-[306px] font-instrument-serif text-[56px] leading-[1.1] tracking-[-1.68px] text-pretty desktop-sm:max-w-none desktop-sm:text-[62px] desktop-sm:leading-[1.05] desktop-sm:tracking-[-1.86px]"
+            className="w-full max-w-[306px] ipad:max-w-[389px] font-instrument-serif text-[56px] ipad:text-[66px] leading-[1.1] tracking-[-1.68px] text-pretty desktop-sm:max-w-none desktop-sm:text-[62px] desktop-sm:leading-[1.05] desktop-sm:tracking-[-1.86px]"
           >
             Shaping the Future of Digital.
           </motion.h1>
 
           <motion.p
             {...reveal(0.26)}
-            className="max-w-[252px] font-sans text-[16px] font-normal leading-[1.4] tracking-[-0.32px] text-white/60 desktop-sm:max-w-[339px] desktop-sm:font-tight desktop-sm:text-[17px] desktop-sm:leading-[25.5px] desktop-sm:tracking-[-0.34px]"
+            className="max-w-[252px] font-sans text-[16px] ipad:text-[18px] ipad:max-w-[311px] font-normal leading-[1.4] tracking-[-0.32px] text-white/60 desktop-sm:max-w-[339px] desktop-sm:font-tight desktop-sm:text-[17px] desktop-sm:leading-[25.5px] desktop-sm:tracking-[-0.34px]"
           >
             We create modern websites with seamless user experiences.
           </motion.p>

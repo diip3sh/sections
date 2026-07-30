@@ -1,7 +1,10 @@
 "use client";
 
 import { FeatureRail } from "./feature-rail";
-import { GlowBackground } from "./glow-background";
+import {
+  GlowBackground,
+  GradientOverlay,
+} from "./glow-background";
 import { HeroContent } from "./hero-content";
 import { Navbar } from "./navbar";
 import { PortraitStage } from "./portrait-stage";
@@ -20,20 +23,19 @@ export const Section18Hero = () => {
       aria-label="Visionary liquid distortion hero"
       className="relative isolate min-h-svh w-full overflow-hidden bg-black"
     >
-      <GlowBackground />
-
       {/*
-        Mobile fills the viewport so the portrait can cover the whole screen.
-        Desktop caps content width at 1440.
+        Preview stack (no middle mask yet):
+          base gradient  z-0
+          liquid         z-5
+          gradient-2     z-10
+          nav / copy     z-20
       */}
-      <div className="relative z-10 mx-auto w-full max-w-none desktop-sm:max-w-[1440px]">
-        <div className="relative mx-auto flex min-h-svh w-full max-w-[402px] flex-col ipad:max-w-none desktop-sm:max-w-none">
-          <PortraitStage />
+      <GlowBackground />
+      <PortraitStage />
+      <GradientOverlay />
 
-          {/*
-            pointer-events-none so PortraitStage liquid canvas can receive hover.
-            Re-enable on interactive UI only (same pattern as section-16).
-          */}
+      <div className="relative mx-auto w-full max-w-none desktop-sm:max-w-[1440px]">
+        <div className="relative mx-auto flex min-h-svh w-full max-w-[402px] flex-col ipad:max-w-none desktop-sm:max-w-none">
           <div className="pointer-events-none relative z-20 flex w-full flex-col">
             <div className="pointer-events-auto w-full">
               <Navbar onBookNow={handleBookNow} />

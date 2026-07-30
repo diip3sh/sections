@@ -11,9 +11,21 @@ const FEATURES = [
 ] as const;
 
 const SOCIALS = [
-  { label: "LinkedIn", href: "#linkedin" },
-  { label: "LinkedIn community", href: "#linkedin-alt" },
-  { label: "LinkedIn updates", href: "#linkedin-updates" },
+  {
+    label: "LinkedIn",
+    href: "#linkedin",
+    icon: "/section-18/icons/linkedin.svg",
+  },
+  {
+    label: "X",
+    href: "#x",
+    icon: "/section-18/icons/x.svg",
+  },
+  {
+    label: "Instagram",
+    href: "#instagram",
+    icon: "/section-18/icons/instagram.svg",
+  },
 ] as const;
 
 export const FeatureRail = () => {
@@ -55,7 +67,7 @@ export const FeatureRail = () => {
               }}
             >
               <img
-                src="/section-18/icons/linkedin.svg"
+                src={social.icon}
                 alt=""
                 width={14}
                 height={14}

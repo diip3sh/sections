@@ -2,7 +2,7 @@ export const GlowBackground = () => {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-[1] overflow-hidden"
+      className="pointer-events-none absolute inset-0 z-[1] overflow-hidden mask-b-from-20% mask-b-to-80% mask-alpha"
     >
       {/* Figma left glow: inset ~12.8% top, overhang left, ~68% from right */}
       <img

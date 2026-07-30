@@ -32,7 +32,7 @@ export const HeroContent = ({
         };
 
   return (
-    <div className="pointer-events-none relative z-20 flex w-full max-w-[370px] flex-col items-center gap-6">
+    <div className="pointer-events-none relative z-20 flex w-full flex-col items-center gap-6 ipad:max-w-[478px] desktop-sm:max-w-[635px]">
       {/* Badge + headline + sub — Figma gap 16 between badge and copy, 8 between title/sub */}
       <div className="flex w-full flex-col items-center gap-4">
         <motion.div
@@ -44,7 +44,7 @@ export const HeroContent = ({
             alt=""
             width={24}
             height={24}
-            className="size-6 shrink-0"
+            className="size-3.5 shrink-0"
             aria-hidden="true"
           />
           <span className="whitespace-nowrap font-outfit text-[16px] leading-5 font-normal text-[rgba(217,217,217,0.6)]">
@@ -55,14 +55,14 @@ export const HeroContent = ({
         <div className="flex w-full flex-col items-center gap-2 text-center">
           <motion.h1
             {...reveal(0.08)}
-            className="pointer-events-auto w-full font-clash text-[40px] leading-[1.1] tracking-[-1.6px] text-white text-balance"
+            className="pointer-events-auto w-full font-clash text-[40px] ipad:text-[56px] desktop-sm:text-[64px] leading-[1.1] tracking-[-1.6px] text-white text-pretty"
           >
             AI That Moves at the Speed of Thought.
           </motion.h1>
 
           <motion.p
             {...reveal(0.16)}
-            className="pointer-events-auto w-full max-w-[306px] font-clash text-[16px] leading-[1.4] tracking-[-0.32px] text-[rgba(255,255,255,0.75)] text-pretty"
+            className="pointer-events-auto w-full max-w-[306px] desktop-sm:max-w-[533px] font-clash text-[16px] ipad:text-[18px] ipad:max-w-none leading-[1.4] tracking-[-0.32px] text-[rgba(255,255,255,0.75)] text-pretty"
           >
             Build, automate, and deploy intelligent workflows with real-time
             performance powered by modern AI infrastructure.
@@ -72,21 +72,31 @@ export const HeroContent = ({
 
       <motion.div
         {...reveal(0.24)}
-        className="pointer-events-auto flex w-full flex-col gap-3"
+        className="pointer-events-auto flex w-full flex-col gap-3 ipad:max-w-87.5 ipad:pt-8 desktop-sm:pt-7 mx-auto ipad:flex-row"
       >
         <Button
           variant="primary"
           aria-label="Get started"
           onClick={onGetStarted}
           icon={
-            <img
-              src="/section-14/arrow-icon.svg"
-              alt=""
-              width={19}
-              height={19}
-              className="size-[19px] shrink-0"
+            <span
+              className="relative size-[19px] shrink-0 overflow-clip rounded-[1.727px]"
               aria-hidden="true"
-            />
+            >
+              <span className="absolute top-[2.35px] left-[1.82px] flex h-[15.555px] w-[15.488px] items-center justify-center">
+                <span className="flex-none rotate-[-45.9deg]">
+                  <span className="relative block h-[9.479px] w-[12.475px]">
+                    <img
+                      src="/section-14/arrow-icon.svg"
+                      alt=""
+                      width={14}
+                      height={11}
+                      className="absolute inset-[-7.69%_-5.84%] block size-full max-w-none"
+                    />
+                  </span>
+                </span>
+              </span>
+            </span>
           }
         >
           Get started

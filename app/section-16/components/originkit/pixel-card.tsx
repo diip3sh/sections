@@ -230,6 +230,8 @@ interface PixelCardProps {
   /** @deprecated Prefer trigger="auto". Forces appear on mount. */
   autoPlay?: boolean;
   style?: CSSProperties;
+  /** Applied to the canvas — CSS masks on parents of <canvas> are unreliable. */
+  canvasStyle?: CSSProperties;
 }
 
 /**
@@ -260,6 +262,7 @@ export default function PixelCard(props: PixelCardProps) {
     label,
     autoPlay = false,
     style,
+    canvasStyle,
   } = props;
 
   const labelCfg: LabelGroup = { text: "", color: "#ffffff", ...label };
@@ -309,23 +312,26 @@ export default function PixelCard(props: PixelCardProps) {
     const el = canvasRef.current;
     const container = containerRef.current;
     const width = Math.floor(
-      el.clientWidth ||
-        el.getBoundingClientRect().width ||
-        container.clientWidth ||
+      container.clientWidth ||
+        container.getBoundingClientRect().width ||
+        el.clientWidth ||
         0,
     );
     const height = Math.floor(
-      el.clientHeight ||
-        el.getBoundingClientRect().height ||
-        container.clientHeight ||
+      container.clientHeight ||
+        container.getBoundingClientRect().height ||
+        el.clientHeight ||
         0,
     );
+    if (width < 1 || height < 1) return;
+
     const ctx = canvasRef.current.getContext("2d");
 
     canvasRef.current.width = width;
     canvasRef.current.height = height;
-    canvasRef.current.style.width = `${width}px`;
-    canvasRef.current.style.height = `${height}px`;
+    // Keep CSS size tied to container so layout resize stays flush (no top gap)
+    canvasRef.current.style.width = "100%";
+    canvasRef.current.style.height = "100%";
 
     const colorsArray = finalColors;
     const step = Math.max(1, Math.round(Number(finalGap)) || 1);
@@ -438,14 +444,20 @@ export default function PixelCard(props: PixelCardProps) {
     present();
 
     const resizeObserver = new ResizeObserver(() => {
+      const alreadyPlayed = hasPlayedRef.current;
       initPixels();
       if (isExport) {
         drawStaticFrame();
         return;
       }
+      // replay:false used to skip appear after resize → blank/stale canvas until refresh
+      if (alreadyPlayed && !replay) {
+        drawStaticFrame();
+        return;
+      }
       if (
-        hasPlayedRef.current ||
         resolvedTrigger === "auto" ||
+        resolvedTrigger === "enter" ||
         isFramerCanvas
       ) {
         handleAnimation("appear");
@@ -531,10 +543,12 @@ export default function PixelCard(props: PixelCardProps) {
       <canvas
         ref={canvasRef}
         style={{
+          position: "absolute",
+          inset: 0,
           width: "100%",
           height: "100%",
           display: "block",
-          gridArea: "1 / 1",
+          ...canvasStyle,
         }}
       />
       {showLabel && labelCfg.text ? (

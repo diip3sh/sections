@@ -46,7 +46,7 @@ export const HeroContent = ({
         };
 
   return (
-    <div className="pointer-events-none relative z-20 flex w-full flex-col items-center gap-6 ipad:max-w-[478px] desktop-sm:max-w-[635px]">
+    <div className="pointer-events-none relative z-20 flex w-full flex-col items-center gap-6 ipad:max-w-[488px] desktop-sm:max-w-[635px]">
       {/* Badge + headline + sub — Figma gap 16 between badge and copy, 8 between title/sub */}
       <div className="flex w-full flex-col items-center gap-4">
         <motion.div
@@ -69,14 +69,14 @@ export const HeroContent = ({
         <div className="flex w-full flex-col items-center gap-2 text-center">
           <motion.h1
             {...reveal(0.08)}
-            className="pointer-events-auto w-full font-clash text-[40px] ipad:text-[56px] desktop-sm:text-[64px] leading-[1.1] tracking-[-1.6px] text-white text-pretty"
+            className="pointer-events-auto w-full text-[40px] ipad:text-[56px] desktop-sm:text-[64px] leading-[1.1] tracking-[-1.6px] text-white text-balance font-aeonik"
           >
             AI That Moves at the Speed of Thought.
           </motion.h1>
 
           <motion.p
             {...reveal(0.16)}
-            className="pointer-events-auto w-full max-w-[306px] desktop-sm:max-w-[533px] font-clash text-[16px] ipad:text-[18px] ipad:max-w-none leading-[1.4] tracking-[-0.32px] text-[rgba(255,255,255,0.75)] text-pretty"
+            className="pointer-events-auto w-full max-w-[306px] desktop-sm:max-w-[533px] font-aeonik text-[16px] ipad:text-[18px] ipad:max-w-none leading-[1.4] tracking-[-0.32px] text-[rgba(255,255,255,0.75)] text-pretty"
           >
             Build, automate, and deploy intelligent workflows with real-time
             performance powered by modern AI infrastructure.

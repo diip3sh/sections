@@ -7,24 +7,56 @@ import CircularText from "../originkit/text-ring";
  * Upper arc of “AI Without Limits” above the headline.
  * Edges fade via alpha mask only — no painted overlays — so text blends into bg.
  */
-/** Matches `--breakpoint-desktop-sm` in globals.css */
-const DESKTOP_SM_MQ = "(min-width: 1280px)";
+
+/** Matches `--breakpoint-*` in globals.css */
+const IPAD_MIN = 768;
+const DESKTOP_SM_MIN = 1280;
+const WIDE_LG_MIN = 1600;
+
+/**
+ * CircularText diameter per breakpoint:
+ * - android-sm (< 768 / --breakpoint-android-sm band): 440
+ * - ipad (≥ 768): 750
+ * - desktop-sm (≥ 1280): 900
+ * - wide-lg (≥ 1600): 1100
+ */
+const DIAMETER = {
+  androidSm: 440,
+  ipad: 750,
+  desktopSm: 900,
+  wideLg: 1100,
+} as const;
+
+const getDiameter = (width: number) => {
+  if (width >= WIDE_LG_MIN) return DIAMETER.wideLg;
+  if (width >= DESKTOP_SM_MIN) return DIAMETER.desktopSm;
+  if (width >= IPAD_MIN) return DIAMETER.ipad;
+  // android-sm and below
+  return DIAMETER.androidSm;
+};
+
+const getFontSize = (width: number) =>
+  width >= DESKTOP_SM_MIN ? "16px" : "13px";
 
 export const TextArc = () => {
   const [mounted, setMounted] = useState(false);
   const [fontSize, setFontSize] = useState("13px");
+  const [diameter, setDiameter] = useState<(typeof DIAMETER)[keyof typeof DIAMETER]>(
+    DIAMETER.androidSm,
+  );
 
   useEffect(() => {
     setMounted(true);
 
-    const mql = window.matchMedia(DESKTOP_SM_MQ);
-    const syncFontSize = () => {
-      setFontSize(mql.matches ? "16px" : "13px");
+    const sync = () => {
+      const width = window.innerWidth;
+      setDiameter(getDiameter(width));
+      setFontSize(getFontSize(width));
     };
 
-    syncFontSize();
-    mql.addEventListener("change", syncFontSize);
-    return () => mql.removeEventListener("change", syncFontSize);
+    sync();
+    window.addEventListener("resize", sync);
+    return () => window.removeEventListener("resize", sync);
   }, []);
 
   // Soft L/R fade: text alpha → 0 into #091009 (no solid bars)
@@ -46,11 +78,14 @@ export const TextArc = () => {
       }}
     >
       {mounted ? (
-        <div className="absolute top-0 left-1/2 size-[440px] -translate-x-1/2">
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2"
+          style={{ width: diameter, height: diameter }}
+        >
           <CircularText
             words={["AI Without Limits"]}
             separator=" · "
-            diameter={440}
+            diameter={diameter}
             color="rgba(255,255,255,1)"
             onHover="pause"
             hoverSpeed={8}

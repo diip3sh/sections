@@ -32,7 +32,7 @@ export const Section16Hero = () => {
         </div>
 
         {/* Figma: copy block top ~263px under 63px nav ≈ ~200px content offset */}
-        <div className="mt-33 flex w-full flex-1 flex-col items-center pb-12 max-w-[402px] ipad:max-w-[520px]">
+        <div className="mt-33 flex w-full flex-1 flex-col items-center pb-12 max-w-[402px] ipad:max-w-[580px]">
           <HeroContent
             onExploreAi={handleExploreAi}
             onContactSales={handleContactSales}

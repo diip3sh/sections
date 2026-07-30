@@ -19,7 +19,7 @@ export const PrismStage = () => {
             backgroundColor="transparent"
             boxSize={80}
             borderWidth={1}
-            borderColor="rgba(90,245,163,0.18)"
+            borderColor="#2E2E2E"
             rotate={{ x: 0, y: 50 }}
             planeTop={62}
             colors={{

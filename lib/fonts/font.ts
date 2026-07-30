@@ -125,3 +125,9 @@ export const HelveticaNeueNormal = localFont({
   variable: "--font-helvetica-neue-family",
   display: "swap",
 });
+
+export const Aeonik = localFont({
+  src: "./aeonik.ttf",
+  variable: "--font-aeonik-family",
+  display: "swap",
+});

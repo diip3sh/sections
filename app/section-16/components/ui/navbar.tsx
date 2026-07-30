@@ -46,13 +46,21 @@ export const Navbar = () => {
         </button>
       </div>
 
-      {/* Desktop — Logo + Product/Solutions | gap | Resources/Pricing + auth */}
-      <div className="mx-auto hidden w-full max-w-[1512px] items-center justify-between px-10 py-5 desktop-sm:flex desktop-sm:px-16">
-        <div className="flex items-center gap-10">
+      {/* Desktop — Logo | centered links (max 618) | auth */}
+      <div className="mx-auto hidden w-full max-w-[1512px] items-center px-10 py-5 desktop-sm:flex desktop-sm:px-16">
+        <div className="flex flex-1 items-center">
           <Logo />
+        </div>
+
+        <div className="mx-auto flex w-full max-w-[618px] items-center justify-between">
           <ul className="flex items-center gap-10">
             <li>
-              <a href="#product" tabIndex={0} aria-label="Product" className={LINK_CLASS}>
+              <a
+                href="#product"
+                tabIndex={0}
+                aria-label="Product"
+                className={LINK_CLASS}
+              >
                 Product
               </a>
             </li>
@@ -67,9 +75,7 @@ export const Navbar = () => {
               </a>
             </li>
           </ul>
-        </div>
 
-        <div className="flex items-center gap-10">
           <ul className="flex items-center gap-10">
             <li>
               <a
@@ -82,31 +88,36 @@ export const Navbar = () => {
               </a>
             </li>
             <li>
-              <a href="#pricing" tabIndex={0} aria-label="Pricing" className={LINK_CLASS}>
+              <a
+                href="#pricing"
+                tabIndex={0}
+                aria-label="Pricing"
+                className={LINK_CLASS}
+              >
                 Pricing
               </a>
             </li>
           </ul>
+        </div>
 
-          <div className="flex shrink-0 items-center gap-6">
-            <a
-              href="#signup"
-              tabIndex={0}
-              aria-label="Sign up"
-              className={LINK_CLASS}
-            >
-              Sign up
-            </a>
+        <div className="flex flex-1 shrink-0 items-center justify-end gap-6">
+          <a
+            href="#signup"
+            tabIndex={0}
+            aria-label="Sign up"
+            className={LINK_CLASS}
+          >
+            Sign up
+          </a>
 
-            <a
-              href="#login"
-              tabIndex={0}
-              aria-label="Log in"
-              className="inline-flex h-10 min-h-11 shrink-0 items-center justify-center rounded-full bg-white px-5 font-geist text-[15px] font-medium leading-none text-black touch-manipulation whitespace-nowrap transition-opacity duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [-webkit-tap-highlight-color:transparent] [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90"
-            >
-              Log in
-            </a>
-          </div>
+          <a
+            href="#login"
+            tabIndex={0}
+            aria-label="Log in"
+            className="inline-flex h-10 min-h-11 shrink-0 items-center justify-center rounded-full bg-white px-5 font-geist text-[15px] font-medium leading-none text-black touch-manipulation whitespace-nowrap transition-opacity duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [-webkit-tap-highlight-color:transparent] [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90"
+          >
+            Log in
+          </a>
         </div>
       </div>
     </nav>

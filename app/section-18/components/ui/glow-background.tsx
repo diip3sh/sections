@@ -152,18 +152,18 @@ export const GradientOverlay = () => {
           alt=""
           width={1440}
           height={840}
-          className="absolute inset-0 top-[-70vh] object-contain object-[center_top] blur-[16px]"
+          className="absolute inset-0 size-full object-cover object-[center_top] blur-[16px] mix-blend-screen"
         />
         <img
           src="/section-18/bg/image.png"
           alt=""
           width={1440}
           height={840}
-          className="absolute inset-0 top-[-15vh] object-contain blur-[16px]"
+          className="absolute inset-0 size-full object-cover object-[center_top] blur-[16px] mix-blend-screen"
         />
       </div>
 
-      {/* iPad — tablet.png only visible through Figma 1440×1024 soft-wash mask */}
+      {/* iPad — tablet.png through soft-wash mask, above liquid (z-10) */}
       <div
         className="absolute inset-0 hidden overflow-hidden ipad:block desktop-sm:hidden"
         style={TABLET_IMAGE_MASK}
@@ -173,14 +173,14 @@ export const GradientOverlay = () => {
           alt=""
           width={1440}
           height={1024}
-          className="absolute inset-0 top-[-60vh] object-contain object-[center_top]"
+          className="absolute inset-0 size-full object-cover object-[center_top] mix-blend-screen"
         />
         <img
           src="/section-18/bg/tablet.png"
           alt=""
           width={1440}
           height={1024}
-          className="absolute inset-0 top-[-60vh] object-contain blur-3xl"
+          className="absolute inset-0 size-full object-cover object-[center_top] mix-blend-screen blur-3xl"
         />
       </div>
     </div>

@@ -8,7 +8,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const BASE_CLASS =
-  "inline-flex h-11 w-full touch-manipulation items-center justify-center rounded-[12px] px-6 py-3 font-tight text-[16px] font-medium tracking-[-0.32px] transition-[opacity,transform,border-color,background-color] duration-200 ease [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.97] motion-reduce:active:scale-100 cursor-pointer";
+  "inline-flex h-11 w-fit shrink-0 touch-manipulation items-center justify-center rounded-[12px] px-6 py-3 font-tight text-[16px] font-medium tracking-[-0.32px] whitespace-nowrap transition-[opacity,transform,border-color,background-color] duration-200 ease [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.97] motion-reduce:active:scale-100 cursor-pointer";
 
 export const Button = ({
   variant = "primary",

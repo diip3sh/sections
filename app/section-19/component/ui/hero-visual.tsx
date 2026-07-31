@@ -1,103 +1,129 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ThunderStrike from "../originkit/thunder-strike";
 
 /**
- * Hero visual layers (Figma element 2146:692).
+ * Hero visual layers (Figma element 2146:692 / desktop 1:1670).
  * Layer order: thunder-mask (z-0) → ThunderStrike (z-5) → circle/mask (z-10).
  */
 
-/** Matches `--breakpoint-ipad` in globals.css */
+/** Matches `--breakpoint-ipad` / `--breakpoint-desktop-sm` in globals.css */
 const IPAD_MIN = 768;
+const DESKTOP_MIN = 1280;
 
-const CIRCLE_SIZE_MOBILE = 317;
-const CIRCLE_SIZE_IPAD = 542;
-const MASK_SIZE_MOBILE = 400;
-const MASK_SIZE_IPAD = 700;
+type Breakpoint = "mobile" | "ipad" | "desktop";
+
+const CIRCLE_SIZE = {
+  mobile: 317,
+  ipad: 542,
+  desktop: 550,
+} as const;
+
+const MASK_SIZE = {
+  mobile: 400,
+  ipad: 700,
+  desktop: 700,
+} as const;
 
 /** Native asset aspect 299×637 — height is derived from width. */
 const THUNDER_ASPECT = 637 / 299;
-const THUNDER_MASK_W_MOBILE = 292;
-const THUNDER_MASK_W_IPAD = 336;
-const THUNDER_MASK_H_MOBILE = Math.round(
-  THUNDER_MASK_W_MOBILE * THUNDER_ASPECT,
-);
-const THUNDER_MASK_H_IPAD = Math.round(THUNDER_MASK_W_IPAD * THUNDER_ASPECT);
+const THUNDER_MASK_W = {
+  mobile: 292,
+  ipad: 336,
+  desktop: 319,
+} as const;
+
+const THUNDER_MASK_H = {
+  mobile: Math.round(THUNDER_MASK_W.mobile * THUNDER_ASPECT),
+  ipad: Math.round(THUNDER_MASK_W.ipad * THUNDER_ASPECT),
+  desktop: Math.round(THUNDER_MASK_W.desktop * THUNDER_ASPECT),
+} as const;
 
 /** How far the beam dips into the circle so they visually join. */
-const THUNDER_OVERLAP_MOBILE = 96;
-const THUNDER_OVERLAP_IPAD = 164;
+const THUNDER_OVERLAP = {
+  mobile: 96,
+  ipad: 164,
+  desktop: 167,
+} as const;
 
 /**
  * Vertical shift of the visual within its stage.
  * Positive moves it down; negative pulls it up (may paint over the navbar).
- * Content clearance in section-19-hero tracks this automatically.
  */
-export const HERO_VISUAL_OFFSET_Y = -500;
+const HERO_VISUAL_OFFSET_Y = {
+  mobile: -500,
+  ipad: -500,
+  desktop: -340,
+} as const;
 
-/** Minimum gap between the visual stage bottom and HeroContent. */
+/** Minimum gap between the visual stage bottom and HeroContent (stacked layouts). */
 export const HERO_CONTENT_GAP = 24;
 
 /** Mobile defaults — prefer `useHeroVisualLayout` for live sizes. */
 export const HERO_VISUAL_HEIGHT =
-  THUNDER_MASK_H_MOBILE - THUNDER_OVERLAP_MOBILE + CIRCLE_SIZE_MOBILE;
+  THUNDER_MASK_H.mobile - THUNDER_OVERLAP.mobile + CIRCLE_SIZE.mobile;
 export const HERO_VISUAL_STAGE_HEIGHT = Math.max(
   0,
-  HERO_VISUAL_HEIGHT + HERO_VISUAL_OFFSET_Y,
+  HERO_VISUAL_HEIGHT + HERO_VISUAL_OFFSET_Y.mobile,
 );
 
-/** Narrow corridor for the live bolt so it reads over the glow. */
-const STRIKE_W = 72;
-/** -top-1 = 4px — extend strike height so it still meets circle top. */
-const STRIKE_TOP_OFFSET = 4;
-
 type HeroVisualLayout = {
+  breakpoint: Breakpoint;
   circleSize: number;
   maskSize: number;
   thunderMaskW: number;
   thunderMaskH: number;
   circleTop: number;
+  offsetY: number;
   visualHeight: number;
+  /** In-flow stage height; 0 on desktop where the visual is absolutely positioned. */
   stageHeight: number;
 };
 
-const getLayout = (isIpad: boolean): HeroVisualLayout => {
-  const circleSize = isIpad ? CIRCLE_SIZE_IPAD : CIRCLE_SIZE_MOBILE;
-  const maskSize = isIpad ? MASK_SIZE_IPAD : MASK_SIZE_MOBILE;
-  const thunderMaskW = isIpad ? THUNDER_MASK_W_IPAD : THUNDER_MASK_W_MOBILE;
-  const thunderMaskH = isIpad ? THUNDER_MASK_H_IPAD : THUNDER_MASK_H_MOBILE;
-  const thunderOverlap = isIpad ? THUNDER_OVERLAP_IPAD : THUNDER_OVERLAP_MOBILE;
-  const circleTop = thunderMaskH - thunderOverlap;
+const getBreakpoint = (width: number): Breakpoint => {
+  if (width >= DESKTOP_MIN) return "desktop";
+  if (width >= IPAD_MIN) return "ipad";
+  return "mobile";
+};
+
+const getLayout = (breakpoint: Breakpoint): HeroVisualLayout => {
+  const circleSize = CIRCLE_SIZE[breakpoint];
+  const maskSize = MASK_SIZE[breakpoint];
+  const thunderMaskW = THUNDER_MASK_W[breakpoint];
+  const thunderMaskH = THUNDER_MASK_H[breakpoint];
+  const circleTop = thunderMaskH - THUNDER_OVERLAP[breakpoint];
+  const offsetY = HERO_VISUAL_OFFSET_Y[breakpoint];
   const visualHeight = circleTop + circleSize;
+  const isDesktop = breakpoint === "desktop";
 
   return {
+    breakpoint,
     circleSize,
     maskSize,
     thunderMaskW,
     thunderMaskH,
     circleTop,
+    offsetY,
     visualHeight,
-    stageHeight: Math.max(0, visualHeight + HERO_VISUAL_OFFSET_Y),
+    stageHeight: isDesktop ? 0 : Math.max(0, visualHeight + offsetY),
   };
 };
 
-/** Responsive thunder/circle/mask sizes + stage metrics (mobile → ipad+). */
+/** Responsive thunder/circle/mask sizes + stage metrics. */
 export const useHeroVisualLayout = (): HeroVisualLayout => {
-  const [isIpad, setIsIpad] = useState(false);
+  const [breakpoint, setBreakpoint] = useState<Breakpoint>("mobile");
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia(`(min-width: ${IPAD_MIN}px)`);
-    const handleChange = () => {
-      setIsIpad(mediaQuery.matches);
+    const update = () => {
+      setBreakpoint(getBreakpoint(window.innerWidth));
     };
 
-    handleChange();
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, []);
 
-  return getLayout(isIpad);
+  return getLayout(breakpoint);
 };
 
 type HeroVisualProps = {
@@ -119,7 +145,7 @@ export const HeroVisual = ({
     <div aria-hidden="true" className="relative size-full overflow-visible">
       {/* Soft thunder glow — lowest */}
       <div
-        className="absolute top-0 left-1/2 z-0 -translate-x-1/2 overflow-visible ipad:-translate-y-[9%]"
+        className="absolute top-0 left-1/2 z-0 -translate-x-1/2 overflow-visible ipad:-translate-y-[9%] desktop-sm:translate-y-[-11%]"
         style={{ width: thunderMaskW, height: thunderMaskH }}
       >
         <img
@@ -127,28 +153,16 @@ export const HeroVisual = ({
           alt=""
           width={thunderMaskW}
           height={thunderMaskH}
-          className="pointer-events-none absolute inset-0 size-full max-w-none object-contain mix-blend-screen"
+          className="block ipad:hidden pointer-events-none absolute inset-0 size-full max-w-none object-contain mix-blend-screen"
+        />
+        <img
+          src="/section-19/ipad-mask.png"
+          alt=""
+          width={thunderMaskW}
+          height={thunderMaskH}
+          className="hidden ipad:block pointer-events-none absolute inset-0 size-full max-w-none object-contain mix-blend-screen"
         />
       </div>
-
-      {/* ThunderStrike — from -top-1 down to circle top; above mask, below circle */}
-      {/* <div
-        className="pointer-events-none absolute -top-1 left-1/2 z-[5] -translate-x-1/2"
-        style={{
-          width: STRIKE_W,
-          height: circleTop + STRIKE_TOP_OFFSET,
-        }}
-      >
-        <ThunderStrike
-          backgroundColor="#fb4ceb"
-          lightningColor="#F370FF"
-          xOffset={0}
-          speed={12}
-          intensity={20}
-          size={20}
-          angle={180}
-        />
-      </div> */}
 
       {/* Circle + mask — above thunder strike */}
       <div

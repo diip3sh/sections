@@ -4,7 +4,7 @@ export const Navbar = () => {
   return (
     <nav
       aria-label="Primary"
-      className="relative flex w-full items-center justify-between p-4"
+      className="relative flex w-full items-center justify-between p-4 px-[48px]"
     >
       <a
         href="#"

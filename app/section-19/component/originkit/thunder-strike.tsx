@@ -1,377 +1,296 @@
-"use client";
-
 // Thunder Strike — Originkit
 // Props set in the preview:
-//   color: #C98BFF
-//   intensity: 85
-//   angle: 90
+//   xOffset: -32
 //   speed: 12
-//   thickness: 3
-//   bloom: 70
+//   intensity: 85
+//   size: 20
+//   angle: 0
 
-import * as React from "react";
+"use client";
+
 import { useEffect, useRef } from "react";
 
-const RenderTarget = {
-  current: () => "preview",
-  canvas: "canvas",
-  export: "export",
-  thumbnail: "thumbnail",
-  preview: "preview",
-};
-
-/**
- * ThunderStrike — a cinematic electric bolt that crackles along a controllable
- * axis. A bright core line jitters with layered glow blooms; soft sparks spit
- * off the path. Tunable color, intensity, angle, speed, thickness, and bloom.
- *
- * @framerSupportedLayoutWidth any
- * @framerSupportedLayoutHeight any
- * @framerIntrinsicWidth 200
- * @framerIntrinsicHeight 400
- */
-export default function ThunderStrike(props: Props) {
-  props = { ...COMPONENT_DEFAULTS, ...props };
-  const {
-    color,
-    intensity,
-    angle,
-    speed,
-    thickness,
-    bloom,
-    branchCount,
-    style,
-  } = props;
-
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const rafRef = useRef<number | null>(null);
-  const sizeRef = useRef({ w: 0, h: 0, dpr: 1 });
-
-  const renderTarget = RenderTarget.current();
-  const isStatic =
-    renderTarget === RenderTarget.export ||
-    renderTarget === RenderTarget.thumbnail;
-
-  const parseColor = (input: string): [number, number, number] => {
-    if (!input) return [201, 139, 255];
-    const s = input.trim();
-    if (s.startsWith("#")) {
-      let hex = s.slice(1);
-      if (hex.length === 3) {
-        hex = hex
-          .split("")
-          .map((c) => c + c)
-          .join("");
-      }
-      const num = parseInt(hex, 16);
-      return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+function rgbToHslWithSV(rgb: string): { h: number; s: number; v: number } {
+  const [r, g, b] = rgb
+    .replace("rgb(", "")
+    .replace(")", "")
+    .split(",")
+    .map((n) => parseInt(n.trim()) / 255);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  const v = max;
+  const d = max - min;
+  s = max === 0 ? 0 : d / max;
+  if (max === min) {
+    h = 0;
+  } else {
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
     }
-    const m = s.match(/rgba?\(([^)]+)\)/i);
-    if (m) {
-      const parts = m[1].split(",").map((p) => parseFloat(p.trim()));
-      return [parts[0] || 0, parts[1] || 0, parts[2] || 0];
-    }
-    return [201, 139, 255];
-  };
+    h *= 60;
+  }
+  return { h: h >= 0 ? h : h + 360, s, v };
+}
+
+interface LightningProps {
+  lightningColor?: string;
+  backgroundColor?: string;
+  xOffset?: number;
+  speed?: number;
+  intensity?: number;
+  size?: number;
+  angle?: number;
+}
+
+export default function Lightning({
+  lightningColor = "rgb(245, 114, 25)",
+  backgroundColor = "rgb(0, 0, 0)",
+  xOffset = 1,
+  speed = 55,
+  intensity = 23,
+  size = 50,
+  angle = -27,
+}: LightningProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const container = containerRef.current;
     const canvas = canvasRef.current;
-    if (!container || !canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const [cr, cg, cb] = parseColor(color);
-    const intensityN = Math.max(0, Math.min(100, intensity)) / 100;
-    const bloomN = Math.max(0, Math.min(100, bloom)) / 100;
-    const thick = Math.max(0.5, thickness);
-    const branches = Math.max(0, Math.min(8, Math.round(branchCount)));
-    const speedN = Math.max(0.1, speed);
-
-    const resize = () => {
-      const rect = container.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const w = Math.max(1, Math.floor(rect.width));
-      const h = Math.max(1, Math.floor(rect.height));
-      sizeRef.current = { w, h, dpr };
-      canvas.width = Math.floor(w * dpr);
-      canvas.height = Math.floor(h * dpr);
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (!canvas) return;
+    const resizeCanvas = () => {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
     };
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    const gl = canvas.getContext("webgl");
+    if (!gl) {
+      console.error("WebGL not supported");
+      return;
+    }
+    let isDestroyed = false;
+    let rafId = 0;
 
-    const ro = new ResizeObserver(resize);
-    ro.observe(container);
-    resize();
-
-    type Point = { x: number; y: number };
-    type Bolt = { points: Point[]; life: number; maxLife: number; width: number };
-
-    const boltsRef: { main: Bolt | null; sparks: Bolt[]; phase: number } = {
-      main: null,
-      sparks: [],
-      phase: 0,
-    };
-
-    const rand = (a: number, b: number) => a + Math.random() * (b - a);
-
-    const buildBolt = (
-      x0: number,
-      y0: number,
-      x1: number,
-      y1: number,
-      segs: number,
-      jag: number,
-    ): Point[] => {
-      const pts: Point[] = [{ x: x0, y: y0 }];
-      for (let i = 1; i < segs; i++) {
-        const t = i / segs;
-        const nx = x0 + (x1 - x0) * t;
-        const ny = y0 + (y1 - y0) * t;
-        const dx = x1 - x0;
-        const dy = y1 - y0;
-        const len = Math.hypot(dx, dy) || 1;
-        const px = -dy / len;
-        const py = dx / len;
-        const offset = (Math.random() * 2 - 1) * jag * (1 - Math.abs(t - 0.5) * 0.4);
-        pts.push({ x: nx + px * offset, y: ny + py * offset });
+    const compileShader = (source: string, type: number) => {
+      const shader = gl.createShader(type);
+      if (!shader) return null;
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error("Shader compile error:", gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
       }
-      pts.push({ x: x1, y: y1 });
-      return pts;
+      return shader;
     };
-
-    const spawnMain = (w: number, h: number) => {
-      const rad = ((angle - 90) * Math.PI) / 180;
-      const cx = w * 0.5;
-      const cy = h * 0.02;
-      const length = h * 0.98;
-      const ex = cx + Math.cos(rad) * length;
-      const ey = cy + Math.sin(rad) * length;
-      // Near-straight electric beam — light jitter like Figma Electric Line
-      boltsRef.main = {
-        points: buildBolt(cx, cy, ex, ey, 22, Math.max(1.5, w * 0.018)),
-        life: 1,
-        maxLife: 1,
-        width: thick,
-      };
-
-      boltsRef.sparks = [];
-      for (let i = 0; i < branches; i++) {
-        const main = boltsRef.main.points;
-        const idx = Math.floor(rand(0.25, 0.75) * (main.length - 1));
-        const origin = main[idx];
-        const side = Math.random() > 0.5 ? 1 : -1;
-        const blen = h * rand(0.08, 0.22);
-        boltsRef.sparks.push({
-          points: buildBolt(
-            origin.x,
-            origin.y,
-            origin.x + side * blen * rand(0.4, 1),
-            origin.y + blen * rand(0.6, 1.2),
-            8,
-            Math.max(2, w * 0.03),
-          ),
-          life: 1,
-          maxLife: 1,
-          width: thick * 0.45,
-        });
+    const vertexShader = compileShader(vertexShaderSource, gl.VERTEX_SHADER);
+    const fragmentShader = compileShader(
+      fragmentShaderSource,
+      gl.FRAGMENT_SHADER,
+    );
+    if (!vertexShader || !fragmentShader) return;
+    const program = gl.createProgram();
+    if (!program) return;
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.error("Program linking error:", gl.getProgramInfoLog(program));
+      return;
+    }
+    gl.useProgram(program);
+    const uniforms: Record<string, WebGLUniformLocation | null> = {
+      iResolution: gl.getUniformLocation(program, "iResolution"),
+      iTime: gl.getUniformLocation(program, "iTime"),
+      uHue: gl.getUniformLocation(program, "uHue"),
+      uBackgroundHsv: gl.getUniformLocation(program, "uBackgroundHsv"),
+      uXOffset: gl.getUniformLocation(program, "uXOffset"),
+      uSpeed: gl.getUniformLocation(program, "uSpeed"),
+      uIntensity: gl.getUniformLocation(program, "uIntensity"),
+      uSize: gl.getUniformLocation(program, "uSize"),
+      uAngle: gl.getUniformLocation(program, "uAngle"),
+    };
+    for (const [name, location] of Object.entries(uniforms)) {
+      if (location === null) {
+        console.warn(`Uniform '${name}' not found in shader program`);
       }
-    };
+    }
+    const vertices = new Float32Array([
+      -1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1,
+    ]);
+    const vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+    const aPosition = gl.getAttribLocation(program, "aPosition");
+    gl.enableVertexAttribArray(aPosition);
+    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+    const startTime = performance.now();
 
-    const drawBolt = (
-      bolt: Bolt,
-      alpha: number,
-      widthMul: number,
-      blur: number,
-      rgb: [number, number, number],
-    ) => {
-      if (bolt.points.length < 2) return;
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      ctx.strokeStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
-      ctx.lineWidth = bolt.width * widthMul;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      if (blur > 0) ctx.shadowBlur = blur;
-      ctx.shadowColor = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${Math.min(1, alpha)})`;
-      ctx.beginPath();
-      ctx.moveTo(bolt.points[0].x, bolt.points[0].y);
-      for (let i = 1; i < bolt.points.length; i++) {
-        ctx.lineTo(bolt.points[i].x, bolt.points[i].y);
+    const render = () => {
+      if (isDestroyed) return;
+      resizeCanvas();
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      if (uniforms.iResolution) {
+        gl.uniform2f(uniforms.iResolution, canvas.width, canvas.height);
       }
-      ctx.stroke();
-      ctx.restore();
-    };
-
-    const drawTopBloom = (w: number, h: number, pulse: number) => {
-      // Elongated vertical star bloom (matches Figma Star 14/15)
-      const cx = w * 0.5;
-      const cy = h * 0.08;
-      const rx = Math.min(w, h) * (0.18 + bloomN * 0.22) * pulse;
-      const ry = h * (0.42 + bloomN * 0.28) * pulse;
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      ctx.translate(cx, cy);
-      ctx.scale(rx, ry);
-      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
-      g.addColorStop(0, `rgba(255,255,255,${0.7 * intensityN * pulse})`);
-      g.addColorStop(
-        0.12,
-        `rgba(${cr},${cg},${cb},${0.55 * intensityN * pulse})`,
-      );
-      g.addColorStop(
-        0.4,
-        `rgba(${cr},${cg},${cb},${0.22 * intensityN * pulse})`,
-      );
-      g.addColorStop(1, `rgba(${cr},${cg},${cb},0)`);
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(0, 0, 1, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    };
-
-    let strikeTimer = 0;
-    let nextStrike = 0.05;
-
-    const drawFrame = (dt: number) => {
-      const { w, h } = sizeRef.current;
-      if (w < 1 || h < 1) return;
-
-      ctx.clearRect(0, 0, w, h);
-      boltsRef.phase += dt * speedN;
-
-      strikeTimer += dt;
-      const flicker = 0.75 + 0.25 * Math.sin(boltsRef.phase * 14);
-
-      if (!boltsRef.main || strikeTimer >= nextStrike) {
-        spawnMain(w, h);
-        strikeTimer = 0;
-        nextStrike = rand(0.04, 0.12) * (2.2 / speedN);
-      } else if (Math.random() < 0.35 * speedN * dt * 8) {
-        // Micro-crackle: rebuild path in place for electric jitter
-        const main = boltsRef.main;
-        const last = main.points[main.points.length - 1];
-        main.points = buildBolt(
-          main.points[0].x,
-          main.points[0].y,
-          last.x,
-          last.y,
-          22,
-          Math.max(1.2, w * 0.016),
+      const currentTime = performance.now();
+      if (uniforms.iTime) {
+        gl.uniform1f(uniforms.iTime, (currentTime - startTime) / 1e3);
+      }
+      const mainColor = rgbToHslWithSV(lightningColor);
+      const bgColor = rgbToHslWithSV(backgroundColor);
+      if (uniforms.uHue) {
+        gl.uniform1f(uniforms.uHue, mainColor.h);
+      }
+      if (uniforms.uBackgroundHsv) {
+        gl.uniform3f(
+          uniforms.uBackgroundHsv,
+          bgColor.h / 360,
+          bgColor.s,
+          bgColor.v,
         );
       }
-
-      drawTopBloom(w, h, flicker);
-
-      if (boltsRef.main) {
-        const a = intensityN * flicker;
-        // Wide purple haze along the beam
-        drawBolt(boltsRef.main, a * 0.2, 14 + bloomN * 12, 36 + bloomN * 40, [
-          cr,
-          cg,
-          cb,
-        ]);
-        drawBolt(boltsRef.main, a * 0.35, 7 + bloomN * 5, 22 + bloomN * 18, [
-          cr,
-          cg,
-          cb,
-        ]);
-        drawBolt(boltsRef.main, a * 0.55, 3.5, 12, [cr, cg, cb]);
-        // Hot lavender mid
-        drawBolt(boltsRef.main, a * 0.85, 1.8, 6, [
-          Math.min(255, cr + 40),
-          Math.min(255, cg + 40),
-          255,
-        ]);
-        // White-hot core (Figma electric centerline)
-        drawBolt(boltsRef.main, Math.min(1, a * 1.15), 1.1, 3, [255, 255, 255]);
-        drawBolt(boltsRef.main, Math.min(1, a * 1.2), 0.45, 0, [255, 255, 255]);
-
-        for (const spark of boltsRef.sparks) {
-          drawBolt(spark, a * 0.35, 3, 12, [cr, cg, cb]);
-          drawBolt(spark, a * 0.7, 1, 2, [255, 255, 255]);
-        }
+      if (uniforms.uXOffset) {
+        gl.uniform1f(uniforms.uXOffset, -xOffset / 25);
+      }
+      if (uniforms.uSpeed) {
+        gl.uniform1f(uniforms.uSpeed, speed / 50);
+      }
+      if (uniforms.uIntensity) {
+        gl.uniform1f(uniforms.uIntensity, intensity / 50);
+      }
+      if (uniforms.uSize) {
+        gl.uniform1f(uniforms.uSize, size * 0.03);
+      }
+      if (uniforms.uAngle) {
+        gl.uniform1f(uniforms.uAngle, (angle * Math.PI) / 180);
+      }
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      if (!isDestroyed) {
+        rafId = requestAnimationFrame(render);
       }
     };
-
-    if (isStatic) {
-      spawnMain(sizeRef.current.w, sizeRef.current.h);
-      drawFrame(1 / 60);
-      return () => {
-        ro.disconnect();
-      };
-    }
-
-    let lastT = performance.now();
-    const loop = (t: number) => {
-      const deltaSec = Math.min(0.05, (t - lastT) / 1000);
-      lastT = t;
-      drawFrame(deltaSec);
-      rafRef.current = requestAnimationFrame(loop);
-    };
-    rafRef.current = requestAnimationFrame(loop);
+    render();
 
     return () => {
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
-      ro.disconnect();
+      isDestroyed = true;
+      window.removeEventListener("resize", resizeCanvas);
+      if (rafId) cancelAnimationFrame(rafId);
+      if (vertexBuffer) gl.deleteBuffer(vertexBuffer);
+      if (vertexShader) gl.deleteShader(vertexShader);
+      if (fragmentShader) gl.deleteShader(fragmentShader);
+      if (program) gl.deleteProgram(program);
     };
-  }, [
-    color,
-    intensity,
-    angle,
-    speed,
-    thickness,
-    bloom,
-    branchCount,
-    isStatic,
-  ]);
+  }, [lightningColor, backgroundColor, xOffset, speed, intensity, size, angle]);
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        overflow: "hidden",
-        background: "transparent",
-        ...style,
-      }}
-    >
+    <div style={{ width: "100%", height: "100%", position: "relative" }}>
       <canvas
         ref={canvasRef}
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          display: "block",
-        }}
+        style={{ width: "100%", height: "100%", position: "relative" }}
       />
     </div>
   );
 }
 
-type Props = {
-  color: string;
-  intensity: number;
-  angle: number;
-  speed: number;
-  thickness: number;
-  bloom: number;
-  branchCount: number;
-  style?: React.CSSProperties;
-};
+const vertexShaderSource = `
+attribute vec2 aPosition;
+void main() {
+  gl_Position = vec4(aPosition, 0.0, 1.0);
+}
+`;
+const fragmentShaderSource = `
+precision mediump float;
+uniform vec2 iResolution;
+uniform float iTime;
+uniform float uHue;
+uniform vec3 uBackgroundHsv;  // x: hue (0-1), y: saturation (0-1), z: value (0-1)
+uniform float uXOffset;
+uniform float uSpeed;
+uniform float uIntensity;
+uniform float uSize;
+uniform float uAngle;
 
-const COMPONENT_DEFAULTS: Props = {
-  color: "#C98BFF",
-  intensity: 85,
-  angle: 90,
-  speed: 12,
-  thickness: 3,
-  bloom: 70,
-  branchCount: 2,
-};
+#define OCTAVE_COUNT 10
+
+vec3 hsv2rgb(vec3 c) {
+    vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+    return c.z * mix(vec3(1.0), rgb, c.y);
+}
+
+float hash11(float p) {
+    p = fract(p * .1031);
+    p *= p + 33.33;
+    p *= p + p;
+    return fract(p);
+}
+
+float hash12(vec2 p) {
+    vec3 p3 = fract(vec3(p.xyx) * .1031);
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
+mat2 rotate2d(float theta) {
+    float c = cos(theta);
+    float s = sin(theta);
+    return mat2(c, -s, s, c);
+}
+
+float noise(vec2 p) {
+    vec2 ip = floor(p);
+    vec2 fp = fract(p);
+    float a = hash12(ip);
+    float b = hash12(ip + vec2(1.0, 0.0));
+    float c = hash12(ip + vec2(0.0, 1.0));
+    float d = hash12(ip + vec2(1.0, 1.0));
+
+    vec2 t = smoothstep(0.0, 1.0, fp);
+    return mix(mix(a, b, t.x), mix(c, d, t.x), t.y);
+}
+
+float fbm(vec2 p) {
+    float value = 0.0;
+    float amplitude = 0.5;
+    for (int i = 0; i < OCTAVE_COUNT; ++i) {
+        value += amplitude * noise(p);
+        p *= rotate2d(0.45);
+        p *= 2.0;
+        amplitude *= 0.5;
+    }
+    return value;
+}
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
+    vec2 uv = fragCoord / iResolution.xy;
+    uv = 2.0 * uv - 1.0;
+    uv.x *= iResolution.x / iResolution.y;
+
+    uv *= rotate2d(uAngle);
+
+    uv.x += uXOffset;
+
+    uv += 2.0 * fbm(uv * uSize + 0.8 * iTime * uSpeed) - 1.0;
+
+    float dist = abs(uv.x);
+    vec3 baseColor = hsv2rgb(vec3(uHue / 360.0, 0.7, 0.8));
+    vec3 bgColor = hsv2rgb(vec3(uBackgroundHsv.x, uBackgroundHsv.y, uBackgroundHsv.z));
+    vec3 lightningEffect = baseColor * pow(mix(0.0, 0.07, hash11(iTime * uSpeed)) / dist, 1.0) * uIntensity;
+    vec3 col = mix(bgColor, lightningEffect, lightningEffect.r);
+    col = pow(col, vec3(1.0));
+    fragColor = vec4(col, 1.0);
+}
+
+void main() {
+    mainImage(gl_FragColor, gl_FragCoord.xy);
+}
+`;

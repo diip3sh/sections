@@ -1,6 +1,10 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
+
+/** Matches `--breakpoint-ipad` / `--breakpoint-desktop-sm` */
+const IPAD_MIN = 768;
+const DESKTOP_SM_MIN = 1280;
 
 /**
  * Base atmosphere — behind portrait (z-0).
@@ -23,16 +27,61 @@ export const GlowBackground = () => {
   );
 };
 
+type CutoutTier = "mobile" | "ipad" | "desktop";
+
 /**
  * Soft elliptical window over the goggles / face:
  * transparent center → liquid shows; opaque edges → gradient-2 covers.
- * Origin sits slightly above mid so it lines up with the bust.
+ * Origin tracks PortraitStage position per breakpoint.
  */
-const CENTER_CUTOUT: CSSProperties = {
+const buildCutout = (tier: CutoutTier): CSSProperties => {
+  const radial =
+    tier === "desktop"
+      ? "radial-gradient(ellipse 42% 48% at 50% 72%, transparent 0%, transparent 32%, #000 68%, #000 100%)"
+      : tier === "ipad"
+        ? "radial-gradient(ellipse 34% 30% at 50% 34%, transparent 0%, transparent 38%, #000 76%, #000 100%)"
+        : "radial-gradient(ellipse 28% 22% at 50% 40%, transparent 0%, transparent 40%, #000 76%, #000 100%)";
+
+  return {
+    maskImage: radial,
+    WebkitMaskImage: radial,
+    maskSize: "100% 100%",
+    WebkitMaskSize: "100% 100%",
+    maskRepeat: "no-repeat",
+    WebkitMaskRepeat: "no-repeat",
+    maskMode: "alpha",
+  };
+};
+
+/**
+ * Figma Mask group (830×590) — soft white wash blob used as alpha.
+ * Approximates:
+ *   2059×1934 @ (-612, -666), linear 195deg white 72% → 0, blur ~58px
+ * so mobile image.png only shows through this soft window.
+ */
+const MOBILE_IMAGE_MASK: CSSProperties = {
   maskImage:
-    "radial-gradient(ellipse 42% 48% at 50% 72%, transparent 0%, transparent 32%, #000 68%, #000 100%)",
+    "radial-gradient(ellipse 95% 90% at 50% 51%, #000 0%, #000 32%, rgba(0,0,0,0.55) 52%, transparent 74%)",
   WebkitMaskImage:
-    "radial-gradient(ellipse 42% 48% at 50% 72%, transparent 0%, transparent 32%, #000 68%, #000 100%)",
+    "radial-gradient(ellipse 95% 90% at 50% 51%, #000 0%, #000 32%, rgba(0,0,0,0.55) 52%, transparent 74%)",
+  maskSize: "100% 100%",
+  WebkitMaskSize: "100% 100%",
+  maskRepeat: "no-repeat",
+  WebkitMaskRepeat: "no-repeat",
+  maskMode: "alpha",
+};
+
+/**
+ * Figma Mask group (1440×1024) — tablet soft white wash as alpha.
+ * Approximates:
+ *   3573×3356 @ (-1062, -1156), linear 195deg white 72% → 0, blur 100px
+ * so tablet.png only shows through this soft window.
+ */
+const TABLET_IMAGE_MASK: CSSProperties = {
+  maskImage:
+    "radial-gradient(ellipse 98% 95% at 50% 51%, #000 0%, #000 28%, rgba(0,0,0,0.5) 48%, transparent 72%)",
+  WebkitMaskImage:
+    "radial-gradient(ellipse 98% 95% at 50% 51%, #000 0%, #000 28%, rgba(0,0,0,0.5) 48%, transparent 72%)",
   maskSize: "100% 100%",
   WebkitMaskSize: "100% 100%",
   maskRepeat: "no-repeat",
@@ -45,10 +94,37 @@ const CENTER_CUTOUT: CSSProperties = {
  * Center cutout reveals the animated bust; amber wash covers the rest.
  */
 export const GradientOverlay = () => {
+  const [tier, setTier] = useState<CutoutTier>("mobile");
+
+  useEffect(() => {
+    const desktop = window.matchMedia(`(min-width: ${DESKTOP_SM_MIN}px)`);
+    const ipad = window.matchMedia(`(min-width: ${IPAD_MIN}px)`);
+
+    const sync = () => {
+      if (desktop.matches) {
+        setTier("desktop");
+        return;
+      }
+      if (ipad.matches) {
+        setTier("ipad");
+        return;
+      }
+      setTier("mobile");
+    };
+
+    sync();
+    desktop.addEventListener("change", sync);
+    ipad.addEventListener("change", sync);
+    return () => {
+      desktop.removeEventListener("change", sync);
+      ipad.removeEventListener("change", sync);
+    };
+  }, []);
+
   return (
     <div
       className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
-      style={CENTER_CUTOUT}
+      style={buildCutout(tier)}
       aria-hidden="true"
     >
       <img
@@ -56,15 +132,57 @@ export const GradientOverlay = () => {
         alt=""
         width={1440}
         height={840}
-        className="absolute inset-0 size-full object-cover object-[center_top] brightness-100 saturate-100 contrast-700"
+        className="absolute inset-0 hidden size-full object-cover object-[center_top] brightness-100 contrast-700 saturate-100 desktop-sm:block"
       />
       <img
         src="/section-18/bg/gradient-2.png"
         alt=""
         width={1440}
         height={840}
-        className="absolute inset-0 size-full object-cover object-[center_top] mix-blend-screen brightness-150 saturate-175"
+        className="absolute inset-0 hidden size-full object-cover object-[center_top] mix-blend-screen brightness-150 saturate-175 desktop-sm:block"
       />
+
+      {/* Mobile — image.png only visible through Figma soft-wash mask */}
+      <div
+        className="absolute inset-0 overflow-hidden ipad:hidden"
+        style={MOBILE_IMAGE_MASK}
+      >
+        <img
+          src="/section-18/bg/image.png"
+          alt=""
+          width={1440}
+          height={840}
+          className="absolute inset-0 top-[-70vh] object-contain object-[center_top] blur-[16px]"
+        />
+        <img
+          src="/section-18/bg/image.png"
+          alt=""
+          width={1440}
+          height={840}
+          className="absolute inset-0 top-[-15vh] object-contain blur-[16px]"
+        />
+      </div>
+
+      {/* iPad — tablet.png only visible through Figma 1440×1024 soft-wash mask */}
+      <div
+        className="absolute inset-0 hidden overflow-hidden ipad:block desktop-sm:hidden"
+        style={TABLET_IMAGE_MASK}
+      >
+        <img
+          src="/section-18/bg/tablet.png"
+          alt=""
+          width={1440}
+          height={1024}
+          className="absolute inset-0 top-[-60vh] object-contain object-[center_top]"
+        />
+        <img
+          src="/section-18/bg/tablet.png"
+          alt=""
+          width={1440}
+          height={1024}
+          className="absolute inset-0 top-[-60vh] object-contain blur-3xl"
+        />
+      </div>
     </div>
   );
 };

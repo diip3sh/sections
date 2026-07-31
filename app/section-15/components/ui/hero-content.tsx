@@ -43,7 +43,7 @@ export const HeroContent = ({
           {...reveal(0.28)}
           className="pointer-events-auto w-full max-w-[370px] font-helvetica-neue text-[32px] desktop-sm:text-[40px] font-medium leading-tight tracking-[-1.28px] text-balance ipad:max-w-[423px] ipad:text-[40px] ipad:tracking-[-1.6px]"
         >
-          <span className="text-black/40">Meet People Behind </span>
+          <span className="text-black/40">Meet the People Behind </span>
           <span className="text-black">Every Great Idea.</span>
         </motion.h1>
 

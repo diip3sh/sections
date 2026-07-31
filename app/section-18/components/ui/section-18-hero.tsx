@@ -24,10 +24,10 @@ export const Section18Hero = () => {
       className="relative isolate min-h-svh w-full overflow-hidden bg-black"
     >
       {/*
-        Preview stack (no middle mask yet):
+        Stack:
           base gradient  z-0
           liquid         z-5
-          gradient-2     z-10
+          gradient-2     z-10 (radial cutout over face)
           nav / copy     z-20
       */}
       <GlowBackground />

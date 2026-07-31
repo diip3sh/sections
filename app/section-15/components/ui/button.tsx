@@ -46,16 +46,23 @@ export const Button = ({
   }
 
   return (
-    <button
-      type={type}
-      className={`${BASE_CLASS} ${CTA_SIZE} relative overflow-hidden rounded-[36px] border border-black bg-[linear-gradient(180deg,#4d4d4d_0%,#0a0a0a_100%)] text-white shadow-[0_7px_8px_rgba(0,0,0,0.18),0_28px_14px_rgba(0,0,0,0.16),0_64px_19px_rgba(0,0,0,0.09),0_114px_23px_rgba(0,0,0,0.03)] ${className}`}
-      {...props}
-    >
-      <span className="relative z-[1]">{children}</span>
+    <span className="relative inline-flex">
+      {/* Linear-gradient shadow — soft fade under the pill */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0_4px_5px_rgba(0,0,0,0.25)]"
+        className="pointer-events-none absolute top-[calc(100%-6px)] left-1/2 z-0 h-10 w-[92%] -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,rgba(0,0,0,0.45)_0%,rgba(0,0,0,0.18)_40%,rgba(0,0,0,0)_100%)] blur-[12px]"
       />
-    </button>
+      <button
+        type={type}
+        className={`${BASE_CLASS} ${CTA_SIZE} relative z-[1] overflow-hidden rounded-[36px] border border-black bg-[linear-gradient(180deg,#4d4d4d_0%,#0a0a0a_100%)] text-white ${className}`}
+        {...props}
+      >
+        <span className="relative z-[1]">{children}</span>
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0_4px_5px_rgba(0,0,0,0.25)]"
+        />
+      </button>
+    </span>
   );
 };

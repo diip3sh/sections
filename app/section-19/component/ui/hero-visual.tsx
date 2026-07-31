@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PixelCard from "../originkit/pixel-card";
 
 /**
  * Hero visual layers (Figma element 2146:692 / desktop 1:1670).
- * Layer order: thunder-mask (z-0) → ThunderStrike (z-5) → circle/mask (z-10).
+ * Layer order: thunder-mask (z-0) → ThunderStrike (z-5) → circle/mask (z-10) → pixels (z-20).
  */
 
 /** Matches `--breakpoint-ipad` / `--breakpoint-desktop-sm` in globals.css */
@@ -55,6 +56,25 @@ const HERO_VISUAL_OFFSET_Y = {
   ipad: -500,
   desktop: -340,
 } as const;
+
+/** Pixel wash over the orb — purple/white to match the glow. */
+const CIRCLE_PIXEL_PROPS = {
+  colors: ["#6A4A9D", "#000"],
+  appearFrom: "top" as const,
+  trigger: "auto" as const,
+  position: "middle" as const,
+  replay: true,
+  gap: 8,
+  pixelSize: 7.9,
+  speed: 700,
+  backgroundColor: "transparent",
+  padding: 0,
+  borderWidth: 0,
+  borderColor: "transparent",
+  radius: 9999,
+  showLabel: false,
+  transition: { type: "tween" as const, duration: 0.8, ease: "easeOut" },
+};
 
 /** Minimum gap between the visual stage bottom and HeroContent (stacked layouts). */
 export const HERO_CONTENT_GAP = 24;
@@ -164,7 +184,7 @@ export const HeroVisual = ({
         />
       </div>
 
-      {/* Circle + mask — above thunder strike */}
+      {/* Circle + mask — above thunder strike; pixels shimmer on top of the orb */}
       <div
         className="absolute left-1/2 z-10 -translate-x-1/2 overflow-visible"
         style={{
@@ -194,6 +214,49 @@ export const HeroVisual = ({
           height={circleSize}
           className="pointer-events-none absolute inset-0 z-10 size-full max-w-none object-contain"
         />
+        {/*
+          Clip and blend must be on separate nodes — mix-blend-mode on the
+          same element as clip-path/overflow often drops circular clipping.
+        */}
+        <div
+          className="pointer-events-none absolute inset-[8%] z-20"
+          style={{
+            clipPath: "circle(50%)",
+            WebkitClipPath: "circle(50%)",
+            // Circle clip + fade out toward the bottom of the orb
+            maskImage: [
+              "radial-gradient(circle closest-side at center, #000 99%, transparent 100%)",
+              "linear-gradient(to bottom, #000 0%, #000 40%, rgba(0,0,0,0.35) 70%, transparent 100%)",
+            ].join(", "),
+            WebkitMaskImage: [
+              "radial-gradient(circle closest-side at center, #000 99%, transparent 100%)",
+              "linear-gradient(to bottom, #000 0%, #000 40%, rgba(0,0,0,0.35) 70%, transparent 100%)",
+            ].join(", "),
+            maskSize: "100% 100%",
+            WebkitMaskSize: "100% 100%",
+            maskRepeat: "no-repeat",
+            WebkitMaskRepeat: "no-repeat",
+            maskComposite: "intersect",
+            WebkitMaskComposite: "source-in",
+            transform: "translateZ(0)",
+          }}
+        >
+          <div className="size-full opacity-50 mix-blend-screen">
+            <PixelCard
+              {...CIRCLE_PIXEL_PROPS}
+              style={{
+                width: "100%",
+                height: "100%",
+                minWidth: 0,
+                minHeight: 0,
+                borderRadius: "50%",
+                overflow: "hidden",
+                clipPath: "circle(50%)",
+                WebkitClipPath: "circle(50%)",
+              }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

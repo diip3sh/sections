@@ -1,40 +1,57 @@
 "use client";
 
 /**
- * Figma `element` (2146:692) — full composite export.
- * Artboard is 670×945 at 1:1; on the phone frame the element sits at y≈-376
- * so the orb lands under the nav. Layer PNGs in /section-19/hero/ are kept
- * for later OriginKit swaps (circle-1, electric-line, thunder-bloom, etc.).
+ * Hero visual layers (Figma element 2146:692).
+ * Base: mask glow under circle; other layers (thunder, pixels) added next.
+ *
+ * Parent stays 317×317 for circle layout. Mask is centered and free to
+ * overflow — set MASK_SIZE to grow/shrink the glow independently.
  */
-const ARTBOARD_W = 670;
-/** Export is 1340×1997 @2x → 670×998.5 at 1x (bleed beyond 945 frame). */
-const EXPORT_H = 1997 / 2;
-const EXPORT_TOP_BLEED = (EXPORT_H - 945) / 2;
-/** Figma element.y (−376) − nav (65) − top export bleed. */
-const ARTBOARD_TOP = -376 - 65 - EXPORT_TOP_BLEED;
+const CIRCLE_SIZE = 317;
+const MASK_SIZE = 400;
+const THUNDER_MASK_SIZE = 192;
 
-/**
- * Hero visual: thunder + glow + orb + pixels as one Figma-accurate image.
- */
 export const HeroVisual = () => {
   return (
     <div
       aria-hidden="true"
-      className="relative z-10 w-full overflow-visible"
-      style={{ height: 420 }}
+      className="relative z-10 flex w-full items-center justify-center overflow-visible"
     >
-      <img
-        src="/section-19/hero/element-ref.png"
-        alt=""
-        width={ARTBOARD_W}
-        height={EXPORT_H}
-        className="pointer-events-none absolute left-1/2 max-w-none -translate-x-[5%]"
-        style={{
-          width: ARTBOARD_W,
-          height: EXPORT_H,
-          top: ARTBOARD_TOP,
-        }}
-      />
+      <div>
+        <img
+          src="/section-19/thunder-mask.png"
+          alt=""
+          width={THUNDER_MASK_SIZE}
+          height={THUNDER_MASK_SIZE}
+          className="pointer-events-none absolute inset-0 z-10 size-full max-w-none object-contain"
+        />
+      </div>
+      <div
+        className="relative overflow-visible"
+        style={{ width: CIRCLE_SIZE, height: CIRCLE_SIZE }}
+      >
+        <img
+          src="/section-19/mask.png"
+          alt=""
+          width={MASK_SIZE}
+          height={MASK_SIZE}
+          className="pointer-events-none absolute z-0 max-w-none object-contain mix-blend-screen"
+          style={{
+            width: MASK_SIZE,
+            height: MASK_SIZE,
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+        <img
+          src="/section-19/circle.png"
+          alt=""
+          width={CIRCLE_SIZE}
+          height={CIRCLE_SIZE}
+          className="pointer-events-none absolute inset-0 z-10 size-full max-w-none object-contain"
+        />
+      </div>
     </div>
   );
 };

@@ -62,7 +62,7 @@ export const Footer = () => {
   return (
     <footer
       aria-label="Notrix footer"
-      className="relative isolate mx-auto w-full max-w-[370px] min-h-[778px] overflow-hidden rounded-[12px] bg-[#212121] ipad:max-w-[648px] ipad:min-h-[810px] desktop-sm:max-w-[1200px] desktop-sm:min-h-[571px]"
+      className="relative isolate mx-auto w-full min-h-[778px] overflow-hidden rounded-[12px] bg-[#212121]"
     >
       {/*
         Mobile (Figma 2168:524): stacked brand → 2-col links (Legal wraps)
@@ -160,8 +160,8 @@ export const Footer = () => {
           cellSize={20}
           gap={0}
           rounded={20}
-          dropSpeed={5}
-          movement={5}
+          dropSpeed={3}
+          movement={2}
         />
       </div>
     </footer>

@@ -44,7 +44,7 @@ export const Section19Hero = () => {
       {/* Falling starfield — z-10 from top of navbar so stars aren't cut off */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 z-10 h-full w-full"
+        className="pointer-events-none absolute inset-x-0 top-0 z-10 desktop-sm:translate-x-[16%] h-full w-full"
       >
         <StarBurst
           speed={7}
@@ -52,7 +52,7 @@ export const Section19Hero = () => {
           color="#E8D4FF"
           centerX={50}
           centerY={0}
-          starSize={9}
+          starSize={18}
           opacity={28}
           flowerIntensity={2}
           twinkleSpeed={3}
@@ -128,7 +128,7 @@ export const Section19Hero = () => {
 
           <div
             className="mt-auto flex w-full flex-col items-center pb-10 desktop-sm:relative desktop-sm:mt-0 desktop-sm:h-full desktop-sm:min-h-[calc(100svh-88px)] desktop-sm:items-stretch desktop-sm:px-[134px] desktop-sm:pt-[79px] desktop-sm:pb-[72px]"
-            style={{ paddingTop: isDesktop ? undefined : HERO_CONTENT_GAP }}
+            style={{ paddingTop: isDesktop ? 150 : HERO_CONTENT_GAP }}
           >
             <HeroContent
               onStartAutomating={handleStartAutomating}

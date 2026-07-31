@@ -53,8 +53,8 @@ export const PortraitStage = () => {
         <LiquidHover
           imageSrc={HERO_SRC}
           resolution={10}
-          cursorSize={25}
-          intensity={12}
+          cursorSize={15}
+          intensity={18}
           style={{ width: "100%", height: "100%", cursor: "crosshair" }}
         />
       </div>

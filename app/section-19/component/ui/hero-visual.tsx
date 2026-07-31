@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import PixelCard from "../originkit/pixel-card";
+import Lightning from "../originkit/thunder-strike";
 
 /**
  * Hero visual layers (Figma element 2146:692 / desktop 1:1670).
@@ -30,8 +31,8 @@ const MASK_SIZE = {
 const THUNDER_ASPECT = 637 / 299;
 const THUNDER_MASK_W = {
   mobile: 292,
-  ipad: 336,
-  desktop: 319,
+  ipad: 490,
+  desktop: 590,
 } as const;
 
 const THUNDER_MASK_H = {
@@ -43,8 +44,8 @@ const THUNDER_MASK_H = {
 /** How far the beam dips into the circle so they visually join. */
 const THUNDER_OVERLAP = {
   mobile: 96,
-  ipad: 164,
-  desktop: 167,
+  ipad: 280,
+  desktop: 320,
 } as const;
 
 /**
@@ -53,8 +54,8 @@ const THUNDER_OVERLAP = {
  */
 const HERO_VISUAL_OFFSET_Y = {
   mobile: -500,
-  ipad: -500,
-  desktop: -340,
+  ipad: -750,
+  desktop: -740,
 } as const;
 
 /** Pixel wash over the orb — purple/white to match the glow. */
@@ -183,6 +184,16 @@ export const HeroVisual = ({
           className="hidden ipad:block pointer-events-none absolute inset-0 size-full max-w-none object-contain mix-blend-screen"
         />
       </div>
+      {/* <div style={{ width: "100", height: thunderMaskH }} className="absolute top-0 left-1/2 z-10 -translate-x-1/2 overflow-visible ipad:-translate-y-[9%] desktop-sm:translate-y-[-11%]">
+        <Lightning
+          // xOffset={7}
+          lightningColor="#C862FF"
+          speed={55}
+          intensity={2}
+          size={20}
+          angle={0}
+        />
+      </div> */}
 
       {/* Circle + mask — above thunder strike; pixels shimmer on top of the orb */}
       <div

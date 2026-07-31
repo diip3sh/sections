@@ -42,7 +42,7 @@ export const HeroContent = ({
 
   return (
     <div className="relative z-20 flex w-full items-center justify-center py-4">
-      <div className="relative z-10 flex w-full max-w-[502px] flex-col items-center gap-6 px-4 text-center ipad:gap-8">
+      <div className="relative z-10 flex w-full flex-col items-center gap-6 px-4 text-center ipad:gap-8">
         <div className="flex w-full flex-col items-center gap-4">
           <FocusReveal
             as="h1"

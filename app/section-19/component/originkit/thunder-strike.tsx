@@ -279,15 +279,18 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
 
     uv.x += uXOffset;
 
-    uv += 2.0 * fbm(uv * uSize + 0.8 * iTime * uSpeed) - 1.0;
+    float displ = 2.0 * fbm(uv * uSize + 0.8 * iTime * uSpeed) - 1.0;
+    uv.x += 0.12 * displ;
+    uv.y += 1.8 * displ;
 
     float dist = abs(uv.x);
     vec3 baseColor = hsv2rgb(vec3(uHue / 360.0, 0.7, 0.8));
-    vec3 bgColor = hsv2rgb(vec3(uBackgroundHsv.x, uBackgroundHsv.y, uBackgroundHsv.z));
-    vec3 lightningEffect = baseColor * pow(mix(0.0, 0.07, hash11(iTime * uSpeed)) / dist, 1.0) * uIntensity;
-    vec3 col = mix(bgColor, lightningEffect, lightningEffect.r);
-    col = pow(col, vec3(1.0));
-    fragColor = vec4(col, 1.0);
+    // Background logic commented out — canvas stays transparent, only the bolt renders.
+    // vec3 bgColor = hsv2rgb(vec3(uBackgroundHsv.x, uBackgroundHsv.y, uBackgroundHsv.z));
+    vec3 lightningEffect = baseColor * pow(mix(0.0, 0.14, hash11(iTime * uSpeed)) / dist, 1.3) * uIntensity;
+    float alpha = clamp(length(lightningEffect) * 4.0, 0.0, 1.0);
+    vec3 col = clamp(lightningEffect, 0.0, 1.0);
+    fragColor = vec4(col * alpha, alpha);
 }
 
 void main() {

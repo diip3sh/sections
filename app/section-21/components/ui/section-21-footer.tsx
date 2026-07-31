@@ -6,7 +6,7 @@ export const Section21Footer = () => {
   return (
     <section
       aria-label="Notrix site footer"
-      className="relative isolate flex min-h-svh w-full items-center justify-center overflow-hidden bg-[#f6f3ea] px-4 py-12 ipad:px-10 ipad:py-16 desktop-sm:px-12 desktop-sm:py-24"
+      className="relative isolate flex min-h-svh w-full items-end justify-center overflow-hidden bg-[#f6f3ea] px-4 py-12 ipad:px-10 ipad:py-16 desktop-sm:px-12 desktop-sm:py-24"
     >
       {/* Soft multi-color wash behind the footer card */}
       <div
@@ -28,7 +28,7 @@ export const Section21Footer = () => {
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-[370px] ipad:max-w-[648px] desktop-sm:max-w-[1200px]">
+      <div className="relative z-10 w-full max-w-[95dvw] wide-lg:max-w-[1440px] mx-auto ">
         <Footer />
       </div>
     </section>

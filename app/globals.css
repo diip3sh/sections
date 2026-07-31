@@ -60,6 +60,18 @@
   }
 }
 
+/** Slow social icon entrance — footer / section-21 */
+@keyframes social-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /** Flip-in around X + rise — reverse of flip-out-x, with bottom→top slip */
 @keyframes phone-flip-in-x {
   from {
@@ -172,6 +184,7 @@
   --animate-trusted-marquee: trusted-marquee 36s linear infinite;
   --animate-page-reveal: page-reveal 500ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
   --animate-phone-slide-up: phone-slide-up 500ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+  --animate-social-slide-up: social-slide-up 800ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
   --animate-phone-flip-in-x: phone-flip-in-x 600ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
   --animate-shine-infinite: shine-infinite 1.4s linear infinite;
   --animate-logo-orbit: logo-orbit 14s linear infinite;
@@ -256,6 +269,17 @@
   }
 
   @keyframes phone-slide-up {
+    from {
+      opacity: 0;
+      transform: none;
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes social-slide-up {
     from {
       opacity: 0;
       transform: none;

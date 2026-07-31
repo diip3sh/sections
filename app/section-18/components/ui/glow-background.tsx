@@ -17,7 +17,7 @@ export const GlowBackground = () => {
       aria-hidden="true"
     >
       <img
-        src="/section-18/bg/gradient.png"
+        src="/section-18/bg/gradient.webp"
         alt=""
         width={1440}
         height={840}
@@ -79,9 +79,9 @@ const MOBILE_IMAGE_MASK: CSSProperties = {
  */
 const TABLET_IMAGE_MASK: CSSProperties = {
   maskImage:
-    "radial-gradient(ellipse 98% 95% at 50% 51%, #000 0%, #000 28%, rgba(0,0,0,0.5) 48%, transparent 72%)",
+    "radial-gradient(ellipse 98% 95% at 50% 80%, #000 0%, #000 28%, rgba(0,0,0,0.5) 48%, transparent 72%)",
   WebkitMaskImage:
-    "radial-gradient(ellipse 98% 95% at 50% 51%, #000 0%, #000 28%, rgba(0,0,0,0.5) 48%, transparent 72%)",
+    "radial-gradient(ellipse 98% 95% at 50% 80%, #000 0%, #000 28%, rgba(0,0,0,0.5) 48%, transparent 72%)",
   maskSize: "100% 100%",
   WebkitMaskSize: "100% 100%",
   maskRepeat: "no-repeat",
@@ -128,14 +128,14 @@ export const GradientOverlay = () => {
       aria-hidden="true"
     >
       <img
-        src="/section-18/bg/gradient-2.png"
+        src="/section-18/bg/gradient-2.webp"
         alt=""
         width={1440}
         height={840}
         className="absolute inset-0 hidden size-full object-cover object-[center_top] brightness-100 contrast-700 saturate-100 desktop-sm:block"
       />
       <img
-        src="/section-18/bg/gradient-2.png"
+        src="/section-18/bg/gradient-2.webp"
         alt=""
         width={1440}
         height={840}
@@ -144,45 +144,45 @@ export const GradientOverlay = () => {
 
       {/* Mobile — image.png only visible through Figma soft-wash mask */}
       <div
-        className="absolute inset-0 overflow-hidden ipad:hidden"
-        style={MOBILE_IMAGE_MASK}
+        className="absolute inset-0 overflow-hidden desktop-sm:hidden"
+      // style={MOBILE_IMAGE_MASK}
       >
         <img
-          src="/section-18/bg/image.png"
+          src="/section-18/gradient.webp"
           alt=""
           width={1440}
           height={840}
-          className="absolute inset-0 size-full object-cover object-[center_top] blur-[16px] mix-blend-screen"
+          className="absolute inset-0 size-full ipad:size-1/2 object-cover object-[center_top] mix-blend-multiply"
         />
         <img
-          src="/section-18/bg/image.png"
+          src="/section-18/ray.webp"
           alt=""
           width={1440}
           height={840}
-          className="absolute inset-0 size-full object-cover object-[center_top] blur-[16px] mix-blend-screen"
+          className="absolute inset-0 size-full ipad:translate-y-[-50%] object-cover object-[center_top] blur-lg"
         />
       </div>
 
       {/* iPad — tablet.png through soft-wash mask, above liquid (z-10) */}
-      <div
+      {/* <div
         className="absolute inset-0 hidden overflow-hidden ipad:block desktop-sm:hidden"
-        style={TABLET_IMAGE_MASK}
+      // style={TABLET_IMAGE_MASK}
       >
         <img
-          src="/section-18/bg/tablet.png"
+          src="/section-18/gradient.webp"
           alt=""
           width={1440}
           height={1024}
-          className="absolute inset-0 size-full object-cover object-[center_top] mix-blend-screen"
+          className="absolute inset-0 size-11/12 object-cover object-[center_top] mix-blend-multiply"
         />
         <img
-          src="/section-18/bg/tablet.png"
+          src="/section-18/ray.webp"
           alt=""
           width={1440}
           height={1024}
-          className="absolute inset-0 size-full object-cover object-[center_top] mix-blend-screen blur-3xl"
+          className="absolute inset-0 size-full object-contain object-[center_top] blur-md brightness-150"
         />
-      </div>
+      </div> */}
     </div>
   );
 };

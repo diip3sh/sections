@@ -72,6 +72,17 @@ export default function LiquidHover({
     const isPreview = false;
     let isHovering = false;
 
+    const SIM_LIFETIME_MS = 3000;
+    const reducedMotion =
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let lastInteraction = 0;
+    let pendingPoint: { x: number; y: number } | null = null;
+    let visible = true;
+    let displayedOnce = false;
+    let io: IntersectionObserver | null = null;
+    let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+    let isDestroyed = false;
+
     const VERT = `
 precision highp float;
 
@@ -417,6 +428,21 @@ void main () {
     resizeCanvas();
     initFBOs();
     const cleanupEvents = setupEvents();
+    if (typeof IntersectionObserver !== "undefined") {
+      io = new IntersectionObserver(
+        (entries) => {
+          visible = entries[0]?.isIntersecting ?? true;
+          if (!visible && rafRef.current) {
+            cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
+          } else if (visible && !rafRef.current && !isDestroyed && !reducedMotion) {
+            rafRef.current = requestAnimationFrame(render);
+          }
+        },
+        { rootMargin: "100px" },
+      );
+      io.observe(container);
+    }
     render(0);
     loadImage(imageSrc);
 
@@ -428,6 +454,7 @@ void main () {
     }
     function updatePointerPosition(eX: number, eY: number) {
       pointer.moved = true;
+      lastInteraction = performance.now();
       pointer.dx = 6 * (eX - pointer.x);
       pointer.dy = 6 * (eY - pointer.y);
       pointer.x = eX;
@@ -443,20 +470,17 @@ void main () {
       };
       const onClick = (e: MouseEvent) => {
         if (!isHovering) return;
-        const rect = container!.getBoundingClientRect();
-        updatePointerPosition(e.clientX - rect.left, e.clientY - rect.top);
+        pendingPoint = { x: e.clientX, y: e.clientY };
       };
       const onMove = (e: MouseEvent) => {
         if (!isHovering) return;
-        const rect = container!.getBoundingClientRect();
-        updatePointerPosition(e.clientX - rect.left, e.clientY - rect.top);
+        pendingPoint = { x: e.clientX, y: e.clientY };
       };
       const onTouchMove = (e: TouchEvent) => {
         isHovering = true;
         e.preventDefault();
         const t = e.targetTouches[0];
-        const rect = container!.getBoundingClientRect();
-        updatePointerPosition(t.clientX - rect.left, t.clientY - rect.top);
+        pendingPoint = { x: t.clientX, y: t.clientY };
       };
       const onTouchStart = () => {
         isHovering = true;
@@ -466,9 +490,12 @@ void main () {
         pointer.moved = false;
       };
       const onResize = () => {
-        resizeCanvas();
-        initFBOs();
-        if (imageTexture) gl.bindTexture(gl.TEXTURE_2D, imageTexture);
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          resizeCanvas();
+          initFBOs();
+          if (imageTexture) gl.bindTexture(gl.TEXTURE_2D, imageTexture);
+        }, 150);
       };
       canvas!.addEventListener("mouseenter", onEnter);
       canvas!.addEventListener("mouseleave", onLeave);
@@ -497,7 +524,7 @@ void main () {
     function resizeCanvas() {
       const width = container!.clientWidth;
       const height = container!.clientHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       canvas!.width = Math.max(2, Math.round(width * overscanFactor * dpr));
       canvas!.height = Math.max(2, Math.round(height * overscanFactor * dpr));
       const cssW = width * overscanFactor;
@@ -543,7 +570,20 @@ void main () {
       };
     }
     function render(_t: number) {
+      if (isDestroyed) return;
+      if (!visible) {
+        rafRef.current = null;
+        return;
+      }
       const dt = 1 / 60;
+      if (pendingPoint) {
+        const rect = container!.getBoundingClientRect();
+        updatePointerPosition(
+          pendingPoint.x - rect.left,
+          pendingPoint.y - rect.top,
+        );
+        pendingPoint = null;
+      }
       if (pointer.moved) {
         if (!isPreview) pointer.moved = false;
         gl.useProgram(splatProgram.program);
@@ -581,88 +621,92 @@ void main () {
         blit(outputColor.write());
         outputColor.swap();
       }
-      gl.useProgram(divergenceProgram.program);
-      gl.uniform2f(
-        divergenceProgram.uniforms.u_texel,
-        velocity.texelSizeX,
-        velocity.texelSizeY,
-      );
-      gl.uniform1i(
-        divergenceProgram.uniforms.u_velocity_texture,
-        velocity.read().attach(1),
-      );
-      blit(divergence);
-      gl.useProgram(pressureProgram.program);
-      gl.uniform2f(
-        pressureProgram.uniforms.u_texel,
-        velocity.texelSizeX,
-        velocity.texelSizeY,
-      );
-      gl.uniform1i(
-        pressureProgram.uniforms.u_divergence_texture,
-        divergence.attach(1),
-      );
-      for (let i = 0; i < 16; i++) {
-        gl.uniform1i(
-          pressureProgram.uniforms.u_pressure_texture,
-          pressure.read().attach(2),
+      const simActive =
+        !reducedMotion && performance.now() - lastInteraction < SIM_LIFETIME_MS;
+      if (simActive) {
+        gl.useProgram(divergenceProgram.program);
+        gl.uniform2f(
+          divergenceProgram.uniforms.u_texel,
+          velocity.texelSizeX,
+          velocity.texelSizeY,
         );
-        blit(pressure.write());
-        pressure.swap();
+        gl.uniform1i(
+          divergenceProgram.uniforms.u_velocity_texture,
+          velocity.read().attach(1),
+        );
+        blit(divergence);
+        gl.useProgram(pressureProgram.program);
+        gl.uniform2f(
+          pressureProgram.uniforms.u_texel,
+          velocity.texelSizeX,
+          velocity.texelSizeY,
+        );
+        gl.uniform1i(
+          pressureProgram.uniforms.u_divergence_texture,
+          divergence.attach(1),
+        );
+        for (let i = 0; i < 10; i++) {
+          gl.uniform1i(
+            pressureProgram.uniforms.u_pressure_texture,
+            pressure.read().attach(2),
+          );
+          blit(pressure.write());
+          pressure.swap();
+        }
+        gl.useProgram(gradientSubtractProgram.program);
+        gl.uniform2f(
+          gradientSubtractProgram.uniforms.u_texel,
+          velocity.texelSizeX,
+          velocity.texelSizeY,
+        );
+        gl.uniform1i(
+          gradientSubtractProgram.uniforms.u_pressure_texture,
+          pressure.read().attach(1),
+        );
+        gl.uniform1i(
+          gradientSubtractProgram.uniforms.u_velocity_texture,
+          velocity.read().attach(2),
+        );
+        blit(velocity.write());
+        velocity.swap();
+        gl.useProgram(advectionProgram.program);
+        gl.uniform2f(
+          advectionProgram.uniforms.u_texel,
+          velocity.texelSizeX,
+          velocity.texelSizeY,
+        );
+        gl.uniform2f(
+          advectionProgram.uniforms.u_output_textel,
+          velocity.texelSizeX,
+          velocity.texelSizeY,
+        );
+        gl.uniform1i(
+          advectionProgram.uniforms.u_velocity_texture,
+          velocity.read().attach(1),
+        );
+        gl.uniform1i(
+          advectionProgram.uniforms.u_input_texture,
+          velocity.read().attach(1),
+        );
+        gl.uniform1f(advectionProgram.uniforms.u_dt, dt);
+        gl.uniform1f(advectionProgram.uniforms.u_dissipation, 0.97);
+        blit(velocity.write());
+        velocity.swap();
+        gl.useProgram(advectionProgram.program);
+        gl.uniform2f(
+          advectionProgram.uniforms.u_output_textel,
+          outputColor.texelSizeX,
+          outputColor.texelSizeY,
+        );
+        gl.uniform1i(
+          advectionProgram.uniforms.u_input_texture,
+          outputColor.read().attach(2),
+        );
+        gl.uniform1f(advectionProgram.uniforms.u_dt, 8 * dt);
+        gl.uniform1f(advectionProgram.uniforms.u_dissipation, 0.98);
+        blit(outputColor.write());
+        outputColor.swap();
       }
-      gl.useProgram(gradientSubtractProgram.program);
-      gl.uniform2f(
-        gradientSubtractProgram.uniforms.u_texel,
-        velocity.texelSizeX,
-        velocity.texelSizeY,
-      );
-      gl.uniform1i(
-        gradientSubtractProgram.uniforms.u_pressure_texture,
-        pressure.read().attach(1),
-      );
-      gl.uniform1i(
-        gradientSubtractProgram.uniforms.u_velocity_texture,
-        velocity.read().attach(2),
-      );
-      blit(velocity.write());
-      velocity.swap();
-      gl.useProgram(advectionProgram.program);
-      gl.uniform2f(
-        advectionProgram.uniforms.u_texel,
-        velocity.texelSizeX,
-        velocity.texelSizeY,
-      );
-      gl.uniform2f(
-        advectionProgram.uniforms.u_output_textel,
-        velocity.texelSizeX,
-        velocity.texelSizeY,
-      );
-      gl.uniform1i(
-        advectionProgram.uniforms.u_velocity_texture,
-        velocity.read().attach(1),
-      );
-      gl.uniform1i(
-        advectionProgram.uniforms.u_input_texture,
-        velocity.read().attach(1),
-      );
-      gl.uniform1f(advectionProgram.uniforms.u_dt, dt);
-      gl.uniform1f(advectionProgram.uniforms.u_dissipation, 0.97);
-      blit(velocity.write());
-      velocity.swap();
-      gl.useProgram(advectionProgram.program);
-      gl.uniform2f(
-        advectionProgram.uniforms.u_output_textel,
-        outputColor.texelSizeX,
-        outputColor.texelSizeY,
-      );
-      gl.uniform1i(
-        advectionProgram.uniforms.u_input_texture,
-        outputColor.read().attach(2),
-      );
-      gl.uniform1f(advectionProgram.uniforms.u_dt, 8 * dt);
-      gl.uniform1f(advectionProgram.uniforms.u_dissipation, 0.98);
-      blit(outputColor.write());
-      outputColor.swap();
       gl.useProgram(displayProgram.program);
       const uv2 = getPointerUV();
       gl.uniform2f(displayProgram.uniforms.u_point, uv2.u, uv2.v);
@@ -694,12 +738,22 @@ void main () {
       gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+      if (reducedMotion && imageTexture) {
+        if (displayedOnce) {
+          rafRef.current = null;
+          return;
+        }
+        displayedOnce = true;
+      }
       rafRef.current = requestAnimationFrame(render);
     }
 
     return () => {
+      isDestroyed = true;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       if (typeof cleanupEvents === "function") cleanupEvents();
+      io?.disconnect();
+      clearTimeout(resizeTimer);
     };
   }, [imageSrc, resolution, cursorSize, intensity]);
 

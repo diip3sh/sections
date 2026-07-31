@@ -7,7 +7,7 @@ import LiquidHover from "../originkit/liquid-distortion";
 /** ease-out-cubic */
 const EASE_OUT = [0.215, 0.61, 0.355, 1] as const;
 
-const HERO_SRC = "/section-18/portraits/hero.png";
+const HERO_SRC = "/section-18/portraits/hero.webp";
 
 /**
  * Mobile → < desktop-sm: smaller bust, upper half.
@@ -50,6 +50,20 @@ export const PortraitStage = () => {
       aria-hidden="true"
     >
       <div className="relative size-full overflow-hidden" style={BOTTOM_BLEND}>
+        {/*
+          Kick off the portrait fetch during HTML parse instead of after
+          hydration — LiquidHover's WebGL texture reuses this HTTP cache entry.
+          crossOrigin must match so the WebGL fetch hits the same cache.
+        */}
+        <img
+          src={HERO_SRC}
+          alt=""
+          aria-hidden="true"
+          crossOrigin="anonymous"
+          fetchPriority="high"
+          decoding="async"
+          className="pointer-events-none absolute size-0 opacity-0"
+        />
         <LiquidHover
           imageSrc={HERO_SRC}
           resolution={10}

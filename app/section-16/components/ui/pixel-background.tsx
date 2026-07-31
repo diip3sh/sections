@@ -92,7 +92,7 @@ export const PixelBackground = () => {
 
   return (
     <div
-      className="pointer-events-none absolute top-0 left-1/2 z-[1] flex h-[48%] w-full max-w-[1512px] -translate-x-1/2 gap-20 overflow-hidden ipad:h-[42%] ipad:gap-10 desktop-sm:gap-[50px] wide-lg:max-w-none"
+      className="pointer-events-none absolute top-0 left-1/2 z-[1] flex h-[48%] w-full max-w-[1512px] -translate-x-1/2 gap-10 overflow-hidden ipad:h-[42%] ipad:gap-10 desktop-sm:gap-[50px] wide-lg:max-w-none"
       aria-hidden="true"
     >
       <div className="relative h-full min-w-0 flex-1 mask-ellipse mask-radial-farthest-corner mask-radial-at-top-left mask-radial-from-30% mask-radial-to-60%">

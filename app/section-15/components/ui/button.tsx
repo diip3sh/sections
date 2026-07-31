@@ -11,8 +11,7 @@ const BASE_CLASS =
   "inline-flex cursor-pointer touch-manipulation items-center justify-center whitespace-nowrap font-sans text-[15px] font-medium leading-none tracking-[-0.6px] transition-[opacity,transform] duration-200 ease [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:scale-[0.98] motion-reduce:active:scale-100 [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90";
 
 /** Figma tablet/desktop CTA frame is 42px — keep the same on mobile (18px was a bad export) */
-const CTA_SIZE =
-  "h-[42px] min-h-[42px] px-5 py-3 ipad:px-6";
+const CTA_SIZE = "h-[42px] min-h-[42px] px-5 py-3 ipad:px-6";
 
 export const Button = ({
   variant = "primary",
@@ -37,7 +36,7 @@ export const Button = ({
     return (
       <button
         type={type}
-        className={`${BASE_CLASS} ${CTA_SIZE} rounded-[36px] border border-black/10 bg-black/[0.02] text-black/70 ${className}`}
+        className={`${BASE_CLASS} ${CTA_SIZE} rounded-[36px] border border-black/10 bg-black/[0.02] text-black/70 hover:bg-black/[0.04] ${className}`}
         {...props}
       >
         {children}

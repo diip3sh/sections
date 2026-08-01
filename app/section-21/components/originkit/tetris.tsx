@@ -386,19 +386,18 @@ function __OriginkitBase_Tetris(props: TetrisProps) {
      * Pre-play a short game so the board opens like it's been running for a
      * while: pieces drop with the same AI + random noise the live loop uses,
      * full rows clear, and the stack settles into a natural mid-game shape.
+     * Only placements that keep the stack within the first 4 rows are allowed,
+     * so it packs the band densely instead of piling up tall and sparse.
      */
     function scatterInitialStack() {
-      const target = Math.floor(cols * rows * 0.55);
+      const limit = 4;
+      // The top row of the band — pieces must never rise above this.
+      const ceiling = Math.max(0, rows - limit);
       let guard = cols * rows;
       while (guard-- > 0) {
-        let filled = 0;
-        for (const v of grid) if (v !== -1) filled++;
-        if (filled >= target) break;
-
         const shape = Math.floor(rand() * SHAPES.length);
-        // Roughly a third of drops are human-sloppy — that's what keeps the
-        // stack uneven and tall instead of a flat AI-optimised wall.
-        const imperfect = rand() < 0.35;
+        // A little noise so the pack stays bumpy, not a flat machine wall.
+        const imperfect = rand() < 0.15;
         let bestCells: Array<[number, number]> | null = null;
         let bestCol = 0;
         let bestRow = 0;
@@ -415,6 +414,10 @@ function __OriginkitBase_Tetris(props: TetrisProps) {
           for (let col = 0; col + width < cols; col++) {
             const row = landing(cells, col);
             if (row < 0) continue;
+            // Skip any drop that would poke above the 4-row band.
+            let top = rows;
+            for (const [, r] of cells) top = Math.min(top, row + r);
+            if (top < ceiling) continue;
             options.push({ cells, col, row });
             const s = score(cells, col, row);
             if (s > bestScore) {
@@ -425,7 +428,7 @@ function __OriginkitBase_Tetris(props: TetrisProps) {
             }
           }
         }
-        // Topped out before we hit the target — leave it as it landed.
+        // Nothing left that fits inside the band — the stack is packed full.
         if (!bestCells) break;
         const chosen =
           imperfect && options.length > 1

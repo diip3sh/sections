@@ -160,7 +160,7 @@ export const Footer = () => {
           cellSize={20}
           gap={0}
           rounded={20}
-          dropSpeed={3}
+          dropSpeed={1}
           movement={2}
           startFilled={true}
         />

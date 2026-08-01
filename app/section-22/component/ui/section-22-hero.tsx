@@ -128,7 +128,7 @@ export const Section22Hero = () => {
           <div className="size-[2305.73px] relative opacity-30">
             <div className="size-[1702.44px] left-[301.64px] top-[301.64px] absolute opacity-10 rounded-full border-[1.47px] border-white" />
             <div className="size-[2305.73px] left-0 top-0 absolute opacity-20 rounded-full border-[1.47px] border-white/50" />
-            <div className="size-[1319.30px] left-[493.22px] top-[493.22px] absolute opacity-20 rounded-full border-[1.47px] border-white" />
+            <div className="size-[1319.30px] left-[493.22px] top-[493.22px] absolute opacity-20 rounded-full border-[1.47px] border-white/50" />
             <div className="size-[932.55px] left-[686.59px] top-[686.59px] absolute opacity-0 rounded-full border-[1.47px] border-white" />
             <div className="size-9 left-[457.62px] top-[622.42px] absolute rounded-full border-[1.47px] border-slate-600" />
             <div className="size-3.5 left-[468.46px] top-[633.26px] absolute bg-slate-800 rounded-full border-[1.47px] border-slate-600" />
@@ -141,7 +141,7 @@ export const Section22Hero = () => {
         <div className="relative hidden size-[1567px]  opacity-30 desktop-sm:block">
           <div className="size-[1157px] left-[205px] top-[205px] absolute opacity-10 rounded-full border border-white" />
           <div className="size-[1567px] left-0 top-0 absolute opacity-20 rounded-full border border-white/45" />
-          <div className="size-[896.61px] left-[335.20px] top-[335.20px] absolute opacity-20 rounded-full border border-white border-dashed" />
+          <div className="size-[896.61px] left-[335.20px] top-[335.20px] absolute opacity-20 rounded-full border border-white/70 border-dashed" />
           <div className="size-[633.77px] left-[466.62px] top-[466.62px] absolute opacity-0 rounded-full border border-white " />
           <div className="size-6 left-[311px] top-[423px] absolute rounded-full border border-slate-600 " />
           <div className="size-2.5 left-[318.37px] top-[430.37px] absolute bg-slate-800 rounded-full border border-slate-600 " />

@@ -233,7 +233,7 @@ export default function InteractiveHeroCanvas({
             const rate = map(m, 320, 1440, 0.002, 5e-4) * (speed / 5);
             const p = fc * rate;
             const h = r / 2;
-            const x = isMobile ? Math.round(lineCount * 0.6) : lineCount;
+            const x = lineCount;
 
             for (let k = 0; k < x; k++) {
                 let ang = map(k, 0, x, 0, Math.PI) + p;
@@ -319,11 +319,17 @@ export default function InteractiveHeroCanvas({
             className={className}
             style={{
                 ...style,
-                position: "relative",
-                width: "100%",
-                height: "100%",
-                overflow: "hidden",
-                transform: rotation ? `rotate(${rotation}deg) scale(1.1)` : undefined,
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                // Larger than the section so rotate + parent translate-y
+                // never leave empty edges (incl. ultrawide / 4K).
+                width: "140%",
+                height: "140%",
+                overflow: "visible",
+                transform: rotation
+                    ? `translate(-50%, -50%) rotate(${rotation}deg)`
+                    : `translate(-50%, -50%)${style?.transform ? ` ${style.transform}` : ""}`,
                 transformOrigin: "center center",
             }}
         >

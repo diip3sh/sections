@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PixelCard from "../originkit/pixel-card";
 import Lightning from "../originkit/thunder-strike";
 
@@ -153,7 +153,16 @@ type HeroVisualProps = {
   thunderMaskW: number;
   thunderMaskH: number;
   circleTop: number;
+  /** Fires once critical visual assets are loaded (or after a short fallback). */
+  onReady?: () => void;
 };
+
+const HERO_VISUAL_ASSETS = [
+  "/section-19/thunder-mask.png",
+  "/section-19/ipad-mask.png",
+  "/section-19/mask.png",
+  "/section-19/circle.png",
+] as const;
 
 export const HeroVisual = ({
   circleSize,
@@ -161,7 +170,52 @@ export const HeroVisual = ({
   thunderMaskW,
   thunderMaskH,
   circleTop,
+  onReady,
 }: HeroVisualProps) => {
+  const readyRef = useRef(false);
+
+  useEffect(() => {
+    if (!onReady) return;
+
+    let cancelled = false;
+
+    const loadImage = (src: string) =>
+      new Promise<void>((resolve) => {
+        const img = new Image();
+        let settled = false;
+        const done = () => {
+          if (settled) return;
+          settled = true;
+          resolve();
+        };
+        img.onload = done;
+        img.onerror = done;
+        img.src = src;
+        if (img.complete) done();
+      });
+
+    const finish = () => {
+      if (cancelled || readyRef.current) return;
+      readyRef.current = true;
+      // Wait a frame so the visual can paint before UI orchestration starts
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!cancelled) onReady();
+        });
+      });
+    };
+
+    void Promise.all(HERO_VISUAL_ASSETS.map(loadImage)).then(finish);
+
+    // Don't block UI forever if an asset hangs
+    const fallback = window.setTimeout(finish, 1800);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(fallback);
+    };
+  }, [onReady]);
+
   return (
     <div aria-hidden="true" className="relative size-full overflow-visible">
       {/* Soft thunder glow — lowest */}

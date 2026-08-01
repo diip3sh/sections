@@ -1,10 +1,15 @@
 "use client";
 
+import { motion } from "motion/react";
+import RollingLetters from "../originkit/rolling-text";
 import { Button } from "./button";
 
 type HeroContentProps = {
   onStartAutomating: () => void;
   onBookDemo: () => void;
+  showHeadline?: boolean;
+  showContent?: boolean;
+  onHeadlineComplete?: () => void;
 };
 
 const SIDE_CALLOUTS = [
@@ -16,34 +21,70 @@ const SIDE_CALLOUTS = [
   },
 ] as const;
 
+const EASE_OUT = [0.215, 0.61, 0.355, 1] as const;
+
 export const HeroContent = ({
   onStartAutomating,
   onBookDemo,
+  showHeadline = true,
+  showContent = true,
+  onHeadlineComplete,
 }: HeroContentProps) => {
   return (
     <div className="relative z-20 mx-auto flex w-full max-w-[370px] flex-col items-center gap-6 px-4 desktop-sm:mx-0 desktop-sm:max-w-none desktop-sm:items-stretch desktop-sm:gap-0 desktop-sm:px-0">
       {/* Eyebrow + headline */}
       <div className="flex w-full flex-col items-center gap-3 text-center desktop-sm:max-w-[923px] desktop-sm:items-start desktop-sm:gap-6 desktop-sm:text-left">
-        <p className="font-sans text-[16px] font-normal leading-normal tracking-[-0.48px] text-[#c98bff] whitespace-nowrap desktop-sm:font-tight desktop-sm:text-[18px] desktop-sm:font-medium desktop-sm:tracking-[-0.54px]">
+        <motion.p
+          initial={false}
+          animate={showHeadline ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+          transition={{ duration: 0.3, ease: EASE_OUT }}
+          className="font-sans text-[16px] font-normal leading-normal tracking-[-0.48px] text-[#c98bff] whitespace-nowrap desktop-sm:font-tight desktop-sm:text-[18px] desktop-sm:font-medium desktop-sm:tracking-[-0.54px]"
+        >
           Future Conversation solution
-        </p>
+        </motion.p>
 
         <div className="flex w-full flex-col items-center gap-2 desktop-sm:items-start desktop-sm:gap-0">
-          <h1 className="w-full font-instrument-serif text-[48px] leading-[1.1] tracking-[-1.44px] text-white text-balance desktop-sm:text-[104px] desktop-sm:leading-[104px] desktop-sm:tracking-[-3.12px]">
-            Intelligent Service Automation
-          </h1>
+          <RollingLetters
+            tag="h1"
+            className="w-full text-balance text-center font-instrument-serif text-[48px] leading-[1.1] tracking-[-1.44px] desktop-sm:text-left desktop-sm:text-[104px] desktop-sm:tracking-[-3.12px]"
+            color="#ffffff"
+            startFrom="bottom"
+            staggerFrom="start"
+            animate={showHeadline}
+            onAnimationComplete={onHeadlineComplete}
+            font={{
+              fontWeight: 400,
+            }}
+            transition={{
+              duration: 0.4,
+              delay: 0.05,
+              ease: EASE_OUT,
+              staggerChildren: 0.022,
+            }}
+            text={"Intelligent Service\nAutomation"}
+          />
 
           {/* Mobile / tablet description stays under the headline */}
-          <p className="w-full max-w-[332px] font-sans text-[14px] font-normal leading-[1.4] tracking-[-0.28px] text-white/80 text-pretty desktop-sm:hidden">
+          <motion.p
+            initial={false}
+            animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+            transition={{ duration: 0.35, ease: EASE_OUT }}
+            className="w-full max-w-[332px] font-sans text-[14px] font-normal leading-[1.4] tracking-[-0.28px] text-white/80 text-pretty desktop-sm:hidden"
+          >
             Automate your customer service with conversational AI that can
             answer, understand, and adept to each user in real time improving
             efficiency, satisfaction,and support quality effortlessly.
-          </p>
+          </motion.p>
         </div>
       </div>
 
       {/* CTAs — stacked on mobile, row on desktop */}
-      <div className="flex w-full flex-col items-center gap-3 pb-[58px] desktop-sm:mt-10 desktop-sm:w-auto desktop-sm:flex-row desktop-sm:items-center desktop-sm:gap-3 desktop-sm:pb-0">
+      <motion.div
+        initial={false}
+        animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+        transition={{ duration: 0.35, ease: EASE_OUT }}
+        className="flex w-full flex-col items-center gap-3 pb-[58px] desktop-sm:mt-10 desktop-sm:w-auto desktop-sm:flex-row desktop-sm:items-center desktop-sm:gap-3 desktop-sm:pb-0"
+      >
         <Button
           variant="primary"
           aria-label="Start Automating"
@@ -60,17 +101,25 @@ export const HeroContent = ({
         >
           Book a Demo
         </Button>
-      </div>
+      </motion.div>
 
       {/* Desktop description — lower left (Figma 1:1858) */}
-      <p className="mt-auto hidden max-w-[420px] font-tight text-[18px] leading-[25.5px] tracking-[-0.36px] text-white/80 desktop-sm:mt-[148px] desktop-sm:block">
+      <motion.p
+        initial={false}
+        animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+        transition={{ duration: 0.35, ease: EASE_OUT, delay: 0.1 }}
+        className="mt-auto hidden max-w-[420px] font-tight text-[18px] leading-[25.5px] tracking-[-0.36px] text-white/80 desktop-sm:mt-[148px] desktop-sm:block"
+      >
         Automate your customer service with conversational AI that can answer,
         understand, and adept to each user in real time - improving efficiency,
         satisfaction, and support quality effortlessly.
-      </p>
+      </motion.p>
 
       {/* Desktop side callouts — right column (Figma 1:1836 / 1:1832) */}
-      <aside
+      <motion.aside
+        initial={false}
+        animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+        transition={{ duration: 0.35, ease: EASE_OUT, delay: 0.2 }}
         aria-label="Product highlights"
         className="pointer-events-none absolute top-[442px] right-0 hidden flex-col items-end gap-[66px] text-right desktop-sm:flex"
       >
@@ -86,7 +135,7 @@ export const HeroContent = ({
             ))}
           </p>
         ))}
-      </aside>
+      </motion.aside>
     </div>
   );
 };

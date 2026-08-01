@@ -67,7 +67,7 @@ export const Navbar = () => {
       </div>
 
       {/* Desktop — Figma 1:1837 */}
-      <div className="relative mx-auto hidden w-full max-w-[1172px] items-center justify-between px-4 pt-9 desktop-sm:flex">
+      <div className="relative mx-auto hidden w-full items-center justify-between pt-9 desktop-sm:flex">
         <div className="flex items-center gap-[52px]">
           <a
             href="#"

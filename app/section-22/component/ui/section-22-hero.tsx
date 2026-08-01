@@ -1,10 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import InteractiveHeroCanvas from "../originkit/wave-arcs";
+import RollingLetters from "../originkit/rolling-text";
+import Sparkles from "../originkit/startdust";
+import { useWaveArcsConfig } from "./use-wave-arcs-config";
+
+const NAV_LINKS = [
+  { href: "#home", label: "Home" },
+  { href: "#service", label: "Service" },
+  { href: "#product", label: "Proudct" },
+  { href: "#about", label: "About Us" },
+] as const;
+
+const STAR_DUST_HEIGHT = 120;
+
+const EASE_OUT = [0.215, 0.61, 0.355, 1] as const;
+
+type RevealPhase = "bg" | "nav" | "headline" | "content";
+
+const fadeUpVariants = {
+  hidden: { opacity: 0, y: 16 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: EASE_OUT },
+  },
+};
 
 export const Section22Hero = () => {
   const [email, setEmail] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { lineWidth, lineCount } = useWaveArcsConfig();
+  const prefersReducedMotion = useReducedMotion();
+
+  const [phase, setPhase] = useState<RevealPhase>("bg");
+
+  useEffect(() => {
+    if (prefersReducedMotion) setPhase("content");
+  }, [prefersReducedMotion]);
+
+  const showNav = prefersReducedMotion || phase !== "bg";
+  const showHeadline =
+    prefersReducedMotion || phase === "headline" || phase === "content";
+  const showContent = prefersReducedMotion || phase === "content";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -13,37 +53,72 @@ export const Section22Hero = () => {
     setEmail("");
   };
 
+  const handleToggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
+
+  const handleCloseMenu = () => {
+    setIsMenuOpen(false);
+  };
+
+  const handleBgComplete = () => {
+    setPhase((current) => (current === "bg" ? "nav" : current));
+  };
+
+  const handleNavComplete = () => {
+    setPhase((current) => (current === "nav" ? "headline" : current));
+  };
+
+  const handleHeadlineComplete = () => {
+    setPhase((current) => (current === "headline" ? "content" : current));
+  };
+
   return (
     <section
       aria-label="Stay ahead of the bezier curve"
       className="relative isolate flex min-h-svh w-full flex-col justify-between overflow-hidden bg-[#050304] text-white select-none"
     >
-      {/* Wave Arcs background canvas (rotated ~8.47deg to match design) */}
-      <div
+      {/* 1. Background — fades in first */}
+      <motion.div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        className="pointer-events-none absolute inset-0 z-0"
+        initial={prefersReducedMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.45, ease: EASE_OUT }}
+        onAnimationComplete={handleBgComplete}
       >
-        <InteractiveHeroCanvas
-          backgroundColor="#050304"
-          lineColor="rgb(0, 178, 255)"
-          lineWidth={2.2}
-          lineCount={230}
-          speed={4}
-          glow={4}
-          rotation={8.47}
-          interactive={true}
-          className="size-full"
-        />
+        <div className="absolute inset-0 -translate-y-[8%] ipad:-translate-y-[0%]">
+          <InteractiveHeroCanvas
+            backgroundColor="#050304"
+            lineColor="rgb(0, 178, 255)"
+            lineWidth={lineWidth}
+            lineCount={lineCount}
+            speed={4}
+            glow={10}
+            rotation={8.47}
+            interactive={true}
+          />
+        </div>
 
-        {/* Ambient cyan & dark blur glows */}
         <div className="absolute top-1/2 left-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00A3FF]/15 blur-[120px]" />
         <div className="absolute bottom-10 left-1/2 h-[350px] w-[700px] -translate-x-1/2 rounded-full bg-[#00B2FF]/20 blur-[100px]" />
-      </div>
+      </motion.div>
 
-      {/* Top Navbar */}
-      <header className="relative z-20 flex w-full items-center justify-between px-6 py-6 ipad:px-12 desktop-sm:px-16">
-        {/* Brand Logo */}
-        <div className="flex items-center gap-2">
+      {/* 2. Navbar — slides in from top after background */}
+      <motion.header
+        className="relative z-20 mx-auto flex w-full max-w-[1280px] items-center justify-between px-6 py-6 ipad:px-12 desktop-sm:px-16"
+        initial={prefersReducedMotion ? false : { y: "-120%", opacity: 0 }}
+        animate={showNav ? { y: 0, opacity: 1 } : { y: "-120%", opacity: 0 }}
+        transition={{ duration: 0.4, ease: EASE_OUT }}
+        onAnimationComplete={() => {
+          if (showNav) handleNavComplete();
+        }}
+      >
+        <a
+          href="#home"
+          aria-label="Visionary home"
+          className="flex min-h-11 items-center gap-2 touch-manipulation focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [-webkit-tap-highlight-color:transparent] cursor-pointer"
+        >
           <svg
             width="22"
             height="22"
@@ -51,6 +126,7 @@ export const Section22Hero = () => {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className="text-white"
+            aria-hidden="true"
           >
             <path
               d="M11 0L13.5 8.5L22 11L13.5 13.5L11 22L8.5 13.5L0 11L8.5 8.5L11 0Z"
@@ -60,74 +136,171 @@ export const Section22Hero = () => {
           <span className="font-sans text-xl font-semibold tracking-[-0.4px]">
             Visionary
           </span>
-        </div>
+        </a>
 
-        {/* Center Pill Nav */}
         <nav
           aria-label="Main Navigation"
-          className="hidden items-center rounded-xl border border-white/10 bg-white/[0.03] p-1 shadow-lg backdrop-blur-md ipad:flex"
+          className="hidden items-center rounded-xl border border-white/10 bg-white/[0.03] p-1 shadow-lg backdrop-blur-md desktop-sm:flex"
         >
-          <a
-            href="#home"
-            className="rounded-lg bg-white/15 px-4 py-2 text-xs font-normal text-white transition-colors hover:bg-white/20"
-          >
-            Home
-          </a>
-          <a
-            href="#service"
-            className="px-4 py-2 text-xs font-normal text-white/80 transition-colors hover:text-white"
-          >
-            Service
-          </a>
-          <a
-            href="#product"
-            className="px-4 py-2 text-xs font-normal text-white/80 transition-colors hover:text-white"
-          >
-            Proudct
-          </a>
-          <a
-            href="#about"
-            className="px-4 py-2 text-xs font-normal text-white/80 transition-colors hover:text-white"
-          >
-            About Us
-          </a>
+          {NAV_LINKS.map((link, index) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className={
+                index === 0
+                  ? "rounded-lg bg-white/15 px-4 py-2 font-tight text-xs font-normal text-white transition-colors duration-200 ease [@media(hover:hover)_and_(pointer:fine)]:hover:bg-white/20 cursor-pointer"
+                  : "px-4 py-2 text-xs font-normal text-white/80 transition-colors duration-200 ease [@media(hover:hover)_and_(pointer:fine)]:hover:text-white cursor-pointer"
+              }
+            >
+              {link.label}
+            </a>
+          ))}
         </nav>
 
-        {/* Right CTA Buttons */}
-        <div className="flex items-center gap-3">
+        <div className="hidden items-center gap-3 desktop-sm:flex">
           <button
             type="button"
-            className="rounded-full border border-[#2f2f2f] bg-white/[0.02] px-5 py-2.5 text-sm font-normal text-white transition-colors hover:border-white/30 hover:bg-white/10"
+            className="rounded-full border border-[#2f2f2f] bg-white/[0.02] px-5 py-2.5 text-sm font-normal text-white transition-colors duration-200 ease [@media(hover:hover)_and_(pointer:fine)]:hover:border-white/30 [@media(hover:hover)_and_(pointer:fine)]:hover:bg-white/10 cursor-pointer"
           >
             Sign in
           </button>
           <button
             type="button"
-            className="rounded-full bg-white px-5 py-2.5 text-sm font-medium text-[#121212] transition-transform hover:scale-105"
+            className="rounded-full bg-white px-5 py-2.5 text-sm font-medium text-[#121212] transition-transform duration-200 ease [@media(hover:hover)_and_(pointer:fine)]:hover:scale-105 cursor-pointer"
           >
             Join Now
           </button>
         </div>
-      </header>
+
+        <button
+          type="button"
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isMenuOpen}
+          aria-controls="mobile-nav"
+          onClick={handleToggleMenu}
+          className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center touch-manipulation transition-opacity duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [-webkit-tap-highlight-color:transparent] desktop-sm:hidden [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-80 cursor-pointer"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            className="size-6 text-white"
+          >
+            {isMenuOpen ? (
+              <path
+                d="M6 6L18 18M18 6L6 18"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+              />
+            ) : (
+              <path
+                d="M4 7H20M4 12H20M4 17H20"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+              />
+            )}
+          </svg>
+        </button>
+      </motion.header>
+
+      {/* Mobile menu panel */}
+      <div
+        id="mobile-nav"
+        className={`absolute inset-x-0 top-[90px] z-30 px-6 ipad:hidden ${isMenuOpen ? "block" : "hidden"}`}
+      >
+        <nav
+          aria-label="Mobile Navigation"
+          className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-[#0a0809]/95 p-3 shadow-2xl backdrop-blur-md"
+        >
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={handleCloseMenu}
+              className="min-h-11 rounded-xl px-4 py-3 text-sm font-normal text-white/80 transition-colors duration-200 ease touch-manipulation focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [-webkit-tap-highlight-color:transparent] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-white/10 [@media(hover:hover)_and_(pointer:fine)]:hover:text-white"
+            >
+              {link.label}
+            </a>
+          ))}
+          <div className="mt-2 flex flex-col gap-2 border-t border-white/10 pt-3">
+            <button
+              type="button"
+              className="min-h-11 w-full rounded-full border border-[#2f2f2f] bg-white/[0.02] px-5 py-2.5 text-sm font-normal text-white transition-colors duration-200 ease touch-manipulation cursor-pointer"
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              className="min-h-11 w-full rounded-full bg-white px-5 py-2.5 text-sm font-medium text-[#121212] transition-opacity duration-200 ease touch-manipulation cursor-pointer"
+            >
+              Join Now
+            </button>
+          </div>
+        </nav>
+      </div>
 
       {/* Main Hero Content */}
-      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 py-12 text-center">
-        {/* Main Serif Headline */}
-        <h1 className="font-serif text-[48px] leading-[1.1] tracking-[-1px] text-white ipad:text-[68px] desktop-sm:text-[74px] desktop-sm:leading-[81px]">
-          Stay ahead of the <br />
-          <span className="font-serif italic">(bazier)</span> curve
-        </h1>
+      <main className="relative z-20 mx-auto flex w-full max-w-[340px] max-h-[600px] flex-1 flex-col items-center justify-between py-12 pt-[62px] text-center ipad:max-h-[623px] ipad:max-w-[512px]">
+        {/* 3. Headline — rolling text after navbar */}
+        <RollingLetters
+          tag="h1"
+          className="w-full text-center font-instrument-serif text-[57px] leading-[1.1] tracking-[-1px] ipad:text-[74px] desktop-sm:text-[78px] desktop-sm:leading-[81px]"
+          color="#ffffff"
+          startFrom="bottom"
+          staggerFrom="center"
+          animate={showHeadline}
+          onAnimationComplete={handleHeadlineComplete}
+          font={{
+            fontWeight: 400,
+            textAlign: "center",
+          }}
+          transition={{
+            duration: 0.45,
+            delay: 0,
+            ease: EASE_OUT,
+            staggerChildren: 0.028,
+          }}
+          segments={[
+            { text: "Stay ahead of the\n" },
+            { text: "(bazier)", className: "italic" },
+            { text: " curve" },
+          ]}
+        />
 
-        {/* Description & Social Proof */}
-        <div className="mt-8 flex max-w-[536px] flex-col items-center gap-6">
-          <p className="font-sans text-base leading-relaxed text-white/80 ipad:text-lg">
-            Get inspired, learn what’s new in design, and <br className="hidden ipad:block" />
+        {/* 4. Description + social + form — stagger after headline */}
+        <motion.div
+          className="mt-8 flex w-full flex-col items-center gap-6"
+          initial="hidden"
+          animate={showContent ? "show" : "hidden"}
+          variants={{
+            hidden: {},
+            show: {
+              transition: {
+                staggerChildren: 0.12,
+                delayChildren: 0.04,
+              },
+            },
+          }}
+        >
+          <motion.p
+            variants={fadeUpVariants}
+            className="w-full font-tight text-[16px] leading-relaxed text-white/80 ipad:text-lg ipad:text-[18px]"
+          >
+            Get inspired, learn what’s new in design, and{" "}
+            <br className="hidden ipad:block" />
             connect with pros - all delivered in weekly mail.
-          </p>
+          </motion.p>
 
-          {/* Avatar Stack + Professionals Counter */}
-          <div className="flex items-center gap-3">
-            <div className="grid grid-cols-1 grid-rows-1 place-items-start leading-none">
+          <motion.div
+            variants={fadeUpVariants}
+            className="flex w-full max-w-full items-center justify-center gap-3"
+          >
+            <div className="grid shrink-0 grid-cols-1 grid-rows-1 place-items-start leading-none">
               <div className="col-start-1 row-start-1 h-[26px] w-[26px] overflow-hidden rounded-[4px] shadow-md">
                 <img
                   src="/section-22/avatar-1.png"
@@ -154,38 +327,63 @@ export const Section22Hero = () => {
                 </div>
               </div>
             </div>
-            <span className="font-sans text-sm tracking-[-0.5px] text-white/60 ipad:text-base">
+            <span className="min-w-0 text-left font-helvetica-neue text-[16px] font-normal tracking-[-0.5px] text-white/60 ipad:text-[18px]">
               Join 100k design professionals
             </span>
-          </div>
+          </motion.div>
 
-          {/* Email Subscription Bar */}
-          <form
+          <motion.form
+            variants={fadeUpVariants}
             onSubmit={handleSubmit}
-            className="mt-2 w-full max-w-[512px] rounded-full border border-white/10 bg-white/[0.05] p-2 shadow-2xl backdrop-blur-md"
+            className="relative z-20 mt-2 w-full rounded-full border border-white/10 p-[6px] shadow-2xl backdrop-blur-md"
+            style={{
+              borderRadius: "100px",
+              background: "rgba(255, 255, 255, 0.05)",
+            }}
           >
-            <div className="flex items-center justify-between rounded-full bg-[#101113] py-2 pl-6 pr-2 shadow-inner">
+            <div className="flex min-w-0 items-center justify-between rounded-full bg-[#101113] py-[6px] pr-2 pl-4 shadow-inner">
               <input
                 type="email"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-transparent font-sans text-sm text-white placeholder:text-white/50 focus:outline-none ipad:text-base"
+                className="min-w-0 w-full bg-transparent font-sans text-sm text-white placeholder:text-white/50 focus:outline-none ipad:text-base"
                 required
               />
               <button
                 type="submit"
-                className="shrink-0 rounded-full border border-[#2f2f2f] bg-white/[0.02] px-6 py-2.5 text-sm text-white transition-colors hover:border-white/40 hover:bg-white/10"
+                className="shrink-0 rounded-full border border-[#2f2f2f] bg-white/[0.02] px-4 py-2.5 text-sm text-white transition-colors duration-200 ease hover:border-white/40 hover:bg-white/10 cursor-pointer"
               >
                 Sign in
               </button>
             </div>
-          </form>
-        </div>
+          </motion.form>
+        </motion.div>
       </main>
 
-      {/* Empty footer spacer for baseline balance */}
       <footer className="relative z-10 py-4" />
+
+      {/* Stardust fades with background */}
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[15] w-full overflow-hidden"
+        style={{ height: STAR_DUST_HEIGHT }}
+        initial={prefersReducedMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, ease: EASE_OUT, delay: 0.15 }}
+      >
+        <Sparkles
+          angle={0}
+          background="rgba(0,0,0,0)"
+          particleColor="#FFFFFF"
+          particleDensity={1}
+          minSize={0.5}
+          maxSize={0.8}
+          speed={6}
+          particleSpeed={2}
+          movement={4}
+        />
+      </motion.div>
     </section>
   );
 };

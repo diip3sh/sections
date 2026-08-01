@@ -168,7 +168,7 @@ export default function RollingLetters({
             delayChildren: transition.delay,
             staggerChildren: stagger(transition.staggerChildren ?? 0.08, {
               from: staggerOrigin[staggerFrom],
-            }),
+            }) as unknown as number,
           },
         },
       }}

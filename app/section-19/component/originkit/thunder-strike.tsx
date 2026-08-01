@@ -1,31 +1,144 @@
 // Thunder Strike — Originkit
-// Props set in the preview:
-//   xOffset: -32
-//   speed: 12
-//   intensity: 85
-//   size: 20
-//   angle: 0
-
+// Originkit — defaults rewritten to match preview.
 "use client";
 
 import { useEffect, useRef } from "react";
 
-function rgbToHslWithSV(rgb: string): { h: number; s: number; v: number } {
-  const [r, g, b] = rgb
-    .replace("rgb(", "")
-    .replace(")", "")
-    .split(",")
-    .map((n) => parseInt(n.trim()) / 255);
+type Rgb = { r: number; g: number; b: number };
+
+/** Coerce tweak-panel / Framer Color values into a CSS color string. */
+function colorToCss(input: unknown): string {
+  if (input == null) return "";
+  if (typeof input === "string") return input.trim();
+  if (typeof input === "number") return "";
+  if (typeof input === "object") {
+    const o = input as Record<string, unknown>;
+    // Channel objects first — never call Object.prototype.toString (→ "[object Object]").
+    if ("__rgba" in o && o.__rgba && typeof o.__rgba === "object") {
+      const c = o.__rgba as Record<string, number>;
+      return `rgb(${Math.round(c.r)}, ${Math.round(c.g)}, ${Math.round(c.b)})`;
+    }
+    if ("r" in o && "g" in o && "b" in o) {
+      return `rgb(${Math.round(Number(o.r))}, ${Math.round(Number(o.g))}, ${Math.round(Number(o.b))})`;
+    }
+    // Framer Color / shim helpers (own methods only).
+    for (const key of ["toRgbString", "toHexString", "toValue"] as const) {
+      const fn = o[key];
+      if (typeof fn === "function") {
+        try {
+          const out = (fn as () => unknown).call(input);
+          if (
+            typeof out === "string" &&
+            out.trim() &&
+            !/^\[object /i.test(out)
+          ) {
+            return out.trim();
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+    if (
+      typeof o.toString === "function" &&
+      o.toString !== Object.prototype.toString
+    ) {
+      try {
+        const out = (o.toString as () => unknown).call(input);
+        if (typeof out === "string" && out.trim() && !/^\[object /i.test(out)) {
+          return out.trim();
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+  return String(input).trim();
+}
+
+/** Parse any common CSS / picker color into linear RGB in 0..1. Never returns NaN. */
+function colorToRgb(input: unknown): Rgb {
+  const fallback: Rgb = { r: 0, g: 0, b: 0 };
+  const s = colorToCss(input);
+  if (!s || /gradient\(/i.test(s) || /^oklch\(/i.test(s)) return fallback;
+
+  let r = 0;
+  let g = 0;
+  let b = 0;
+
+  // Hex: #rgb #rgba #rrggbb #rrggbbaa, or bare rrggbb
+  const hexMatch = s.match(/^#?([0-9a-fA-F]{3,8})$/);
+  if (hexMatch) {
+    let hex = hexMatch[1];
+    if (hex.length === 3 || hex.length === 4) {
+      hex = hex
+        .slice(0, 3)
+        .split("")
+        .map((c) => c + c)
+        .join("");
+    } else if (hex.length === 8) {
+      hex = hex.slice(0, 6);
+    }
+    if (hex.length !== 6) return fallback;
+    r = parseInt(hex.slice(0, 2), 16) / 255;
+    g = parseInt(hex.slice(2, 4), 16) / 255;
+    b = parseInt(hex.slice(4, 6), 16) / 255;
+  } else {
+    let m = s.match(/rgba?\(([^)]+)\)/i);
+    if (m) {
+      const parts = m[1]
+        .split(/[\s,/]+/)
+        .filter(Boolean)
+        .map((v) => parseFloat(v));
+      if (parts.length < 3 || parts.some((n) => Number.isNaN(n)))
+        return fallback;
+      // Support both 0-255 and 0-1 channel forms.
+      const scale = parts[0] > 1 || parts[1] > 1 || parts[2] > 1 ? 255 : 1;
+      r = parts[0] / scale;
+      g = parts[1] / scale;
+      b = parts[2] / scale;
+    } else {
+      m = s.match(/hsla?\(([^)]+)\)/i);
+      if (!m) return fallback;
+      const parts = m[1]
+        .split(/[\s,/]+/)
+        .filter(Boolean)
+        .map((v) => parseFloat(v));
+      if (parts.length < 3 || parts.some((n) => Number.isNaN(n)))
+        return fallback;
+      const h = (((parts[0] % 360) + 360) % 360) / 360;
+      const sat = parts[1] > 1 ? parts[1] / 100 : parts[1];
+      const li = parts[2] > 1 ? parts[2] / 100 : parts[2];
+      const k = (n: number) => (n + h * 12) % 12;
+      const f = (n: number) =>
+        li -
+        sat *
+          Math.min(li, 1 - li) *
+          Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+      r = f(0);
+      g = f(8);
+      b = f(4);
+    }
+  }
+
+  if ([r, g, b].some((n) => Number.isNaN(n))) return fallback;
+  return {
+    r: Math.min(1, Math.max(0, r)),
+    g: Math.min(1, Math.max(0, g)),
+    b: Math.min(1, Math.max(0, b)),
+  };
+}
+
+/** RGB 0..1 → HSV (h in degrees). Used for the bolt hue uniform. */
+function rgbToHsv(rgb: Rgb): { h: number; s: number; v: number } {
+  const { r, g, b } = rgb;
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   let h = 0;
-  let s = 0;
   const v = max;
   const d = max - min;
-  s = max === 0 ? 0 : d / max;
-  if (max === min) {
-    h = 0;
-  } else {
+  const s = max === 0 ? 0 : d / max;
+  if (max !== min) {
     switch (max) {
       case r:
         h = (g - b) / d + (g < b ? 6 : 0);
@@ -33,7 +146,7 @@ function rgbToHslWithSV(rgb: string): { h: number; s: number; v: number } {
       case g:
         h = (b - r) / d + 2;
         break;
-      case b:
+      default:
         h = (r - g) / d + 4;
         break;
     }
@@ -43,13 +156,15 @@ function rgbToHslWithSV(rgb: string): { h: number; s: number; v: number } {
 }
 
 interface LightningProps {
-  lightningColor?: string;
-  backgroundColor?: string;
+  lightningColor?: unknown;
+  backgroundColor?: unknown;
   xOffset?: number;
   speed?: number;
   intensity?: number;
   size?: number;
   angle?: number;
+  direction?: number;
+  wander?: number;
 }
 
 export default function Lightning({
@@ -57,26 +172,53 @@ export default function Lightning({
   backgroundColor = "rgb(0, 0, 0)",
   xOffset = 1,
   speed = 55,
-  intensity = 23,
+  intensity = 1,
   size = 50,
   angle = -27,
+  direction = 90,
+  wander = 50,
 }: LightningProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Live prop bag — updated every render so the WebGL loop never tears down
+  // (and never restarts rAF) when the control panel tweaks values.
+  const propsRef = useRef({
+    lightningColor,
+    backgroundColor,
+    xOffset,
+    speed,
+    intensity,
+    size,
+    angle,
+    direction,
+    wander,
+  });
+  propsRef.current = {
+    lightningColor,
+    backgroundColor,
+    xOffset,
+    speed,
+    intensity,
+    size,
+    angle,
+    direction,
+    wander,
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const resizeCanvas = () => {
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
-    };
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-    const gl = canvas.getContext("webgl");
+
+    const gl =
+      canvas.getContext("webgl", {
+        preserveDrawingBuffer: true,
+        premultipliedAlpha: false,
+      }) ||
+      (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
     if (!gl) {
       console.error("WebGL not supported");
       return;
     }
+
     let isDestroyed = false;
     let rafId = 0;
 
@@ -92,12 +234,14 @@ export default function Lightning({
       }
       return shader;
     };
+
     const vertexShader = compileShader(vertexShaderSource, gl.VERTEX_SHADER);
     const fragmentShader = compileShader(
       fragmentShaderSource,
       gl.FRAGMENT_SHADER,
     );
     if (!vertexShader || !fragmentShader) return;
+
     const program = gl.createProgram();
     if (!program) return;
     gl.attachShader(program, vertexShader);
@@ -108,6 +252,7 @@ export default function Lightning({
       return;
     }
     gl.useProgram(program);
+
     const uniforms: Record<string, WebGLUniformLocation | null> = {
       iResolution: gl.getUniformLocation(program, "iResolution"),
       iTime: gl.getUniformLocation(program, "iTime"),
@@ -118,12 +263,10 @@ export default function Lightning({
       uIntensity: gl.getUniformLocation(program, "uIntensity"),
       uSize: gl.getUniformLocation(program, "uSize"),
       uAngle: gl.getUniformLocation(program, "uAngle"),
+      uDirection: gl.getUniformLocation(program, "uDirection"),
+      uWander: gl.getUniformLocation(program, "uWander"),
     };
-    for (const [name, location] of Object.entries(uniforms)) {
-      if (location === null) {
-        console.warn(`Uniform '${name}' not found in shader program`);
-      }
-    }
+
     const vertices = new Float32Array([
       -1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1,
     ]);
@@ -133,53 +276,64 @@ export default function Lightning({
     const aPosition = gl.getAttribLocation(program, "aPosition");
     gl.enableVertexAttribArray(aPosition);
     gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+
     const startTime = performance.now();
+
+    const resizeCanvas = () => {
+      const w = Math.max(1, Math.floor(canvas.clientWidth));
+      const h = Math.max(1, Math.floor(canvas.clientHeight));
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+    };
+
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
 
     const render = () => {
       if (isDestroyed) return;
       resizeCanvas();
       gl.viewport(0, 0, canvas.width, canvas.height);
+
+      const p = propsRef.current;
       if (uniforms.iResolution) {
         gl.uniform2f(uniforms.iResolution, canvas.width, canvas.height);
       }
-      const currentTime = performance.now();
       if (uniforms.iTime) {
-        gl.uniform1f(uniforms.iTime, (currentTime - startTime) / 1e3);
+        gl.uniform1f(uniforms.iTime, (performance.now() - startTime) / 1e3);
       }
-      const mainColor = rgbToHslWithSV(lightningColor);
-      const bgColor = rgbToHslWithSV(backgroundColor);
-      if (uniforms.uHue) {
-        gl.uniform1f(uniforms.uHue, mainColor.h);
-      }
+
+      const bolt = rgbToHsv(colorToRgb(p.lightningColor));
+      const bg = rgbToHsv(colorToRgb(p.backgroundColor));
+      if (uniforms.uHue)
+        gl.uniform1f(uniforms.uHue, Number.isFinite(bolt.h) ? bolt.h : 0);
       if (uniforms.uBackgroundHsv) {
         gl.uniform3f(
           uniforms.uBackgroundHsv,
-          bgColor.h / 360,
-          bgColor.s,
-          bgColor.v,
+          (Number.isFinite(bg.h) ? bg.h : 0) / 360,
+          Number.isFinite(bg.s) ? bg.s : 0,
+          Number.isFinite(bg.v) ? bg.v : 0,
         );
       }
-      if (uniforms.uXOffset) {
-        gl.uniform1f(uniforms.uXOffset, -xOffset / 25);
-      }
-      if (uniforms.uSpeed) {
-        gl.uniform1f(uniforms.uSpeed, speed / 50);
-      }
-      if (uniforms.uIntensity) {
-        gl.uniform1f(uniforms.uIntensity, intensity / 50);
-      }
-      if (uniforms.uSize) {
-        gl.uniform1f(uniforms.uSize, size * 0.03);
-      }
-      if (uniforms.uAngle) {
-        gl.uniform1f(uniforms.uAngle, (angle * Math.PI) / 180);
-      }
+      if (uniforms.uXOffset) gl.uniform1f(uniforms.uXOffset, -p.xOffset / 25);
+      if (uniforms.uSpeed) gl.uniform1f(uniforms.uSpeed, p.speed / 50);
+      if (uniforms.uIntensity)
+        gl.uniform1f(uniforms.uIntensity, p.intensity / 50);
+      if (uniforms.uSize) gl.uniform1f(uniforms.uSize, p.size * 0.03);
+      if (uniforms.uAngle)
+        gl.uniform1f(uniforms.uAngle, (p.angle * Math.PI) / 180);
+      if (uniforms.uDirection)
+        gl.uniform1f(uniforms.uDirection, (p.direction * Math.PI) / 180);
+      if (uniforms.uWander) gl.uniform1f(uniforms.uWander, p.wander / 50);
+
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       if (!isDestroyed) {
         rafId = requestAnimationFrame(render);
       }
     };
-    render();
+
+    rafId = requestAnimationFrame(render);
 
     return () => {
       isDestroyed = true;
@@ -189,8 +343,14 @@ export default function Lightning({
       if (vertexShader) gl.deleteShader(vertexShader);
       if (fragmentShader) gl.deleteShader(fragmentShader);
       if (program) gl.deleteProgram(program);
+      const lose = (
+        gl as WebGLRenderingContext & {
+          getExtension(name: string): { loseContext?: () => void } | null;
+        }
+      ).getExtension("WEBGL_lose_context");
+      lose?.loseContext?.();
     };
-  }, [lightningColor, backgroundColor, xOffset, speed, intensity, size, angle]);
+  }, []);
 
   return (
     <div style={{ width: "100%", height: "100%", position: "relative" }}>
@@ -208,6 +368,7 @@ void main() {
   gl_Position = vec4(aPosition, 0.0, 1.0);
 }
 `;
+
 const fragmentShaderSource = `
 precision mediump float;
 uniform vec2 iResolution;
@@ -219,6 +380,8 @@ uniform float uSpeed;
 uniform float uIntensity;
 uniform float uSize;
 uniform float uAngle;
+uniform float uDirection;    // travel direction of the bolt noise, radians (0 = +X axis)
+uniform float uWander;       // how far the bolt strays from its base line (0 = pinned)
 
 #define OCTAVE_COUNT 10
 
@@ -279,18 +442,21 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
 
     uv.x += uXOffset;
 
-    float displ = 2.0 * fbm(uv * uSize + 0.8 * iTime * uSpeed) - 1.0;
-    uv.x += 0.12 * displ;
-    uv.y += 1.8 * displ;
+    vec2 flowDir = vec2(cos(uDirection), sin(uDirection));
+    // The horizontal shape is frozen in place — only the vertical zigzag
+    // animates, so the bolt never sways side to side.
+    float fieldX = fbm(uv * uSize);
+    float fieldY = fbm(uv * uSize + flowDir * uWander * 0.8 * iTime * uSpeed);
+    uv += vec2((fieldX * 2.0 - 1.0) * 0.35, fieldY * 2.0 - 1.0);
 
     float dist = abs(uv.x);
     vec3 baseColor = hsv2rgb(vec3(uHue / 360.0, 0.7, 0.8));
-    // Background logic commented out — canvas stays transparent, only the bolt renders.
-    // vec3 bgColor = hsv2rgb(vec3(uBackgroundHsv.x, uBackgroundHsv.y, uBackgroundHsv.z));
-    vec3 lightningEffect = baseColor * pow(mix(0.0, 0.14, hash11(iTime * uSpeed)) / dist, 1.3) * uIntensity;
-    float alpha = clamp(length(lightningEffect) * 4.0, 0.0, 1.0);
-    vec3 col = clamp(lightningEffect, 0.0, 1.0);
-    fragColor = vec4(col * alpha, alpha);
+    vec3 bgColor = hsv2rgb(vec3(uBackgroundHsv.x, uBackgroundHsv.y, uBackgroundHsv.z));
+    vec3 lightningEffect = baseColor * pow(mix(0.0, 0.07, hash11(iTime * uSpeed)) / dist, 1.0) * uIntensity;
+    float coverage = clamp(lightningEffect.r, 0.0, 1.0);
+    vec3 col = mix(bgColor, lightningEffect, coverage);
+    col = pow(col, vec3(1.0));
+    fragColor = vec4(col, coverage);
 }
 
 void main() {

@@ -10,7 +10,7 @@ import { useWaveArcsConfig } from "./use-wave-arcs-config";
 const NAV_LINKS = [
   { href: "#home", label: "Home" },
   { href: "#service", label: "Service" },
-  { href: "#product", label: "Proudct" },
+  { href: "#product", label: "Product" },
   { href: "#about", label: "About Us" },
 ] as const;
 
@@ -114,7 +114,7 @@ export const Section22Hero = () => {
           <div className="size-[1778.65px] relative opacity-30">
             <div className="size-[1313.27px] left-[232.69px] top-[232.69px] absolute opacity-10 rounded-full border-1 border-white" />
             <div className="size-[1778.65px] left-0 top-0 absolute opacity-20 rounded-full border-1 border-white" />
-            <div className="size-[1017.71px] left-[380.46px] top-[380.47px] absolute opacity-20 rounded-full border-1 border-white" />
+            <div className="size-[1017.71px] left-[380.46px] top-[380.47px] absolute opacity-20 rounded-full border-1 border-white/50" />
             <div className="size-[719.37px] left-[529.64px] top-[529.64px] absolute opacity-0 rounded-full border-1 border-white" />
             <div className="size-7 left-[353px] top-[480.13px] absolute rounded-full border-1 border-slate-600" />
             <div className="size-3 left-[361.37px] top-[488.50px] absolute bg-slate-800 rounded-full border-1 border-slate-600" />
@@ -127,7 +127,7 @@ export const Section22Hero = () => {
         <div className="relative hidden size-[2305.73px] opacity-30 ipad:block desktop-sm:hidden">
           <div className="size-[2305.73px] relative opacity-30">
             <div className="size-[1702.44px] left-[301.64px] top-[301.64px] absolute opacity-10 rounded-full border-[1.47px] border-white" />
-            <div className="size-[2305.73px] left-0 top-0 absolute opacity-20 rounded-full border-[1.47px] border-white" />
+            <div className="size-[2305.73px] left-0 top-0 absolute opacity-20 rounded-full border-[1.47px] border-white/50" />
             <div className="size-[1319.30px] left-[493.22px] top-[493.22px] absolute opacity-20 rounded-full border-[1.47px] border-white" />
             <div className="size-[932.55px] left-[686.59px] top-[686.59px] absolute opacity-0 rounded-full border-[1.47px] border-white" />
             <div className="size-9 left-[457.62px] top-[622.42px] absolute rounded-full border-[1.47px] border-slate-600" />
@@ -140,7 +140,7 @@ export const Section22Hero = () => {
         {/* Desktop */}
         <div className="relative hidden size-[1567px]  opacity-30 desktop-sm:block">
           <div className="size-[1157px] left-[205px] top-[205px] absolute opacity-10 rounded-full border border-white" />
-          <div className="size-[1567px] left-0 top-0 absolute opacity-20 rounded-full border border-white" />
+          <div className="size-[1567px] left-0 top-0 absolute opacity-20 rounded-full border border-white/45" />
           <div className="size-[896.61px] left-[335.20px] top-[335.20px] absolute opacity-20 rounded-full border border-white border-dashed" />
           <div className="size-[633.77px] left-[466.62px] top-[466.62px] absolute opacity-0 rounded-full border border-white " />
           <div className="size-6 left-[311px] top-[423px] absolute rounded-full border border-slate-600 " />
@@ -152,7 +152,7 @@ export const Section22Hero = () => {
 
       {/* 2. Navbar — slides in from top after background */}
       <motion.header
-        className="relative z-20 mx-auto flex w-full max-w-[1280px] items-center justify-between px-6 py-6 ipad:px-12 desktop-sm:px-16"
+        className="relative z-20 mx-auto flex w-[100dvw] px-6  items-center justify-between py-6 desktop-sm:px-12"
         initial={prefersReducedMotion ? false : { y: "-120%", opacity: 0 }}
         animate={showNav ? { y: 0, opacity: 1 } : { y: "-120%", opacity: 0 }}
         transition={{ duration: 0.4, ease: EASE_OUT }}
@@ -186,7 +186,7 @@ export const Section22Hero = () => {
 
         <nav
           aria-label="Main Navigation"
-          className="hidden items-center rounded-xl border border-white/10 bg-white/[0.03] p-1 shadow-lg backdrop-blur-md desktop-sm:flex"
+          className="hidden items-center rounded-xl border border-white/10 bg-white/[0.03] p-1 shadow-lg backdrop-blur-md desktop-sm:flex ml-20"
         >
           {NAV_LINKS.map((link, index) => (
             <a
@@ -382,14 +382,14 @@ export const Section22Hero = () => {
             {/* Particle dust — same width as form, behind it */}
             <motion.div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-1/2 z-0 w-full overflow-hidden"
+              className="pointer-events-none absolute inset-x-0 top-1/2 translate-y-[-100%] z-0 w-full overflow-hidden"
               style={{ height: STAR_DUST_HEIGHT }}
               initial={prefersReducedMotion ? false : { opacity: 0 }}
               animate={showContent ? { opacity: 1 } : { opacity: 0 }}
               transition={{ duration: 0.5, ease: EASE_OUT, delay: 0.15 }}
             >
               <Sparkles
-                angle={180}
+                angle={0}
                 background="rgba(0,0,0,0)"
                 particleColor="#FFFFFF"
                 particleDensity={1}

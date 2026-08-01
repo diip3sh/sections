@@ -117,7 +117,7 @@ export const Section23Hero = () => {
 
       {/* Outer frame — mobile full-bleed feel, tablet/desktop 90dvw */}
       <motion.div
-        className="relative z-10 w-full max-w-[90dvw] wide-lg:max-w-[65dvw] overflow-hidden rounded-[16px] ipad:rounded-[20px]"
+        className="relative z-10 w-full max-w-[90dvw] full-hd:max-w-[65dvw] overflow-hidden rounded-[16px] ipad:rounded-[20px]"
         initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: EASE_OUT }}

@@ -131,13 +131,11 @@ export const Section19Hero = () => {
         </div>
       </motion.div>
 
-      <div className="relative z-20 mx-auto flex min-h-svh w-full max-w-100.5 flex-col ipad:max-w-none desktop-sm:max-w-[1480px]">
+      <div className="relative z-20 mx-auto flex min-h-svh w-full max-w-100.5 flex-col ipad:max-w-none desktop-sm:max-w-[1380px]">
         {/* 2. Navbar — slides in after HeroVisual is ready */}
         <motion.div
           initial={prefersReducedMotion ? false : { y: "-120%", opacity: 0 }}
-          animate={
-            showNav ? { y: 0, opacity: 1 } : { y: "-120%", opacity: 0 }
-          }
+          animate={showNav ? { y: 0, opacity: 1 } : { y: "-120%", opacity: 0 }}
           transition={{ duration: 0.4, ease: EASE_OUT }}
           onAnimationComplete={() => {
             if (showNav) handleNavComplete();

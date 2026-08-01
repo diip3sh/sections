@@ -382,23 +382,86 @@ function __OriginkitBase_Tetris(props: TetrisProps) {
       clearing = [];
     }
 
-    /** Drop a handful of random pieces at the bottom so the board opens half-full. */
+    /**
+     * Pre-play a short game so the board opens like it's been running for a
+     * while: pieces drop with the same AI + random noise the live loop uses,
+     * full rows clear, and the stack settles into a natural mid-game shape.
+     */
     function scatterInitialStack() {
-      const pieces = Math.max(4, Math.round((cols * rows) / 18));
-      for (let i = 0; i < pieces; i++) {
+      const target = Math.floor(cols * rows * 0.55);
+      let guard = cols * rows;
+      while (guard-- > 0) {
+        let filled = 0;
+        for (const v of grid) if (v !== -1) filled++;
+        if (filled >= target) break;
+
         const shape = Math.floor(rand() * SHAPES.length);
-        const turns = Math.floor(rand() * 4);
-        const cells = rotate(shape, turns);
-        let width = 0;
-        for (const [c] of cells) width = Math.max(width, c);
-        const col = Math.floor(rand() * Math.max(1, cols - width));
-        if (!fits(cells, col, 0)) continue;
-        let row = 0;
-        while (fits(cells, col, row + 1)) row++;
+        // Roughly a third of drops are human-sloppy — that's what keeps the
+        // stack uneven and tall instead of a flat AI-optimised wall.
+        const imperfect = rand() < 0.35;
+        let bestCells: Array<[number, number]> | null = null;
+        let bestCol = 0;
+        let bestRow = 0;
+        let bestScore = -Infinity;
+        const options: Array<{
+          cells: Array<[number, number]>;
+          col: number;
+          row: number;
+        }> = [];
+        for (let turn = 0; turn < 4; turn++) {
+          const cells = rotate(shape, turn);
+          let width = 0;
+          for (const [c] of cells) width = Math.max(width, c);
+          for (let col = 0; col + width < cols; col++) {
+            const row = landing(cells, col);
+            if (row < 0) continue;
+            options.push({ cells, col, row });
+            const s = score(cells, col, row);
+            if (s > bestScore) {
+              bestScore = s;
+              bestCells = cells;
+              bestCol = col;
+              bestRow = row;
+            }
+          }
+        }
+        // Topped out before we hit the target — leave it as it landed.
+        if (!bestCells) break;
+        const chosen =
+          imperfect && options.length > 1
+            ? options[Math.floor(rand() * options.length)]
+            : { cells: bestCells, col: bestCol, row: bestRow };
+
         const color =
           blockRGB.length > 1 ? Math.floor(rand() * blockRGB.length) : 0;
-        for (const [c, r] of cells) {
-          grid[(row + r) * cols + (col + c)] = color;
+        for (const [c, r] of chosen.cells) {
+          grid[(chosen.row + r) * cols + (chosen.col + c)] = color;
+        }
+
+        // Collapse any rows that filled while stacking, exactly like play.
+        const full: number[] = [];
+        for (let r = 0; r < rows; r++) {
+          let solid = true;
+          for (let c = 0; c < cols; c++) {
+            if (grid[r * cols + c] === -1) {
+              solid = false;
+              break;
+            }
+          }
+          if (solid) full.push(r);
+        }
+        if (full.length) {
+          const gone = new Set(full);
+          const next = new Array(cols * rows).fill(-1);
+          let write = rows - 1;
+          for (let r = rows - 1; r >= 0; r--) {
+            if (gone.has(r)) continue;
+            for (let c = 0; c < cols; c++) {
+              next[write * cols + c] = grid[r * cols + c];
+            }
+            write--;
+          }
+          grid = next;
         }
       }
     }

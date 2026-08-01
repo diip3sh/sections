@@ -30,10 +30,19 @@ const FLAG_ROWS = [
     { src: "/section-23/flags/uganda.svg", alt: "Uganda" },
   ],
   [
-    { src: "/section-23/flags/brazil.svg", alt: "Brazil" },
+    { src: "/section-23/flags/india.svg", alt: "India" },
     { src: "/section-23/flags/canada.svg", alt: "Canada" },
     { src: "/section-23/flags/india.svg", alt: "India" },
     { src: "/section-23/flags/brunei.svg", alt: "Brunei" },
+    { src: "/section-23/flags/brazil.svg", alt: "Brazil" },
+  ],
+  [
+    { src: "/section-23/flags/wales.svg", alt: "Wales" },
+    { src: "/section-23/flags/haiti.svg", alt: "Haiti" },
+    { src: "/section-23/flags/nauru.svg", alt: "Nauru" },
+    { src: "/section-23/flags/jordan.svg", alt: "Jordan" },
+    { src: "/section-23/flags/uganda.svg", alt: "Uganda" },
+    { src: "/section-23/flags/taiwan.svg", alt: "Taiwan" },
   ],
 ] as const;
 
@@ -46,6 +55,26 @@ const fadeUp = {
   },
 };
 
+const getFlagVisibility = (rowIndex: number, flagIndex: number) => {
+  // Mobile: denser cloud — show most pills
+  // Tablet+: show fuller rows; desktop trims outer pills on row 0/1
+  if (rowIndex === 0) {
+    if (flagIndex === 0 || flagIndex === 4) {
+      return "hidden ipad:block";
+    }
+  }
+  if (rowIndex === 1) {
+    if (flagIndex === 0 || flagIndex === 5) {
+      return "hidden ipad:block";
+    }
+  }
+  // Extra mobile/tablet depth row — hide on desktop
+  if (rowIndex >= 3) {
+    return "block desktop-sm:hidden";
+  }
+  return undefined;
+};
+
 export const Section23Hero = () => {
   const prefersReducedMotion = useReducedMotion();
 
@@ -56,7 +85,7 @@ export const Section23Hero = () => {
   return (
     <section
       aria-label="Your content deserves a global audience"
-      className="relative isolate flex min-h-svh w-full items-center justify-center overflow-hidden bg-[#171717] px-4 py-10 ipad:px-8 ipad:py-14 desktop-sm:px-11 desktop-sm:py-16"
+      className="relative isolate flex min-h-svh w-full items-center justify-center overflow-hidden bg-[#171717] px-4 py-8 ipad:px-8 ipad:py-12 desktop-sm:px-11 desktop-sm:py-16"
     >
       {/* Ambient blue / purple field */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
@@ -86,9 +115,9 @@ export const Section23Hero = () => {
         />
       </div>
 
-      {/* Outer frame */}
+      {/* Outer frame — mobile full-bleed feel, tablet/desktop 90dvw */}
       <motion.div
-        className="relative z-10 w-[90dvw] max-w-[1192px] overflow-hidden rounded-[16px] ipad:rounded-[20px]"
+        className="relative z-10 w-full max-w-[90dvw] wide-lg:max-w-[65dvw] overflow-hidden rounded-[16px] ipad:rounded-[20px]"
         initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: EASE_OUT }}
@@ -98,7 +127,6 @@ export const Section23Hero = () => {
           className="absolute inset-0 bg-gradient-to-b from-[#222226] to-[#1d1d20]"
         />
 
-        {/* Top ellipse glow on outer frame */}
         <img
           src="/section-23/ellipse-glow.svg"
           alt=""
@@ -106,156 +134,159 @@ export const Section23Hero = () => {
           className="pointer-events-none absolute top-[-40%] left-1/2 size-[280px] max-w-none -translate-x-1/2 opacity-80 ipad:size-[364px]"
         />
 
-        {/* Inner card — rotating soft-beam border */}
+        {/* Inner card */}
         <div className="card-orbit-border relative m-2 rounded-[12px] ipad:m-4 ipad:rounded-[16px]">
           <div className="card-orbit-border__inner overflow-hidden rounded-[10.5px] bg-[#16131c] ipad:rounded-[14.5px]">
-          {/* Soft inner glow behind globe */}
-          <img
-            src="/section-23/glow.svg"
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none absolute top-[-30%] left-1/2 h-[70%] w-[90%] max-w-none -translate-x-1/2 opacity-90"
-          />
+            <img
+              src="/section-23/glow.svg"
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none absolute top-[-30%] left-1/2 h-[70%] w-[90%] max-w-none -translate-x-1/2 opacity-90"
+            />
 
-          {/* Globe + flag cloud */}
-          <div className="relative mx-auto flex min-h-[280px] w-full max-w-[1084px] flex-col items-center justify-start pt-8 ipad:min-h-[340px] ipad:pt-12 desktop-sm:min-h-[380px]">
-            <div className="relative flex w-full items-center justify-center">
-              {/* Flag pills — behind globe */}
-              <motion.div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 top-0 z-10 flex flex-col gap-4 px-2 ipad:gap-8 ipad:px-0"
-                style={{
-                  maskImage:
-                    "linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%)",
-                  WebkitMaskImage:
-                    "linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%)",
-                }}
-                initial="hidden"
-                animate="show"
-                variants={{
-                  hidden: {},
-                  show: {
-                    transition: {
-                      staggerChildren: prefersReducedMotion ? 0 : 0.06,
-                      delayChildren: prefersReducedMotion ? 0 : 0.2,
+            {/* Visual stage: flags + globe */}
+            <div className="relative mx-auto flex w-full max-w-[1084px] flex-col items-center pt-10 ipad:pt-12 desktop-sm:min-h-[380px] desktop-sm:pt-12">
+              <div className="relative flex w-full items-center justify-center pb-4 ipad:pb-6 desktop-sm:pb-0">
+                {/* Flag pills — behind globe */}
+                <motion.div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-x-0 top-0 z-10 flex flex-col gap-5 px-1 ipad:gap-8 ipad:px-0"
+                  style={{
+                    maskImage:
+                      "linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%)",
+                    WebkitMaskImage:
+                      "linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%)",
+                  }}
+                  initial="hidden"
+                  animate="show"
+                  variants={{
+                    hidden: {},
+                    show: {
+                      transition: {
+                        staggerChildren: prefersReducedMotion ? 0 : 0.06,
+                        delayChildren: prefersReducedMotion ? 0 : 0.2,
+                      },
                     },
-                  },
-                }}
-              >
-                {FLAG_ROWS.map((row, rowIndex) => (
-                  <div
-                    key={rowIndex}
-                    className={`flex w-full items-center justify-center gap-3 ipad:gap-8 ${
-                      rowIndex === 1 ? "px-0" : "px-4 ipad:px-10"
-                    } ${rowIndex === 2 ? "hidden ipad:flex" : ""}`}
-                  >
-                    {row.map((flag, flagIndex) => (
-                      <motion.div
-                        key={`${flag.alt}-${rowIndex}-${flagIndex}`}
-                        variants={fadeUp}
-                        className={
-                          rowIndex === 0 && (flagIndex === 0 || flagIndex === 4)
-                            ? "hidden desktop-sm:block"
-                            : rowIndex === 1 &&
-                                (flagIndex === 0 || flagIndex === 5)
-                              ? "hidden ipad:block"
-                              : undefined
-                        }
-                        style={
-                          prefersReducedMotion
-                            ? undefined
-                            : {
-                                animation: `section-18-glow ${3.5 + (flagIndex % 3) * 0.4}s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite alternate`,
-                                animationDelay: `${flagIndex * 0.15}s`,
-                              }
-                        }
-                      >
-                        <FlagPill flagSrc={flag.src} flagAlt="" />
-                      </motion.div>
-                    ))}
-                  </div>
-                ))}
-              </motion.div>
+                  }}
+                >
+                  {FLAG_ROWS.map((row, rowIndex) => (
+                    <div
+                      key={rowIndex}
+                      className={`flex w-full items-center justify-center gap-5 ipad:gap-8 ${
+                        rowIndex % 2 === 0 ? "px-2 ipad:px-10" : "px-0"
+                      }`}
+                    >
+                      {row.map((flag, flagIndex) => (
+                        <motion.div
+                          key={`${flag.alt}-${rowIndex}-${flagIndex}`}
+                          variants={fadeUp}
+                          className={getFlagVisibility(rowIndex, flagIndex)}
+                          style={
+                            prefersReducedMotion
+                              ? undefined
+                              : {
+                                  animation: `section-18-glow ${3.5 + (flagIndex % 3) * 0.4}s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite alternate`,
+                                  animationDelay: `${flagIndex * 0.15}s`,
+                                }
+                          }
+                        >
+                          <FlagPill flagSrc={flag.src} flagAlt="" />
+                        </motion.div>
+                      ))}
+                    </div>
+                  ))}
+                </motion.div>
 
-              {/* Globe — above flags, horizontal spin only */}
-              <motion.div
-                className="relative z-20 size-[220px] overflow-hidden rounded-full ipad:size-[360px] desktop-sm:size-[420px]"
-                initial={prefersReducedMotion ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.55, ease: EASE_OUT, delay: 0.1 }}
-              >
-                <Globe
-                  direction="right"
-                  speed={prefersReducedMotion ? 0 : 1.2}
-                  smoothing={8}
-                  stopOnHover={false}
-                  dragSpeed={0}
-                  fill="dots"
-                  dots={GLOBE_DOTS}
-                  oceanColor="#050510"
-                  outlineColor="#9ECFFF"
-                  graticuleColor="#5BA3E8"
-                  showOutline={true}
-                  showGrid={true}
-                  outlineWidth={1}
-                  scale={10}
-                  detail={6}
-                  initialLatitude={8}
-                  initialLongitude={40}
-                />
-              </motion.div>
+                {/* Globe */}
+                <motion.div
+                  className="relative z-20 size-[280px] translate-y-26 overflow-hidden rounded-full ipad:size-[520px] ipad:translate-y-30 desktop-sm:size-[420px] desktop-sm:translate-y-16"
+                  style={{
+                    maskImage:
+                      "linear-gradient(to bottom, #000 0%, #000 52%, transparent 92%)",
+                    WebkitMaskImage:
+                      "linear-gradient(to bottom, #000 0%, #000 52%, transparent 92%)",
+                  }}
+                  initial={prefersReducedMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.55, ease: EASE_OUT, delay: 0.1 }}
+                >
+                  <Globe
+                    direction="right"
+                    speed={prefersReducedMotion ? 0 : 1.2}
+                    smoothing={8}
+                    stopOnHover={false}
+                    dragSpeed={0}
+                    fill="dots"
+                    dots={GLOBE_DOTS}
+                    oceanColor="#0B0F29"
+                    outlineColor="#9ECFFF"
+                    graticuleColor="#4B6AAA"
+                    showOutline={true}
+                    showGrid={true}
+                    outlineWidth={1}
+                    scale={10}
+                    detail={6}
+                    initialLatitude={8}
+                    initialLongitude={40}
+                  />
+                </motion.div>
+              </div>
             </div>
-          </div>
 
-          {/* Copy row */}
-          <motion.div
-            className="relative z-30 flex w-full flex-col gap-8 px-5 pb-8 pt-2 ipad:flex-row ipad:items-end ipad:justify-between ipad:gap-10 ipad:px-14 ipad:pb-12 desktop-sm:px-[58px]"
-            initial="hidden"
-            animate="show"
-            variants={{
-              hidden: {},
-              show: {
-                transition: {
-                  staggerChildren: prefersReducedMotion ? 0 : 0.12,
-                  delayChildren: prefersReducedMotion ? 0 : 0.35,
-                },
-              },
-            }}
-          >
-            <motion.h1
-              variants={fadeUp}
-              className="max-w-[388px] font-instrument-serif text-[36px] leading-[1.1] tracking-[-1.4px] text-white ipad:text-[48px] ipad:tracking-[-1.9px] desktop-sm:text-[56px] desktop-sm:tracking-[-2.24px]"
-            >
-              Your Content Deserves a Global Audience.
-            </motion.h1>
-
+            {/* Copy — stacked/centered on mobile+tablet, split on desktop */}
             <motion.div
-              variants={fadeUp}
-              className="flex w-full max-w-[280px] flex-col items-start gap-4"
+              className="relative z-30 mx-auto flex w-full max-w-[449px] ipad:max-w-[550px] flex-col items-center gap-6 px-5 pb-10 pt-22 text-center ipad:gap-8 ipad:px-10 ipad:pb-12 desktop-sm:max-w-none desktop-sm:flex-row desktop-sm:items-end desktop-sm:justify-between desktop-sm:gap-10 desktop-sm:px-[58px] desktop-sm:pb-12 desktop-sm:pt-2 desktop-sm:text-left"
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: {},
+                show: {
+                  transition: {
+                    staggerChildren: prefersReducedMotion ? 0 : 0.12,
+                    delayChildren: prefersReducedMotion ? 0 : 0.35,
+                  },
+                },
+              }}
             >
-              <p className="font-sans text-[14px] leading-[1.4] tracking-[-0.28px] text-[#c2c0c9]">
-                Translate speech into 150+ languages with AI voices that sound
-                natural, and are ready in minutes
-              </p>
-              <button
-                type="button"
-                onClick={handleGetStarted}
-                className="relative inline-flex min-h-11 items-center justify-center rounded-full px-4 py-3 font-sans text-base font-medium tracking-[-0.32px] text-[#060e08] shadow-[0_2px_2.5px_rgba(0,0,0,0.1),0_9px_4.5px_rgba(0,0,0,0.09),0_19px_6px_rgba(0,0,0,0.05),inset_0_1px_1px_0_white,inset_0_-1.5px_0_0_rgba(0,0,0,0.1)] touch-manipulation transition-transform duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [-webkit-tap-highlight-color:transparent] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02] cursor-pointer"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(180deg, rgba(255,255,255,0.33) 0%, rgba(255,255,255,0) 100%), linear-gradient(90deg, #f0f0f0 0%, #f0f0f0 100%)",
-                }}
+              <motion.div
+                variants={fadeUp}
+                className="flex w-full flex-col items-center gap-2 ipad:gap-4 desktop-sm:max-w-97 desktop-sm:items-start"
               >
-                Get started for free
-              </button>
-            </motion.div>
-          </motion.div>
+                <h1 className="w-full font-instrument-serif text-[44px] leading-[1.1] tracking-[-1.76px] text-white ipad:text-[56px] ipad:tracking-[-2.24px] desktop-sm:text-[56px]">
+                  Your Content Deserves a Global Audience.
+                </h1>
+                <p className="max-w-[256px] font-sans text-[14px] leading-[1.4] tracking-[-0.28px] text-[#c2c0c9] ipad:max-w-[387px] desktop-sm:hidden">
+                  Translate speech into 150+ languages with AI voices that sound
+                  natural, and are ready in minutes
+                </p>
+              </motion.div>
 
-          {/* Inner frame vignette */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_0px_7px_0px_rgba(0,0,0,0.92)]"
-          />
+              <motion.div
+                variants={fadeUp}
+                className="flex w-full max-w-[280px] flex-col items-center gap-4 desktop-sm:items-start"
+              >
+                <p className="hidden font-sans text-[14px] leading-[1.4] tracking-[-0.28px] text-[#c2c0c9] desktop-sm:block">
+                  Translate speech into 150+ languages with AI voices that sound
+                  natural, and are ready in minutes
+                </p>
+                <button
+                  type="button"
+                  onClick={handleGetStarted}
+                  className="relative inline-flex min-h-11 items-center justify-center rounded-full px-4 py-3 font-sans text-base font-medium tracking-[-0.32px] text-[#060e08] shadow-[0_2px_2.5px_rgba(0,0,0,0.1),0_9px_4.5px_rgba(0,0,0,0.09),0_19px_6px_rgba(0,0,0,0.05),inset_0_1px_1px_0_white,inset_0_-1.5px_0_0_rgba(0,0,0,0.1)] touch-manipulation transition-transform duration-200 ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [-webkit-tap-highlight-color:transparent] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02] cursor-pointer"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(180deg, rgba(255,255,255,0.33) 0%, rgba(255,255,255,0) 100%), linear-gradient(90deg, #f0f0f0 0%, #f0f0f0 100%)",
+                  }}
+                >
+                  Get started for free
+                </button>
+              </motion.div>
+            </motion.div>
+
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_0px_7px_0px_rgba(0,0,0,0.92)]"
+            />
           </div>
         </div>
       </motion.div>

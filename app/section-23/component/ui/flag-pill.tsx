@@ -9,7 +9,7 @@ const PILL_SHADOW =
 
 export const FlagPill = ({ flagSrc, flagAlt, className = "" }: FlagPillProps) => (
   <div
-    className={`flex shrink-0 items-center gap-2 overflow-hidden rounded-full border border-white/5 bg-[#1b2246] px-3 py-1 ipad:px-4 ${PILL_SHADOW} ${className}`}
+    className={`flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full border-[0.75px] border-white/5 bg-[#1b2246] px-3 py-[3px] ipad:gap-2 ipad:border ipad:px-4 ipad:py-1 ${PILL_SHADOW} ${className}`}
   >
     <div className="relative size-6 shrink-0 overflow-hidden ipad:size-8">
       <img
@@ -22,7 +22,7 @@ export const FlagPill = ({ flagSrc, flagAlt, className = "" }: FlagPillProps) =>
     </div>
     <div
       aria-hidden="true"
-      className="h-2.5 w-14 rounded-full bg-[#232d5c] ipad:h-3 ipad:w-20"
+      className="h-[9px] w-[60px] rounded-full bg-[#232d5c] ipad:h-3 ipad:w-20"
     />
   </div>
 );

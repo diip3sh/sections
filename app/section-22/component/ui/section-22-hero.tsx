@@ -101,8 +101,54 @@ export const Section22Hero = () => {
         </div>
 
         <div className="absolute top-1/2 left-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00A3FF]/15 blur-[120px]" />
-        <div className="absolute bottom-10 left-1/2 h-[350px] w-[700px] -translate-x-1/2 rounded-full bg-[#00B2FF]/20 blur-[100px]" />
+        <div className="absolute bottom-0 left-1/2 size-[825px] -translate-x-1/2 translate-y-1/2 rounded-full bg-cyan-700 blur-[267px]" />
       </motion.div>
+
+      {/* Circle overlay — above interaction bg, below UI */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-10 desktop-sm:translate-x-0 translate-x-[-5%] flex items-center justify-center translate-y-[50%]"
+      >
+        {/* Mobile */}
+        <div className="relative size-[1778.65px] opacity-30 ipad:hidden">
+          <div className="size-[1778.65px] relative opacity-30">
+            <div className="size-[1313.27px] left-[232.69px] top-[232.69px] absolute opacity-10 rounded-full border-1 border-white" />
+            <div className="size-[1778.65px] left-0 top-0 absolute opacity-20 rounded-full border-1 border-white" />
+            <div className="size-[1017.71px] left-[380.46px] top-[380.47px] absolute opacity-20 rounded-full border-1 border-white" />
+            <div className="size-[719.37px] left-[529.64px] top-[529.64px] absolute opacity-0 rounded-full border-1 border-white" />
+            <div className="size-7 left-[353px] top-[480.13px] absolute rounded-full border-1 border-slate-600" />
+            <div className="size-3 left-[361.37px] top-[488.50px] absolute bg-slate-800 rounded-full border-1 border-slate-600" />
+            <div className="size-7 left-[1272.42px] top-[351.88px] absolute rounded-full border-1 border-slate-600" />
+            <div className="size-3 left-[1280.77px] top-[360.23px] absolute bg-slate-800 rounded-full border-1 border-slate-600" />
+          </div>
+        </div>
+
+        {/* iPad */}
+        <div className="relative hidden size-[2305.73px] opacity-30 ipad:block desktop-sm:hidden">
+          <div className="size-[2305.73px] relative opacity-30">
+            <div className="size-[1702.44px] left-[301.64px] top-[301.64px] absolute opacity-10 rounded-full border-[1.47px] border-white" />
+            <div className="size-[2305.73px] left-0 top-0 absolute opacity-20 rounded-full border-[1.47px] border-white" />
+            <div className="size-[1319.30px] left-[493.22px] top-[493.22px] absolute opacity-20 rounded-full border-[1.47px] border-white" />
+            <div className="size-[932.55px] left-[686.59px] top-[686.59px] absolute opacity-0 rounded-full border-[1.47px] border-white" />
+            <div className="size-9 left-[457.62px] top-[622.42px] absolute rounded-full border-[1.47px] border-slate-600" />
+            <div className="size-3.5 left-[468.46px] top-[633.26px] absolute bg-slate-800 rounded-full border-[1.47px] border-slate-600" />
+            <div className="size-9 left-[1649.47px] top-[456.14px] absolute rounded-full border-[1.47px] border-slate-600" />
+            <div className="size-3.5 left-[1660.31px] top-[466.98px] absolute bg-slate-800 rounded-full border-[1.47px] border-slate-600" />
+          </div>
+        </div>
+
+        {/* Desktop */}
+        <div className="relative hidden size-[1567px]  opacity-30 desktop-sm:block">
+          <div className="size-[1157px] left-[205px] top-[205px] absolute opacity-10 rounded-full border border-white" />
+          <div className="size-[1567px] left-0 top-0 absolute opacity-20 rounded-full border border-white" />
+          <div className="size-[896.61px] left-[335.20px] top-[335.20px] absolute opacity-20 rounded-full border border-white border-dashed" />
+          <div className="size-[633.77px] left-[466.62px] top-[466.62px] absolute opacity-0 rounded-full border border-white " />
+          <div className="size-6 left-[311px] top-[423px] absolute rounded-full border border-slate-600 " />
+          <div className="size-2.5 left-[318.37px] top-[430.37px] absolute bg-slate-800 rounded-full border border-slate-600 " />
+          <div className="size-6 left-[1121px] top-[310px] absolute rounded-full border  border-slate-600" />
+          <div className="size-2.5 left-[1128.37px]  top-[317.37px] absolute bg-slate-800 rounded-full border border-slate-600" />
+        </div>
+      </div>
 
       {/* 2. Navbar — slides in from top after background */}
       <motion.header

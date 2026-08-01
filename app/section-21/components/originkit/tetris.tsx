@@ -386,11 +386,11 @@ function __OriginkitBase_Tetris(props: TetrisProps) {
      * Pre-play a short game so the board opens like it's been running for a
      * while: pieces drop with the same AI + random noise the live loop uses,
      * full rows clear, and the stack settles into a natural mid-game shape.
-     * Only placements that keep the stack within the first 4 rows are allowed,
+     * Only placements that keep the stack within the first 7 rows are allowed,
      * so it packs the band densely instead of piling up tall and sparse.
      */
     function scatterInitialStack() {
-      const limit = 4;
+      const limit = 8;
       // The top row of the band — pieces must never rise above this.
       const ceiling = Math.max(0, rows - limit);
       let guard = cols * rows;

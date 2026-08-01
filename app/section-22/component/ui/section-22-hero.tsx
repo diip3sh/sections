@@ -100,8 +100,8 @@ export const Section22Hero = () => {
           />
         </div>
 
-        <div className="absolute top-1/2 left-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00A3FF]/15 blur-[120px]" />
-        <div className="absolute bottom-0 left-1/2 size-[825px] -translate-x-1/2 translate-y-1/2 rounded-full bg-cyan-700 blur-[267px]" />
+        <div className="absolute top-1/2 left-1/2 h-125 w-225 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00A3FF]/15 blur-[120px]" />
+        <div className="absolute bottom-0 left-1/2 size-206.25 -translate-x-1/2 translate-y-1/2 rounded-full bg-cyan-700 blur-[267px]" />
       </motion.div>
 
       {/* Circle overlay — above interaction bg, below UI */}
@@ -381,10 +381,9 @@ export const Section22Hero = () => {
           <motion.form
             variants={fadeUpVariants}
             onSubmit={handleSubmit}
-            className="relative z-20 mt-2 w-full rounded-full border border-white/10 p-[6px] shadow-2xl backdrop-blur-md"
+            className="form-glow-border relative z-20 mt-2 w-full rounded-full bg-white/15 shadow-2xl backdrop-blur-md"
             style={{
               borderRadius: "100px",
-              background: "rgba(255, 255, 255, 0.05)",
             }}
           >
             <div className="flex min-w-0 items-center justify-between rounded-full bg-[#101113] py-[6px] pr-2 pl-4 shadow-inner">

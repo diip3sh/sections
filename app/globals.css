@@ -354,3 +354,73 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter);
 }
+
+/* Animated glow border — section-22 email form */
+@property --glow-a {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --glow-i {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
+@keyframes form-glow-spin {
+  to {
+    --glow-a: 1turn;
+  }
+}
+
+.form-glow-border {
+  --glow-a: 0deg;
+  --glow-i: 1;
+  border: 2px solid rgb(0, 178, 255);
+  padding: 6px;
+  border-radius: 100px;
+  box-shadow: 0 0 20px rgba(0, 178, 255, 0.2);
+  mask:
+    conic-gradient(#000 0 0) content-box,
+    linear-gradient(
+      calc(mod(var(--glow-a), 180deg) * var(--glow-i) + 45deg),
+      #0000 30%,
+      #000 40% 60%,
+      #0000 70%
+    )
+      subtract,
+    conic-gradient(#000 0 0) padding-box;
+  -webkit-mask:
+    conic-gradient(#000 0 0) content-box,
+    linear-gradient(
+      calc(mod(var(--glow-a), 180deg) * var(--glow-i) + 45deg),
+      #0000 30%,
+      #000 40% 60%,
+      #0000 70%
+    )
+      subtract,
+    conic-gradient(#000 0 0) padding-box;
+  animation: form-glow-spin 8s linear infinite;
+  transition: box-shadow 0.2s ease;
+}
+
+.form-glow-border:focus-within {
+  box-shadow: 0 0 28px rgba(0, 178, 255, 0.4);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .form-glow-border:hover {
+    box-shadow: 0 0 28px rgba(0, 178, 255, 0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-glow-border {
+    --glow-i: 0;
+    --glow-a: 0deg;
+    animation: none;
+    mask: none;
+    -webkit-mask: none;
+  }
+}

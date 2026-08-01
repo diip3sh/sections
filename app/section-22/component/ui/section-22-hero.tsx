@@ -132,27 +132,27 @@ export const Section22Hero = () => {
             <div className="size-[932.55px] left-[686.59px] top-[686.59px] absolute opacity-0 rounded-full border-[1.47px] border-white" />
             <div className="size-9 left-[457.62px] top-[622.42px] absolute rounded-full border-[1.47px] border-slate-600" />
             <div className="size-3.5 left-[468.46px] top-[633.26px] absolute bg-slate-800 rounded-full border-[1.47px] border-slate-600" />
-            <div className="size-9 left-[1649.47px] top-[456.14px] absolute rounded-full border-[1.47px] border-slate-600" />
+            <div className="size-9 left-[1649.47px] top-[456.14px] absolute rounded-full border-[1.47px] border-slate-600/50" />
             <div className="size-3.5 left-[1660.31px] top-[466.98px] absolute bg-slate-800 rounded-full border-[1.47px] border-slate-600" />
           </div>
         </div>
 
         {/* Desktop */}
         <div className="relative hidden size-[1567px]  opacity-30 desktop-sm:block">
-          <div className="size-[1157px] left-[205px] top-[205px] absolute opacity-10 rounded-full border border-white" />
+          <div className="size-[1157px] left-[205px] top-[205px] absolute opacity-10 rounded-full border border-white/50" />
           <div className="size-[1567px] left-0 top-0 absolute opacity-20 rounded-full border border-white/45" />
           <div className="size-[896.61px] left-[335.20px] top-[335.20px] absolute opacity-20 rounded-full border border-white/70 border-dashed" />
-          <div className="size-[633.77px] left-[466.62px] top-[466.62px] absolute opacity-0 rounded-full border border-white " />
-          <div className="size-6 left-[311px] top-[423px] absolute rounded-full border border-slate-600 " />
-          <div className="size-2.5 left-[318.37px] top-[430.37px] absolute bg-slate-800 rounded-full border border-slate-600 " />
-          <div className="size-6 left-[1121px] top-[310px] absolute rounded-full border  border-slate-600" />
-          <div className="size-2.5 left-[1128.37px]  top-[317.37px] absolute bg-slate-800 rounded-full border border-slate-600" />
+          <div className="size-[633.77px] left-[466.62px] top-[466.62px] absolute opacity-0 rounded-full border border-white/50 " />
+          <div className="size-6 left-[311px] top-[423px] absolute rounded-full border opacity-10" />
+          <div className="size-2.5 left-[318.37px] top-[430.37px] absolute bg-[#19333C]/70 rounded-full opacity-20 " />
+          <div className="size-6 left-[1121px] top-[310px] absolute rounded-full border opacity-20 " />
+          <div className="size-2.5 left-[1128.37px]  top-[317.37px] absolute bg-[#19333C]/70 rounded-full opacity-10" />
         </div>
       </div>
 
       {/* 2. Navbar — slides in from top after background */}
       <motion.header
-        className="relative z-20 mx-auto flex w-[100dvw] px-6  items-center justify-between py-6 desktop-sm:px-12"
+        className="relative z-20 mx-auto flex w-dvw px-6  items-center justify-between py-6 desktop-sm:px-12 ultrawide:max-w-360"
         initial={prefersReducedMotion ? false : { y: "-120%", opacity: 0 }}
         animate={showNav ? { y: 0, opacity: 1 } : { y: "-120%", opacity: 0 }}
         transition={{ duration: 0.4, ease: EASE_OUT }}
@@ -291,7 +291,7 @@ export const Section22Hero = () => {
       </div>
 
       {/* Main Hero Content */}
-      <main className="relative z-20 mx-auto flex w-full max-w-[340px] max-h-[600px] flex-1 flex-col items-center justify-between py-12 pt-[62px] text-center ipad:max-h-[623px] ipad:max-w-[512px]">
+      <main className="relative z-20 mx-auto flex w-full max-w-[340px] max-h-[600px] flex-1 flex-col items-center justify-between py-12 pt-[62px] text-center ipad:max-h-[623px] ipad:max-w-[512px] desktop-sm:max-h-[800px]">
         {/* 3. Headline — rolling text after navbar */}
         <RollingLetters
           tag="h1"
@@ -354,7 +354,7 @@ export const Section22Hero = () => {
                   className="size-full object-cover"
                 />
               </div>
-              <div className="col-start-1 row-start-1 ml-[11px] mt-[1px] rotate-[8.44deg]">
+              <div className="col-start-1 row-start-1 ml-[11px] mt-[1px] rotate-[8.44deg] translate-y-[4%]">
                 <div className="h-[26px] w-[26px] overflow-hidden rounded-[4px] shadow-md">
                   <img
                     src="/section-22/avatar-2.png"
@@ -404,7 +404,7 @@ export const Section22Hero = () => {
             <motion.form
               variants={fadeUpVariants}
               onSubmit={handleSubmit}
-              className="form-glow-border relative z-10 w-full rounded-full bg-white/15 shadow-2xl backdrop-blur-md"
+              className="form-glow-border relative z-10 w-full rounded-full bg-white/10 shadow-2xl backdrop-blur-md"
               style={{
                 borderRadius: "100px",
               }}

@@ -378,57 +378,59 @@ export const Section22Hero = () => {
             </span>
           </motion.div>
 
-          <motion.form
-            variants={fadeUpVariants}
-            onSubmit={handleSubmit}
-            className="form-glow-border relative z-20 mt-2 w-full rounded-full bg-white/15 shadow-2xl backdrop-blur-md"
-            style={{
-              borderRadius: "100px",
-            }}
-          >
-            <div className="flex min-w-0 items-center justify-between rounded-full bg-[#101113] py-[6px] pr-2 pl-4 shadow-inner">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="min-w-0 w-full bg-transparent font-sans text-sm text-white placeholder:text-white/50 focus:outline-none ipad:text-base"
-                required
+          <div className="relative mt-2 w-full">
+            {/* Particle dust — same width as form, behind it */}
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 top-1/2 z-0 w-full overflow-hidden"
+              style={{ height: STAR_DUST_HEIGHT }}
+              initial={prefersReducedMotion ? false : { opacity: 0 }}
+              animate={showContent ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.5, ease: EASE_OUT, delay: 0.15 }}
+            >
+              <Sparkles
+                angle={180}
+                background="rgba(0,0,0,0)"
+                particleColor="#FFFFFF"
+                particleDensity={1}
+                minSize={0.5}
+                maxSize={0.8}
+                speed={6}
+                particleSpeed={2}
+                movement={4}
               />
-              <button
-                type="submit"
-                className="shrink-0 rounded-full border border-[#2f2f2f] bg-white/[0.02] px-4 py-2.5 text-sm text-white transition-colors duration-200 ease hover:border-white/40 hover:bg-white/10 cursor-pointer"
-              >
-                Sign in
-              </button>
-            </div>
-          </motion.form>
+            </motion.div>
+
+            <motion.form
+              variants={fadeUpVariants}
+              onSubmit={handleSubmit}
+              className="form-glow-border relative z-10 w-full rounded-full bg-white/15 shadow-2xl backdrop-blur-md"
+              style={{
+                borderRadius: "100px",
+              }}
+            >
+              <div className="flex min-w-0 items-center justify-between rounded-full bg-[#101113] py-[6px] pr-2 pl-4 shadow-inner">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="min-w-0 w-full bg-transparent font-sans text-sm text-white placeholder:text-white/50 focus:outline-none ipad:text-base"
+                  required
+                />
+                <button
+                  type="submit"
+                  className="shrink-0 rounded-full border border-[#2f2f2f] bg-white/[0.02] px-4 py-2.5 text-sm text-white transition-colors duration-200 ease hover:border-white/40 hover:bg-white/10 cursor-pointer"
+                >
+                  Sign in
+                </button>
+              </div>
+            </motion.form>
+          </div>
         </motion.div>
       </main>
 
       <footer className="relative z-10 py-4" />
-
-      {/* Stardust fades with background */}
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[15] w-full overflow-hidden"
-        style={{ height: STAR_DUST_HEIGHT }}
-        initial={prefersReducedMotion ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, ease: EASE_OUT, delay: 0.15 }}
-      >
-        <Sparkles
-          angle={0}
-          background="rgba(0,0,0,0)"
-          particleColor="#FFFFFF"
-          particleDensity={1}
-          minSize={0.5}
-          maxSize={0.8}
-          speed={6}
-          particleSpeed={2}
-          movement={4}
-        />
-      </motion.div>
     </section>
   );
 };

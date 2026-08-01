@@ -104,6 +104,7 @@ interface TetrisProps {
   gap?: number;
   rounded?: number;
   dropSpeed?: number;
+  startFilled?: boolean;
   style?: CSSProperties;
 }
 
@@ -137,6 +138,7 @@ function __OriginkitBase_Tetris(props: TetrisProps) {
     gap = 1,
     rounded = 20,
     dropSpeed = 2,
+    startFilled = false,
     style,
   } = props;
 
@@ -380,6 +382,27 @@ function __OriginkitBase_Tetris(props: TetrisProps) {
       clearing = [];
     }
 
+    /** Drop a handful of random pieces at the bottom so the board opens half-full. */
+    function scatterInitialStack() {
+      const pieces = Math.max(4, Math.round((cols * rows) / 18));
+      for (let i = 0; i < pieces; i++) {
+        const shape = Math.floor(rand() * SHAPES.length);
+        const turns = Math.floor(rand() * 4);
+        const cells = rotate(shape, turns);
+        let width = 0;
+        for (const [c] of cells) width = Math.max(width, c);
+        const col = Math.floor(rand() * Math.max(1, cols - width));
+        if (!fits(cells, col, 0)) continue;
+        let row = 0;
+        while (fits(cells, col, row + 1)) row++;
+        const color =
+          blockRGB.length > 1 ? Math.floor(rand() * blockRGB.length) : 0;
+        for (const [c, r] of cells) {
+          grid[(row + r) * cols + (col + c)] = color;
+        }
+      }
+    }
+
     function build() {
       dpr = Math.min(2, window.devicePixelRatio || 1);
       // The board is whatever size the frame gives it — clientWidth, not
@@ -410,6 +433,7 @@ function __OriginkitBase_Tetris(props: TetrisProps) {
       piece = null;
       clearing = [];
       clearMs = 0;
+      if (startFilled) scatterInitialStack();
       spawn();
     }
 
@@ -547,6 +571,7 @@ function __OriginkitBase_Tetris(props: TetrisProps) {
     gap,
     rounded,
     dropSpeed,
+    startFilled,
   ]);
 
   return (

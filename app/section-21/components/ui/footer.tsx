@@ -162,6 +162,7 @@ export const Footer = () => {
           rounded={20}
           dropSpeed={3}
           movement={2}
+          startFilled={true}
         />
       </div>
     </footer>

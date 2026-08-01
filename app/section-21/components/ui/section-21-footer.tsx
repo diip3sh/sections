@@ -6,7 +6,7 @@ export const Section21Footer = () => {
   return (
     <section
       aria-label="Notrix site footer"
-      className="relative isolate flex min-h-svh w-full items-end justify-center overflow-hidden bg-[#f6f3ea] px-4 py-12 ipad:px-10 ipad:py-16 desktop-sm:px-12 desktop-sm:py-24"
+      className="relative isolate flex min-h-svh w-full flex-col items-center justify-end overflow-hidden bg-[#f6f3ea] px-4 pb-8 pt-12 ipad:px-10 ipad:pt-16 desktop-sm:px-12 desktop-sm:pt-24"
     >
       {/* Soft multi-color wash behind the footer card */}
       <div
@@ -24,7 +24,7 @@ export const Section21Footer = () => {
           alt=""
           width={2238}
           height={545}
-          className="absolute top-[-30%] left-1/2 h-auto w-[280%] max-w-none -translate-x-1/2 scale-110 opacity-90 blur-[40px] ipad:top-[-40%] ipad:w-[220%] ipad:blur-[60px] desktop-sm:top-[-55%] desktop-sm:w-[160%] desktop-sm:blur-[80px]"
+          className="absolute top-[-30%] left-1/2 h-auto w-[280%] max-w-none -translate-x-1/2 scale-110 opacity-90 blur-[40px] ipad:top-[-40%] ipad:w-[220%] ipad:blur-[60px] desktop-sm:top-[-55%] desktop-sm:w-[200%] desktop-sm:scale-125 desktop-sm:blur-[80px] full-hd:w-[240%] full-hd:scale-150 full-hd:blur-[90px] ultrawide:top-[-60%] ultrawide:w-[280%] ultrawide:scale-[1.75] ultrawide:blur-[100px]"
         />
       </div>
 

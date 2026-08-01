@@ -90,11 +90,11 @@ export const Section22Hero = () => {
         <div className="absolute inset-0 -translate-y-[8%] ipad:-translate-y-[0%]">
           <InteractiveHeroCanvas
             backgroundColor="#050304"
-            lineColor="rgb(0, 178, 255)"
+            lineColor="#03B7F6"
             lineWidth={lineWidth}
             lineCount={lineCount}
-            speed={4}
-            glow={10}
+            speed={6}
+            glow={4}
             rotation={8.47}
             interactive={true}
           />
@@ -143,8 +143,8 @@ export const Section22Hero = () => {
           <div className="size-[1567px] left-0 top-0 absolute opacity-20 rounded-full border border-white/45" />
           <div className="size-[896.61px] left-[335.20px] top-[335.20px] absolute opacity-20 rounded-full border border-white/70 border-dashed" />
           <div className="size-[633.77px] left-[466.62px] top-[466.62px] absolute opacity-0 rounded-full border border-white/50 " />
-          <div className="size-6 left-[311px] top-[423px] absolute rounded-full border opacity-10" />
-          <div className="size-2.5 left-[318.37px] top-[430.37px] absolute bg-[#19333C]/70 rounded-full opacity-20 " />
+          <div className="size-6 left-[311px] top-[423px] absolute rounded-full border opacity-20" />
+          <div className="size-2.5 left-[318.37px] top-[430.37px] absolute bg-red-500 rounded-full opacity-10 " />
           <div className="size-6 left-[1121px] top-[310px] absolute rounded-full border opacity-20 " />
           <div className="size-2.5 left-[1128.37px]  top-[317.37px] absolute bg-[#19333C]/70 rounded-full opacity-10" />
         </div>
@@ -291,7 +291,7 @@ export const Section22Hero = () => {
       </div>
 
       {/* Main Hero Content */}
-      <main className="relative z-20 mx-auto flex w-full max-w-[340px] max-h-[600px] flex-1 flex-col items-center justify-between py-12 pt-[62px] text-center ipad:max-h-[623px] ipad:max-w-[512px] desktop-sm:max-h-[800px]">
+      <main className="relative z-20 mx-auto flex w-full max-w-[340px] max-h-[600px] flex-1 flex-col items-center justify-between py-12 pt-[62px] text-center ipad:max-h-[623px] ipad:max-w-[512px] desktop-sm:max-h-[650px]">
         {/* 3. Headline — rolling text after navbar */}
         <RollingLetters
           tag="h1"

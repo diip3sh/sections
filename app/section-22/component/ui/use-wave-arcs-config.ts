@@ -20,10 +20,10 @@ export type WaveArcsConfig = {
  * - fullHd:   1920+
  */
 export const WAVE_ARCS_BY_BREAKPOINT = {
-  mobile: { lineWidth: 5, lineCount: 300 },
-  ipad: { lineWidth: 5, lineCount: 300 },
-  desktop: { lineWidth: 10, lineCount: 300 },
-  fullHd: { lineWidth: 10, lineCount: 500 },
+  mobile: { lineWidth: 5, lineCount: 400 },
+  ipad: { lineWidth: 5, lineCount: 400 },
+  desktop: { lineWidth: 5, lineCount: 400 },
+  fullHd: { lineWidth: 5, lineCount: 400 },
 } as const satisfies Record<string, WaveArcsConfig>;
 
 export const useWaveArcsConfig = (): WaveArcsConfig => {

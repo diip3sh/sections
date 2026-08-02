@@ -859,7 +859,11 @@ export default function Globe({
       const intersects = raycaster.intersectObject(oceanMesh);
       isHovering = intersects.length > 0;
     };
+    const handleMouseLeave = () => {
+      isHovering = false;
+    };
     canvas.addEventListener("mousemove", handleMouseMove);
+    canvas.addEventListener("mouseleave", handleMouseLeave);
 
     const resizeObserver = new ResizeObserver(() => {
       const newWidth = container.clientWidth || container.offsetWidth || 800;
@@ -880,6 +884,7 @@ export default function Globe({
       if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
       canvas.removeEventListener("mousedown", handleMouseDown);
       canvas.removeEventListener("mousemove", handleMouseMove);
+      canvas.removeEventListener("mouseleave", handleMouseLeave);
       resizeObserver.disconnect();
       renderer.dispose();
       container.removeChild(canvas);

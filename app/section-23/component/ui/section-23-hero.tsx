@@ -7,7 +7,7 @@ import { FlagPill } from "./flag-pill";
 const EASE_OUT = [0.215, 0.61, 0.355, 1] as const;
 
 const GLOBE_DOTS = {
-  color: "#6EB6FF",
+  color: "#357de9",
   size: 5,
   density: 7,
   allDots: false,
@@ -212,22 +212,22 @@ export const Section23Hero = () => {
                 >
                   <Globe
                     direction="right"
-                    speed={prefersReducedMotion ? 0 : 1.2}
+                    speed={prefersReducedMotion ? 0 : 2}
                     smoothing={8}
-                    stopOnHover={false}
+                    stopOnHover={true}
                     dragSpeed={0}
                     fill="dots"
                     dots={GLOBE_DOTS}
-                    oceanColor="#0B0F29"
-                    outlineColor="#9ECFFF"
+                    oceanColor="#0a112a"
+                    outlineColor="#357de9"
                     graticuleColor="#4B6AAA"
                     showOutline={true}
                     showGrid={true}
                     outlineWidth={1}
                     scale={10}
                     detail={6}
-                    initialLatitude={8}
-                    initialLongitude={40}
+                    initialLatitude={23}
+                    initialLongitude={-23}
                   />
                 </motion.div>
               </div>

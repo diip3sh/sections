@@ -89,12 +89,12 @@ export const Section22Hero = () => {
       >
         <div className="absolute inset-0 -translate-y-[8%] ipad:-translate-y-[0%]">
           <InteractiveHeroCanvas
-            backgroundColor="#050304"
-            lineColor="#03B7F6"
+            backgroundColor="#0a0a0a"
+            lineColor="#02b7f6"
             lineWidth={lineWidth}
             lineCount={lineCount}
             speed={6}
-            glow={4}
+            glow={10}
             rotation={8.47}
             interactive={true}
           />

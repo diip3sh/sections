@@ -277,7 +277,7 @@ export const Section25Hero = () => (
             />
           </div>
 
-          <div className="pointer-events-none relative flex justify-center px-[17px] py-[33px] ipad:py-[42px] desktop-sm:pt-[197px]">
+          <div className="pointer-events-none relative flex justify-center px-[17px] py-[33px] ipad:py-[42px] desktop-sm:py-[120px]">
             <Reveal className="pointer-events-auto">
               <DashboardCard />
             </Reveal>

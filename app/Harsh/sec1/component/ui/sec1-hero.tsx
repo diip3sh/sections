@@ -24,6 +24,11 @@ const FLAGS = [
 
 const AVATARS = [1, 2, 3];
 
+/** Entrance stagger. `hero-reveal` (globals.css) fades + lifts, and collapses to
+ *  a plain fade under prefers-reduced-motion. */
+const REVEAL = "animate-hero-reveal";
+const delay = (ms: number) => ({ animationDelay: `${ms}ms` });
+
 /** Linearly interpolates a Figma value between two viewport widths, clamped at
  *  both ends — used to grow the tablet frame into the desktop one. */
 const interpolate = (from: [number, number], to: [number, number]) => {
@@ -60,8 +65,9 @@ const BUTTON_GRADIENT =
   "linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(90deg, rgb(229, 229, 229) 0%, rgb(229, 229, 229) 100%)";
 
 const LightButton = ({ label, className }: { label: string; className: string }) => (
-  <div
-    className={`relative flex shrink-0 items-center justify-center rounded-[3px] ${className} ${BUTTON_SHADOW}`}
+  <button
+    type="button"
+    className={`relative flex shrink-0 cursor-pointer items-center justify-center rounded-[3px] transition-opacity duration-200 hover:opacity-80 ${className} ${BUTTON_SHADOW}`}
   >
     <div
       aria-hidden
@@ -72,21 +78,25 @@ const LightButton = ({ label, className }: { label: string; className: string })
       {label}
     </p>
     <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_2px_2px_0px_white,inset_0px_-1.5px_0px_0px_rgba(0,0,0,0.23)]" />
-  </div>
+  </button>
 );
 
 const DarkButton = ({ label, className }: { label: string; className: string }) => (
-  <div
-    className={`relative flex shrink-0 items-center justify-center rounded-[3px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#292929] ${className}`}
+  <button
+    type="button"
+    className={`relative flex shrink-0 cursor-pointer items-center justify-center rounded-[3px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#292929] transition-opacity duration-200 hover:opacity-80 ${className}`}
   >
     <p className="relative shrink-0 whitespace-nowrap text-[16px] leading-normal tracking-[-0.32px] text-white">
       {label}
     </p>
-  </div>
+  </button>
 );
 
-const Badge = () => (
-  <div className="relative flex shrink-0 items-center justify-center gap-[10px] overflow-clip rounded-[3px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#282828] px-[12px] py-[8px]">
+const Badge = ({ step }: { step: number }) => (
+  <div
+    style={delay(step)}
+    className={`${REVEAL} relative flex shrink-0 items-center justify-center gap-[10px] overflow-clip rounded-[3px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#282828] px-[12px] py-[8px]`}
+  >
     <div className="relative size-[6px] shrink-0">
       <img alt="" className="absolute inset-0 block size-full max-w-none" src={`${A}/dot.svg`} />
     </div>
@@ -159,7 +169,7 @@ const StatCard = ({
   position: CSSProperties;
 }) => (
   <div
-    className={`absolute flex flex-col items-center border-solid border-[rgba(255,255,255,0.1)] bg-[#292929] ${className} ${shadow}`}
+    className={`${REVEAL} absolute flex flex-col items-center border-solid border-[rgba(255,255,255,0.1)] bg-[#292929] ${className} ${shadow}`}
     style={{
       ...position,
       width,
@@ -371,7 +381,7 @@ const LogoStrip = ({
   style?: CSSProperties;
 }) => (
   <div
-    className={`flex items-center border border-solid border-[rgba(255,255,255,0.1)] bg-[#0f0f0f] ${className}`}
+    className={`${REVEAL} flex items-center border border-solid border-[rgba(255,255,255,0.1)] bg-[#0f0f0f] ${className}`}
     style={style}
   >
     {cells.map((cell, index) => (
@@ -402,12 +412,15 @@ const MobileLayout = () => (
   <ScaleFrame frameWidth={402} className="w-full overflow-hidden min-[640px]:hidden">
     <div className="flex flex-col items-start gap-[16px] p-[16px]">
     {/* Top Nav */}
-    <div className="relative flex h-[59px] w-full shrink-0 items-center justify-center gap-[121px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#0f0f0f] px-[32px] py-[15.5px]">
+    <div
+      style={delay(0)}
+      className={`${REVEAL} relative flex h-[59px] w-full shrink-0 items-center justify-center gap-[121px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#0f0f0f] px-[32px] py-[15.5px]`}
+    >
       <div className="relative flex min-w-px flex-[1_0_0] items-center justify-between">
         <div className="relative h-[28px] w-[40px] shrink-0 overflow-clip">
           <img alt="Logo" className="absolute inset-0 block size-full max-w-none" src={`${A}/logo.svg`} />
         </div>
-        <div className="relative size-[24px] shrink-0">
+        <div className="relative size-[24px] shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-70">
           <img alt="Menu" className="absolute inset-0 block size-full max-w-none" src={`${A}/menu.svg`} />
         </div>
       </div>
@@ -425,18 +438,24 @@ const MobileLayout = () => (
       {/* copy — 346 wide, the Figma column; h-304 keeps 41px under the CTAs */}
       <div className="absolute left-[12px] right-[12px] top-[32px] flex h-[304px] flex-col items-center gap-[24px]">
         <div className="relative flex w-full shrink-0 flex-col items-center gap-[12px]">
-          <Badge />
+          <Badge step={80} />
           <div className="relative flex w-full shrink-0 flex-col items-start gap-[8px] text-center text-white">
-            <h1 className="relative w-[340px] max-w-full shrink-0 text-[35px] leading-[40px] tracking-[-1.4px]">
+            <h1 style={delay(160)} className={`${REVEAL} relative w-[340px] max-w-full shrink-0 text-[35px] leading-[40px] tracking-[-1.4px]`}>
               Build Your Global Team. Effortlessly.
             </h1>
-            <p className="relative w-full shrink-0 text-[14px] leading-[1.5] opacity-60">
+            <p
+              style={delay(240)}
+              className={`${REVEAL} relative w-full shrink-0 text-[14px] leading-[1.5] opacity-60`}
+            >
               Hire exceptional talent across 180+ countries, automate compliance, &amp; manage
               international payroll.
             </p>
           </div>
         </div>
-        <div className="relative flex w-full shrink-0 flex-col items-start justify-center gap-[16px] overflow-clip">
+        <div
+          style={delay(320)}
+          className={`${REVEAL} relative flex w-full shrink-0 flex-col items-start justify-center gap-[16px] overflow-clip`}
+        >
           <LightButton label="Get started" className="w-full px-[24px] py-[14px]" />
           <DarkButton label="Book a call" className="w-full px-[24px] py-[14px]" />
         </div>
@@ -444,14 +463,17 @@ const MobileLayout = () => (
 
       {/* globe */}
       <div className="absolute bottom-0 left-0 h-[224px] w-full overflow-clip">
-        <div className="absolute left-1/2 top-0 h-[371.127px] w-[370.391px] -translate-x-1/2 overflow-clip rounded-[412px]">
+        <div
+          style={delay(400)}
+          className={`${REVEAL} absolute left-1/2 top-0 h-[371.127px] w-[370.391px] -translate-x-1/2 overflow-clip rounded-[412px]`}
+        >
           <MediaGlobe query="(max-width: 639px)" />
         </div>
 
         <StatCard
           className="overflow-clip"
           shadow={CARD_SHADOW_LEFT_MOBILE}
-          position={{ left: "20.02px", top: "20.41px" }}
+          position={{ ...delay(480), left: "20.02px", top: "20.41px" }}
           value="300K+"
           caption="users globally"
           width="107.1px"
@@ -468,7 +490,7 @@ const MobileLayout = () => (
         <StatCard
           className="overflow-clip"
           shadow={CARD_SHADOW_RIGHT_MOBILE}
-          position={{ right: "12.01px", top: "131.52px" }}
+          position={{ ...delay(560), right: "12.01px", top: "131.52px" }}
           value="120+"
           caption="countries supported"
           width="143.134px"
@@ -496,7 +518,11 @@ const MobileLayout = () => (
     </div>
 
     {/* Logo strip */}
-    <LogoStrip className="relative h-[80px] w-full shrink-0" cells={MOBILE_CELLS} />
+    <LogoStrip
+      className="relative h-[80px] w-full shrink-0"
+      style={delay(640)}
+      cells={MOBILE_CELLS}
+    />
     </div>
   </ScaleFrame>
 );
@@ -508,12 +534,12 @@ const IpadLayout = () => (
   // that so the same layout carries up to the 1280px desktop breakpoint.
   <div className="hidden flex-col items-start gap-[16px] p-[16px_32px] min-[640px]:flex desktop-sm:hidden">
     {/* Top Nav */}
-    <div className="relative flex h-[59px] w-full shrink-0 items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] bg-[#0f0f0f] px-[32px] py-[15.5px]">
+    <div style={delay(0)} className={`${REVEAL} relative flex h-[59px] w-full shrink-0 items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] bg-[#0f0f0f] px-[32px] py-[15.5px]`}>
       <div className="relative flex min-w-px flex-[1_0_0] items-center justify-between">
         <div className="relative h-[28px] w-[40px] shrink-0 overflow-clip">
           <img alt="Logo" className="absolute inset-0 block size-full max-w-none" src={`${A}/logo.svg`} />
         </div>
-        <div className="relative size-[24px] shrink-0">
+        <div className="relative size-[24px] shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-70">
           <img alt="Menu" className="absolute inset-0 block size-full max-w-none" src={`${A}/menu.svg`} />
         </div>
       </div>
@@ -534,18 +560,24 @@ const IpadLayout = () => (
       {/* copy */}
       <div className="absolute left-1/2 top-[48px] flex w-[468px] max-w-[calc(100%-48px)] -translate-x-1/2 flex-col items-center gap-[32px]">
         <div className="relative flex w-full shrink-0 flex-col items-center gap-[24px]">
-          <Badge />
+          <Badge step={80} />
           <div className="relative flex w-full shrink-0 flex-col items-start gap-[16px] text-center text-white">
-            <h1 className="relative w-full shrink-0 text-[56px] leading-[55px] tracking-[-2.24px]">
+            <h1 style={delay(160)} className={`${REVEAL} relative w-full shrink-0 text-[56px] leading-[55px] tracking-[-2.24px]`}>
               Build Your Global Team. Effortlessly.
             </h1>
-            <p className="relative w-full shrink-0 text-[16px] leading-[1.5] opacity-60">
+            <p
+              style={delay(240)}
+              className={`${REVEAL} relative w-full shrink-0 text-[16px] leading-[1.5] opacity-60`}
+            >
               Hire exceptional talent across 180+ countries, automate compliance, and manage
               international payroll.
             </p>
           </div>
         </div>
-        <div className="relative flex shrink-0 items-center gap-[16px] overflow-clip">
+        <div
+          style={delay(320)}
+          className={`${REVEAL} relative flex shrink-0 items-center gap-[16px] overflow-clip`}
+        >
           <LightButton label="Get started" className="px-[24px] py-[14px]" />
           <DarkButton label="Book a call" className="px-[24px] py-[14px]" />
         </div>
@@ -558,21 +590,21 @@ const IpadLayout = () => (
         style={{ height: fluidLg(360, 447) }}
       >
         <div
-          className="absolute left-1/2 top-0 aspect-[680/681.433] -translate-x-1/2 overflow-clip rounded-[999px]"
-          style={{ width: fluidLg(680, 898), maxWidth: "100%" }}
+          className={`${REVEAL} absolute left-1/2 top-0 aspect-[680/681.433] -translate-x-1/2 overflow-clip rounded-[999px]`}
+          style={{ ...delay(400), width: fluidLg(680, 898), maxWidth: "100%" }}
         >
           <MediaGlobe query="(min-width: 640px) and (max-width: 1279px)" />
         </div>
 
         <StatCard
           {...BIG_CARD_LEFT}
-          position={{ left: fluidLg(32, 85), top: "8.3%" }}
+          position={{ ...delay(480), left: fluidLg(32, 85), top: "8.3%" }}
           shadow={CARD_SHADOW_LEFT_DESKTOP}
         />
 
         <StatCard
           {...BIG_CARD_RIGHT}
-          position={{ right: fluidLg(32, 51), top: "61.6%" }}
+          position={{ ...delay(560), right: fluidLg(32, 51), top: "61.6%" }}
           shadow={CARD_SHADOW_RIGHT_DESKTOP}
         />
       </div>
@@ -581,7 +613,11 @@ const IpadLayout = () => (
     </div>
 
     {/* Logo strip */}
-    <LogoStrip className="relative h-[95px] w-full shrink-0" cells={IPAD_CELLS} />
+    <LogoStrip
+      className="relative h-[95px] w-full shrink-0"
+      style={delay(640)}
+      cells={IPAD_CELLS}
+    />
   </div>
 );
 
@@ -592,7 +628,7 @@ const DesktopLayout = () => (
   // width (1184 = 100vw − 96) so the whole section grows with the screen.
   <div className="hidden w-full flex-col items-start gap-[16px] p-[16px_48px] desktop-sm:flex">
     {/* Top Nav */}
-    <div className="relative flex w-full items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] bg-[#0f0f0f] px-[32px] py-[16px]">
+    <div style={delay(0)} className={`${REVEAL} relative flex w-full items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] bg-[#0f0f0f] px-[32px] py-[16px]`}>
       <div className="relative flex min-w-px flex-[1_0_0] items-center justify-between">
         <div className="relative h-[28px] w-[40px] shrink-0 overflow-clip">
           <img alt="Logo" className="absolute inset-0 block size-full max-w-none" src={`${A}/logo.svg`} />
@@ -600,7 +636,12 @@ const DesktopLayout = () => (
         <LightButton label="Get started" className="px-[16px] py-[12px]" />
         <div className="absolute left-1/2 top-[calc(50%-0.5px)] flex -translate-x-1/2 -translate-y-1/2 items-center gap-[24px] whitespace-nowrap text-[16px] leading-normal text-white">
           {NAV_LINKS.map((link) => (
-            <p key={link.label} className={`relative shrink-0 ${link.active ? "" : "opacity-60"}`}>
+            <p
+              key={link.label}
+              className={`relative shrink-0 cursor-pointer transition-opacity duration-200 ${
+                link.active ? "hover:opacity-80" : "opacity-60 hover:opacity-100"
+              }`}
+            >
               {link.label}
             </p>
           ))}
@@ -626,18 +667,24 @@ const DesktopLayout = () => (
       {/* copy */}
       <div className="absolute left-1/2 top-[48px] flex w-[468px] -translate-x-1/2 flex-col items-center gap-[32px]">
         <div className="relative flex w-full shrink-0 flex-col items-center gap-[24px]">
-          <Badge />
+          <Badge step={80} />
           <div className="relative flex w-full shrink-0 flex-col items-start gap-[16px] text-center text-white">
-            <h1 className="relative w-full shrink-0 text-[56px] leading-[64px] tracking-[-2.24px]">
+            <h1 style={delay(160)} className={`${REVEAL} relative w-full shrink-0 text-[56px] leading-[64px] tracking-[-2.24px]`}>
               Build Your Global Team. Effortlessly.
             </h1>
-            <p className="relative w-full shrink-0 text-[16px] leading-[1.5] opacity-60">
+            <p
+              style={delay(240)}
+              className={`${REVEAL} relative w-full shrink-0 text-[16px] leading-[1.5] opacity-60`}
+            >
               Hire exceptional talent across 180+ countries, automate compliance, and manage
               international payroll.
             </p>
           </div>
         </div>
-        <div className="relative flex shrink-0 items-center gap-[16px] overflow-clip">
+        <div
+          style={delay(320)}
+          className={`${REVEAL} relative flex shrink-0 items-center gap-[16px] overflow-clip`}
+        >
           <LightButton label="Get started" className="px-[24px] py-[14px]" />
           <DarkButton label="Book a call" className="px-[24px] py-[14px]" />
         </div>
@@ -645,26 +692,33 @@ const DesktopLayout = () => (
 
       {/* globe — 898 / 1184 wide, frame 447 tall (49.78% of its own width) */}
       <div className="absolute bottom-0 left-1/2 aspect-[898/447] w-[75.84%] -translate-x-1/2 overflow-clip">
-        <div className="absolute left-1/2 top-0 aspect-[898/900] w-full -translate-x-1/2 overflow-clip rounded-[999px]">
+        <div
+          style={delay(400)}
+          className={`${REVEAL} absolute left-1/2 top-0 aspect-[898/900] w-full -translate-x-1/2 overflow-clip rounded-[999px]`}
+        >
           <MediaGlobe query="(min-width: 1280px)" />
         </div>
 
         <StatCard
           {...BIG_CARD_LEFT}
-          position={{ left: "9.47%", top: "7.38%" }}
+          position={{ ...delay(480), left: "9.47%", top: "7.38%" }}
           shadow={CARD_SHADOW_LEFT_DESKTOP}
         />
 
         <StatCard
           {...BIG_CARD_RIGHT}
-          position={{ right: "5.68%", top: "61.52%" }}
+          position={{ ...delay(560), right: "5.68%", top: "61.52%" }}
           shadow={CARD_SHADOW_RIGHT_DESKTOP}
         />
       </div>
     </div>
 
     {/* Logo strip */}
-    <LogoStrip className="relative h-[95px] w-full shrink-0" cells={DESKTOP_CELLS} />
+    <LogoStrip
+      className="relative h-[95px] w-full shrink-0"
+      style={delay(640)}
+      cells={DESKTOP_CELLS}
+    />
   </div>
 );
 

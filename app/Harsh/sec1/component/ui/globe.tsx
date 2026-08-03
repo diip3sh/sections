@@ -34,6 +34,19 @@ type Rgba = { r: number; g: number; b: number; a: number };
 const LAND_URL = "/Harsh/globe/ne_50m_land.json";
 let landFeaturesPromise: Promise<any> | null = null;
 
+/** Everything derived from the land data is deterministic, so it is computed
+ *  once per page and reused. Without this, a remount (React Strict Mode's
+ *  double-invoke in dev, a breakpoint switch, a scroll-away/back) rebuilds the
+ *  land bitmap, the coastline tubes and every dot from scratch — which is what
+ *  made the globe appear, vanish and appear again. */
+let landBitmap: {
+    pixels: Uint8ClampedArray;
+    width: number;
+    height: number;
+} | null = null;
+const dotCoordsCache = new Map<string, number[][]>();
+const mergedGeometryCache = new Map<string, BufferGeometry>();
+
 const loadLandFeatures = () => {
     if (!landFeaturesPromise) {
         landFeaturesPromise = fetch(LAND_URL)
@@ -299,6 +312,8 @@ export default function Globe({
         canvas.style.display = "block";
         canvas.style.opacity = "0";
         canvas.style.visibility = "hidden";
+        // Revealed once, when the globe is fully built — never partially.
+        canvas.style.transition = "opacity 220ms ease-out";
         container.appendChild(canvas);
 
         const resolvedOceanColor = oceanColor;
@@ -383,10 +398,13 @@ export default function Globe({
                 opacity: graticuleRgba.a,
             });
             // One merged mesh instead of ~36 — the grid is static, so there
-            // is no reason to pay a draw call per line.
+            // is no reason to pay a draw call per line. The merged result is
+            // cached module-side so remounts skip the rebuild entirely.
             const graticuleGeometries: BufferGeometry[] = [];
             const gridSpacing = 15;
-            for (let lat = -90; lat <= 90; lat += gridSpacing) {
+            const graticuleKey = `grid|${globeRadius}|${gridWidth}|${gridSpacing}`;
+            const cachedGraticule = mergedGeometryCache.get(graticuleKey);
+            for (let lat = -90; !cachedGraticule && lat <= 90; lat += gridSpacing) {
                 const positions: number[] = [];
                 const segments = 64;
                 for (let i = 0; i <= segments; i++) {
@@ -423,7 +441,7 @@ export default function Globe({
                     }
                 }
             }
-            for (let lng = -180; lng < 180; lng += gridSpacing) {
+            for (let lng = -180; !cachedGraticule && lng < 180; lng += gridSpacing) {
                 const positions: number[] = [];
                 const segments = 64;
                 for (let i = 0; i <= segments; i++) {
@@ -460,10 +478,15 @@ export default function Globe({
                     }
                 }
             }
-            if (graticuleGeometries.length > 0) {
+            if (cachedGraticule) {
+                const tubeMesh = new Mesh(cachedGraticule, graticuleMaterial);
+                tubeMesh.renderOrder = 0;
+                graticuleGroup.add(tubeMesh);
+            } else if (graticuleGeometries.length > 0) {
                 const merged = mergeGeometries(graticuleGeometries, false);
                 graticuleGeometries.forEach((geometry) => geometry.dispose());
                 if (merged) {
+                    mergedGeometryCache.set(graticuleKey, merged);
                     const tubeMesh = new Mesh(merged, graticuleMaterial);
                     tubeMesh.renderOrder = 0;
                     graticuleGroup.add(tubeMesh);
@@ -502,9 +525,13 @@ export default function Globe({
                     let skippedCount = 0;
                     // Built in slices: ~1400 rings in one go blocks the main
                     // thread for hundreds of ms, which is what made the globe
-                    // hitch while it appeared.
+                    // hitch while it appeared. Cached after the first build.
+                    const outlineKey = `outline|${globeRadius}|${outlineWidth}|${detail}`;
+                    const cachedOutline = mergedGeometryCache.get(outlineKey);
                     let featureIndex = 0;
-                    for (const feature of landFeatures.features as any[]) {
+                    for (const feature of cachedOutline
+                        ? []
+                        : (landFeatures.features as any[])) {
                         if (featureIndex++ % 120 === 119) {
                             await new Promise((resolve) =>
                                 requestAnimationFrame(() => resolve(null))
@@ -596,12 +623,17 @@ export default function Globe({
                     }
                     void processedCount;
                     void skippedCount;
-                    if (outlineGeometries.length > 0) {
+                    if (cachedOutline) {
+                        const tubeMesh = new Mesh(cachedOutline, outlineMaterial);
+                        tubeMesh.renderOrder = 0;
+                        continentOutlineGroup.add(tubeMesh);
+                    } else if (outlineGeometries.length > 0) {
                         const merged = mergeGeometries(outlineGeometries, false);
                         outlineGeometries.forEach((geometry) =>
                             geometry.dispose()
                         );
                         if (merged) {
+                            mergedGeometryCache.set(outlineKey, merged);
                             const tubeMesh = new Mesh(merged, outlineMaterial);
                             tubeMesh.renderOrder = 0;
                             continentOutlineGroup.add(tubeMesh);
@@ -609,37 +641,40 @@ export default function Globe({
                     }
                 }
 
-                const bitmapWidth = 2048;
-                const bitmapHeight = 1024;
-                const offscreenCanvas = document.createElement("canvas");
-                offscreenCanvas.width = bitmapWidth;
-                offscreenCanvas.height = bitmapHeight;
-                const ctx = offscreenCanvas.getContext("2d", {
-                    willReadFrequently: true,
-                });
-                if (!ctx) throw new Error("Canvas not supported");
-                const projection = geoEquirectangular().fitSize(
-                    [bitmapWidth, bitmapHeight],
-                    { type: "Sphere" } as any
-                );
-                const pathGenerator = geoPath()
-                    .projection(projection)
-                    .context(ctx);
-                ctx.fillStyle = "#000";
-                ctx.fillRect(0, 0, bitmapWidth, bitmapHeight);
-                ctx.fillStyle = "#fff";
-                ctx.beginPath();
-                landFeatures.features.forEach((feature: any) => {
-                    pathGenerator(feature);
-                });
-                ctx.fill();
-                const imageData = ctx.getImageData(
-                    0,
-                    0,
-                    bitmapWidth,
-                    bitmapHeight
-                );
-                const pixels = imageData.data;
+                if (!landBitmap) {
+                    const bitmapW = 2048;
+                    const bitmapH = 1024;
+                    const offscreenCanvas = document.createElement("canvas");
+                    offscreenCanvas.width = bitmapW;
+                    offscreenCanvas.height = bitmapH;
+                    const ctx = offscreenCanvas.getContext("2d", {
+                        willReadFrequently: true,
+                    });
+                    if (!ctx) throw new Error("Canvas not supported");
+                    const projection = geoEquirectangular().fitSize(
+                        [bitmapW, bitmapH],
+                        { type: "Sphere" } as any
+                    );
+                    const pathGenerator = geoPath()
+                        .projection(projection)
+                        .context(ctx);
+                    ctx.fillStyle = "#000";
+                    ctx.fillRect(0, 0, bitmapW, bitmapH);
+                    ctx.fillStyle = "#fff";
+                    ctx.beginPath();
+                    landFeatures.features.forEach((feature: any) => {
+                        pathGenerator(feature);
+                    });
+                    ctx.fill();
+                    landBitmap = {
+                        pixels: ctx.getImageData(0, 0, bitmapW, bitmapH).data,
+                        width: bitmapW,
+                        height: bitmapH,
+                    };
+                }
+                const bitmapWidth = landBitmap.width;
+                const bitmapHeight = landBitmap.height;
+                const pixels = landBitmap.pixels;
                 const isOnLand = (lng: number, lat: number) => {
                     const x =
                         Math.round(((lng + 180) / 360) * bitmapWidth) %
@@ -698,20 +733,25 @@ export default function Globe({
                     dotInstances = new Mesh(fillGeometry, fillMaterial);
                     globeGroup.add(dotInstances);
                 } else {
-                    const dotCoordinates: number[][] = [];
                     const baseStep = dotSpacing * 0.08;
-                    for (let lat = -90; lat <= 90; lat += baseStep) {
-                        const latRad = (Math.abs(lat) * Math.PI) / 180;
-                        const cosLat = Math.cos(latRad);
-                        const lngStep =
-                            cosLat > 0.01
-                                ? baseStep / Math.max(0.3, cosLat)
-                                : 360;
-                        for (let lng = -180; lng < 180; lng += lngStep) {
-                            if (allDots || isOnLand(lng, lat)) {
-                                dotCoordinates.push([lng, lat]);
+                    const dotKey = `${baseStep}|${allDots}`;
+                    let dotCoordinates = dotCoordsCache.get(dotKey);
+                    if (!dotCoordinates) {
+                        dotCoordinates = [];
+                        for (let lat = -90; lat <= 90; lat += baseStep) {
+                            const latRad = (Math.abs(lat) * Math.PI) / 180;
+                            const cosLat = Math.cos(latRad);
+                            const lngStep =
+                                cosLat > 0.01
+                                    ? baseStep / Math.max(0.3, cosLat)
+                                    : 360;
+                            for (let lng = -180; lng < 180; lng += lngStep) {
+                                if (allDots || isOnLand(lng, lat)) {
+                                    dotCoordinates.push([lng, lat]);
+                                }
                             }
                         }
+                        dotCoordsCache.set(dotKey, dotCoordinates);
                     }
 
                     if (dotCoordinates.length > 0) {

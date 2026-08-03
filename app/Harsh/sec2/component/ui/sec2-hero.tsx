@@ -5,112 +5,33 @@ const A = "/Harsh/sec2";
 
 const HELVETICA = '"Helvetica Neue", Helvetica, Arial, sans-serif';
 
-const GLOBE_QUERY = "(min-width: 0px)";
+const PHONE_QUERY = "(max-width: 639px)";
+const TABLET_QUERY = "(min-width: 640px) and (max-width: 1279px)";
+const DESKTOP_QUERY = "(min-width: 1280px)";
 
-/** bg-glow — every blob keeps its Figma box, rotation and overscan inset. */
-const GLOWS = [
-  {
-    box: "left-[237.84px] top-[555.5px] h-[304.147px] w-[249.789px] opacity-75",
-    inner: "inset-[-48.94%_-59.59%]",
-    src: "glow-1.svg",
-  },
-  {
-    box: "left-[4.22px] top-[687.51px] h-[144.955px] w-[267.261px] opacity-75",
-    inner: "inset-[-102.68%_-55.69%]",
-    src: "glow-2.svg",
-  },
-  {
-    box: "left-[-102.84px] top-[698.07px] h-[263.909px] w-[440.437px] opacity-75",
-    inner: "inset-[-42.65%_-33.7%_-42.65%_-27.11%]",
-    src: "glow-group.svg",
-  },
-];
+const NAV_LINKS = ["Home", "Pricing", "About", "Tools"];
 
-const ROTATED_GLOWS = [
-  {
-    box: "left-[115.08px] top-[555.72px] h-[411.278px] w-[497.59px] mix-blend-plus-lighter",
-    rotate: "rotate-[-29.2deg]",
-    inner: "h-[221.843px] w-[446.046px] opacity-75",
-    overscan: "inset-[-67.09%_-33.37%]",
-    src: "glow-3.svg",
-  },
-  {
-    box: "left-[-115.64px] top-[-32.51px] h-[204.852px] w-[329.897px]",
-    rotate: "rotate-[163.97deg]",
-    inner: "h-[124.814px] w-[307.381px] opacity-53",
-    overscan: "inset-[-119.25%_-48.42%]",
-    src: "glow-4.svg",
-  },
-  {
-    box: "left-[-119.49px] top-[-13.94px] h-[160.204px] w-[241.794px] mix-blend-plus-lighter",
-    rotate: "rotate-[155.67deg]",
-    inner: "h-[70.203px] w-[233.617px] opacity-53",
-    overscan: "inset-[-212.01%_-63.71%]",
-    src: "glow-5.svg",
-  },
-  {
-    box: "left-[213px] top-[-97px] size-[322.855px]",
-    rotate: "rotate-45",
-    inner: "h-[121.103px] w-[335.484px] opacity-75",
-    overscan: "inset-[-122.9%_-44.37%]",
-    src: "glow-6.svg",
-  },
-];
+/** Entrance stagger — `hero-reveal` (globals.css) fades + lifts, and collapses
+ *  to a plain fade under prefers-reduced-motion. */
+const REVEAL = "animate-hero-reveal";
+const delay = (ms: number) => ({ animationDelay: `${ms}ms` });
 
-const PATTERN_LINES = Array.from({ length: 48 }, (_, index) => index);
-
-const Background = () => (
-  <div className="pointer-events-none absolute inset-0 overflow-clip">
-    {GLOWS.map((glow) => (
-      <div key={glow.src} className={`absolute ${glow.box}`}>
-        <div className={`absolute ${glow.inner}`}>
-          <img alt="" className="block size-full max-w-none" src={`${A}/${glow.src}`} />
-        </div>
-      </div>
-    ))}
-
-    {ROTATED_GLOWS.map((glow) => (
-      <div key={glow.src} className={`absolute flex items-center justify-center ${glow.box}`}>
-        <div className={`flex-none ${glow.rotate}`}>
-          <div className={`relative ${glow.inner}`}>
-            <div className={`absolute ${glow.overscan}`}>
-              <img alt="" className="block size-full max-w-none" src={`${A}/${glow.src}`} />
-            </div>
-          </div>
-        </div>
-      </div>
-    ))}
-
-    {/* scan lines, masked to the same soft falloff as the design */}
-    <div
-      className="absolute left-[calc(50%+27.16px)] top-[-97px] flex w-[828.316px] -translate-x-1/2 flex-col items-start gap-[20.708px]"
-      style={{
-        maskImage: `url("${A}/pattern-mask.svg")`,
-        WebkitMaskImage: `url("${A}/pattern-mask.svg")`,
-        maskMode: "alpha",
-        maskComposite: "intersect",
-        WebkitMaskComposite: "source-in",
-        maskRepeat: "no-repeat",
-        WebkitMaskRepeat: "no-repeat",
-        maskSize: "1003.912px 1285.094px",
-        WebkitMaskSize: "1003.912px 1285.094px",
-        maskPosition: "-103.098px -113.551px",
-        WebkitMaskPosition: "-103.098px -113.551px",
-      }}
-    >
-      {PATTERN_LINES.map((line) => (
-        <div key={line} className="relative h-0 w-[828.316px] shrink-0 mix-blend-overlay">
-          <div className="absolute inset-[-1.94px_0_-0.65px_0]">
-            <img alt="" className="block size-full max-w-none" src={`${A}/line.svg`} />
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
+/** The whole BG group (glows + masked scan lines) exported as one image. Figma
+ *  clips the export to the parent frame, so each PNG is exactly frame-sized
+ *  (402×836 / 744×994 / 1280×913) and simply fills it. */
+const Background = ({ src }: { src: string }) => (
+  <img
+    alt=""
+    className="pointer-events-none absolute inset-0 size-full max-w-none object-cover"
+    src={`${A}/${src}`}
+  />
 );
 
-const GetStartedButton = () => (
-  <div className="relative flex w-full shrink-0 items-center justify-center rounded-[999px] px-[24px] py-[14px] drop-shadow-[0px_53px_7.5px_rgba(0,0,0,0),0px_34px_7px_rgba(0,0,0,0.01),0px_19px_6px_rgba(0,0,0,0.05),0px_9px_4.5px_rgba(0,0,0,0.09),0px_2px_2.5px_rgba(0,0,0,0.1)]">
+const GetStartedButton = ({ className }: { className: string }) => (
+  <button
+    type="button"
+    className={`relative flex shrink-0 cursor-pointer items-center justify-center rounded-[999px] transition-opacity duration-200 hover:opacity-80 drop-shadow-[0px_53px_7.5px_rgba(0,0,0,0),0px_34px_7px_rgba(0,0,0,0.01),0px_19px_6px_rgba(0,0,0,0.05),0px_9px_4.5px_rgba(0,0,0,0.09),0px_2px_2.5px_rgba(0,0,0,0.1)] ${className}`}
+  >
     <div
       aria-hidden
       className="pointer-events-none absolute inset-0 rounded-[999px]"
@@ -123,7 +44,7 @@ const GetStartedButton = () => (
       Get started
     </p>
     <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_1px_1px_0px_white,inset_0px_-1.5px_0px_0px_rgba(0,0,0,0.1)]" />
-  </div>
+  </button>
 );
 
 /** The two hands are one photo, each revealed through its own alpha mask. */
@@ -158,11 +79,26 @@ const HandCutout = ({
   </div>
 );
 
-const GlassCard = ({ className, children }: { className: string; children: React.ReactNode }) => (
+/** The "glass" is a 301×166 plate of 10% white with a 2px backdrop-blur, the
+ *  whole plate blurred by 20px and clipped by the card — offset exactly as in
+ *  Figma, which is what gives each card its uneven, lit-from-one-side look. */
+const GlassCard = ({
+  className,
+  plate,
+  step,
+  children,
+}: {
+  className: string;
+  plate: string;
+  step: number;
+  children: React.ReactNode;
+}) => (
   <div
-    className={`absolute flex flex-col items-start overflow-clip border-solid border-[rgba(255,255,255,0.1)] ${className}`}
+    className={`absolute flex flex-col items-start overflow-clip border-solid border-[rgba(255,255,255,0.1)] backdrop-blur-sm ${className}`}
   >
-    <div className="absolute left-1/2 top-1/2 h-[166px] w-[301px] -translate-x-1/2 -translate-y-1/2 blur-[20px]">
+    <div
+      className={`absolute h-[166px] w-[301px] -translate-x-1/2 -translate-y-1/2 blur-[20px] ${plate}`}
+    >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[rgba(255,255,255,0.1)] backdrop-blur-[2px]"
@@ -172,17 +108,20 @@ const GlassCard = ({ className, children }: { className: string; children: React
   </div>
 );
 
-const Sec2Frame = () => (
+const PhoneFrame = () => (
   <div className="relative h-[836px] w-[402px] overflow-clip bg-[#101216]">
-    <Background />
+    <Background src="bg.png" />
 
     {/* Top Nav */}
-    <div className="absolute left-0 top-0 flex w-[402px] items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] p-[16px]">
+    <div
+      style={delay(0)}
+      className={`${REVEAL} absolute left-0 top-0 flex w-[402px] items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] p-[16px]`}
+    >
       <div className="relative flex min-w-px flex-[1_0_0] items-center justify-between">
         <p className="relative shrink-0 whitespace-nowrap text-[22px] leading-normal tracking-[-0.66px] text-white">
           Hirefy
         </p>
-        <div className="relative size-[24px] shrink-0">
+        <div className="relative size-[24px] shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-70">
           <img alt="Menu" className="absolute inset-0 block size-full max-w-none" src={`${A}/menu.svg`} />
         </div>
       </div>
@@ -191,27 +130,39 @@ const Sec2Frame = () => (
     {/* copy */}
     <div className="absolute left-1/2 top-[90px] flex w-[370px] -translate-x-1/2 flex-col items-center gap-[24px]">
       <div className="relative flex w-full shrink-0 flex-col items-center gap-[8px] text-center text-white">
-        <h1 className="relative w-[320px] shrink-0 text-[35px] leading-[40px] tracking-[-1.4px]">
+        <h1
+          style={delay(80)}
+          className={`${REVEAL} relative w-[320px] shrink-0 text-[35px] leading-[40px] tracking-[-1.4px]`}
+        >
           Build Your Global Team. Effortlessly.
         </h1>
-        <p className="relative w-full shrink-0 text-[14px] leading-[1.5] opacity-70">
+        <p
+          style={delay(160)}
+          className={`${REVEAL} relative w-full shrink-0 text-[14px] leading-[1.5] opacity-70`}
+        >
           Hire exceptional talent across 180+ countries, automate compliance, and manage
           international payroll.
         </p>
       </div>
-      <div className="relative flex w-full shrink-0 flex-col items-start justify-center gap-[8px]">
-        <GetStartedButton />
-        <div className="relative flex w-full shrink-0 items-center justify-center rounded-[999px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#252525] px-[24px] py-[14px]">
+      <div
+        style={delay(240)}
+        className={`${REVEAL} relative flex w-full shrink-0 flex-col items-start justify-center gap-[8px]`}
+      >
+        <GetStartedButton className="w-full px-[24px] py-[14px]" />
+        <button
+          type="button"
+          className="relative flex w-full shrink-0 cursor-pointer items-center justify-center rounded-[999px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#252525] px-[24px] py-[14px] transition-opacity duration-200 hover:opacity-80"
+        >
           <p className="relative shrink-0 whitespace-nowrap text-[16px] leading-normal tracking-[-0.32px] text-white">
             Book a Call
           </p>
-        </div>
+        </button>
       </div>
     </div>
 
     {/* globe */}
-    <div className="absolute left-[calc(50%+0.5px)] top-[418px] h-[324px] w-[323px] -translate-x-1/2 overflow-clip rounded-[999px]">
-      <MediaGlobe query={GLOBE_QUERY} />
+    <div style={delay(320)} className={`${REVEAL} absolute left-[calc(50%+0.5px)] top-[418px] h-[324px] w-[323px] -translate-x-1/2 overflow-clip rounded-[999px]`}>
+      <MediaGlobe query={PHONE_QUERY} />
     </div>
 
     <HandCutout
@@ -229,7 +180,11 @@ const Sec2Frame = () => (
     />
 
     {/* stat card */}
-    <GlassCard className="left-[20px] top-[445px] w-[136px] gap-[4px] rounded-[6px] border p-[12px]">
+    <GlassCard
+      className="left-[20px] top-[445px] w-[136px] gap-[4px] rounded-[6px] border p-[12px]"
+      plate="left-[calc(50%-0.5px)] top-[calc(50%+0.5px)]"
+      step={400}
+    >
       <p className="relative w-full shrink-0 text-[16px] font-bold italic leading-[1.4] text-white">
         95%
       </p>
@@ -239,7 +194,11 @@ const Sec2Frame = () => (
     </GlassCard>
 
     {/* testimonial */}
-    <GlassCard className="left-[calc(50%+79px)] top-[667px] w-[212px] -translate-x-1/2 gap-[12px] rounded-[4.729px] border-[0.788px] p-[12px]">
+    <GlassCard
+      className="left-[calc(50%+79px)] top-[667px] w-[212px] -translate-x-1/2 gap-[12px] rounded-[4.729px] border-[0.788px] p-[12px]"
+      plate="left-[calc(50%+25.5px)] top-[calc(50%+4.21px)]"
+      step={480}
+    >
       <p className="relative w-full shrink-0 text-[12px] leading-[1.4] text-white">
         We expanded into 12 new markets in under 60 days without hiring.
       </p>
@@ -262,10 +221,257 @@ const Sec2Frame = () => (
   </div>
 );
 
+/* -------------------------------- tablet ------------------------------- */
+
+const TabletFrame = () => (
+  <div className="relative h-[994px] w-[744px] overflow-clip bg-[#101216]">
+    <Background src="bg-ipad.png" />
+
+    {/* Top Nav */}
+    <div
+      style={delay(0)}
+      className={`${REVEAL} absolute left-0 top-0 flex h-[64px] w-[744px] items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] px-[32px] py-[16px]`}
+    >
+      <div className="relative flex min-w-px flex-[1_0_0] items-center justify-between">
+        <p className="relative shrink-0 whitespace-nowrap text-[28px] leading-normal tracking-[-0.84px] text-white">
+          Hirefy
+        </p>
+        <div className="relative size-[24px] shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-70">
+          <img alt="Menu" className="absolute inset-0 block size-full max-w-none" src={`${A}/menu.svg`} />
+        </div>
+      </div>
+    </div>
+
+    {/* copy */}
+    <div className="absolute left-[149px] top-[120px] flex w-[446px] flex-col items-center gap-[32px]">
+      <div className="relative flex w-full shrink-0 flex-col items-center gap-[16px] text-center text-white">
+        <h1
+          style={delay(80)}
+          className={`${REVEAL} relative w-full shrink-0 text-[48px] leading-[55px] tracking-[-1.92px]`}
+        >
+          Build Your Global Team. Effortlessly.
+        </h1>
+        <p
+          style={delay(160)}
+          className={`${REVEAL} relative w-full shrink-0 text-[16px] leading-[1.5] opacity-70`}
+        >
+          Hire exceptional talent across 180+ countries, automate compliance, and manage
+          international payroll.
+        </p>
+      </div>
+      <div
+        style={delay(240)}
+        className={`${REVEAL} relative flex shrink-0 items-center gap-[12px]`}
+      >
+        <GetStartedButton className="px-[24px] py-[16px]" />
+        <button
+          type="button"
+          className="relative flex shrink-0 cursor-pointer items-center justify-center rounded-[999px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#252525] px-[24px] py-[16px] transition-opacity duration-200 hover:opacity-80"
+        >
+          <p className="relative shrink-0 whitespace-nowrap text-[16px] leading-normal tracking-[-0.32px] text-white">
+            Book a Call
+          </p>
+        </button>
+      </div>
+    </div>
+
+    {/* globe */}
+    <div style={delay(320)} className={`${REVEAL} absolute left-[163px] top-[432px] h-[420px] w-[418px] overflow-clip rounded-[999px]`}>
+      <MediaGlobe query={TABLET_QUERY} />
+    </div>
+
+    <HandCutout
+      box="left-[401px] top-[383.289px] h-[264.423px] w-[343px]"
+      mask="ipad-mask-top.svg"
+      maskSize="343px 264.423px"
+      image="left-[-97.68%] top-[-17.2%] h-[170.95%] w-[197.68%]"
+    />
+
+    <HandCutout
+      box="left-0 top-[692.875px] h-[267.9px] w-[282px]"
+      mask="ipad-mask-bottom.svg"
+      maskSize="282px 267.9px"
+      image="left-[-15.3%] top-[-63.32%] h-[163.32%] w-[232.73%]"
+    />
+
+    {/* stat card */}
+    <GlassCard
+      className="left-[113px] top-[473px] w-[169px] gap-[4px] rounded-[6px] border p-[16px]"
+      plate="left-1/2 top-1/2"
+      step={400}
+    >
+      <p className="relative w-full shrink-0 text-[20px] font-bold italic leading-[1.4] text-white">
+        95%
+      </p>
+      <p className="relative w-full shrink-0 text-[14px] leading-[1.4] text-white opacity-70">
+        Faster Global Hiring
+      </p>
+    </GlassCard>
+
+    {/* testimonial */}
+    <GlassCard
+      className="left-[441px] top-[740px] w-[246px] gap-[16px] rounded-[6px] border p-[14px]"
+      plate="left-[calc(50%-0.5px)] top-1/2"
+      step={480}
+    >
+      <p className="relative w-full shrink-0 text-[14px] leading-[1.4] text-white">
+        We expanded into 12 new markets in under 60 days without hiring.
+      </p>
+      <div className="relative flex w-full shrink-0 items-center gap-[6px]">
+        <div className="relative size-[32px] shrink-0">
+          <img
+            alt=""
+            className="absolute inset-0 block size-full max-w-none"
+            height="32"
+            width="32"
+            src={`${A}/avatar.png`}
+          />
+        </div>
+        <div className="relative flex w-[127px] shrink-0 flex-col items-start text-[12px] leading-[1.3] text-white">
+          <p className="relative w-full shrink-0 font-bold italic">Sarah Kim</p>
+          <p className="relative w-full shrink-0 opacity-70">VP People at NovaTech</p>
+        </div>
+      </div>
+    </GlassCard>
+  </div>
+);
+
+/* ------------------------------- desktop ------------------------------- */
+
+const DesktopFrame = () => (
+  <div className="relative h-[913px] w-[1280px] overflow-clip bg-[#101216]">
+    <Background src="bg-desktop.png" />
+
+    {/* Top Nav */}
+    <div
+      style={delay(0)}
+      className={`${REVEAL} absolute left-0 top-0 flex h-[74px] w-[1280px] items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] px-[32px] py-[16px]`}
+    >
+      <div className="relative flex w-[1200px] shrink-0 items-center justify-between">
+        <p className="relative shrink-0 whitespace-nowrap text-[28px] leading-normal tracking-[-0.84px] text-white">
+          Hirefy
+        </p>
+        <GetStartedButton className="px-[16px] py-[12px]" />
+        <div className="absolute left-1/2 top-[calc(50%-0.5px)] flex -translate-x-1/2 -translate-y-1/2 items-center gap-[24px] whitespace-nowrap text-[16px] leading-normal text-white">
+          {NAV_LINKS.map((link) => (
+            <p
+              key={link}
+              className="relative shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-70"
+            >
+              {link}
+            </p>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    {/* copy */}
+    <div className="absolute left-[417px] top-[144px] flex w-[446px] flex-col items-center gap-[32px]">
+      <div className="relative flex w-full shrink-0 flex-col items-center gap-[16px] text-center text-white">
+        <h1
+          style={delay(80)}
+          className={`${REVEAL} relative w-full shrink-0 text-[48px] leading-[55px] tracking-[-1.92px]`}
+        >
+          Build Your Global Team. Effortlessly.
+        </h1>
+        <p
+          style={delay(160)}
+          className={`${REVEAL} relative w-full shrink-0 text-[16px] leading-[1.5] opacity-70`}
+        >
+          Hire exceptional talent across 180+ countries, automate compliance, and manage
+          international payroll.
+        </p>
+      </div>
+      <div
+        style={delay(240)}
+        className={`${REVEAL} relative flex shrink-0 items-center gap-[12px]`}
+      >
+        <GetStartedButton className="px-[24px] py-[16px]" />
+        <button
+          type="button"
+          className="relative flex shrink-0 cursor-pointer items-center justify-center rounded-[999px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#252525] px-[24px] py-[16px] transition-opacity duration-200 hover:opacity-80"
+        >
+          <p className="relative shrink-0 whitespace-nowrap text-[16px] leading-normal tracking-[-0.32px] text-white">
+            Book a Call
+          </p>
+        </button>
+      </div>
+    </div>
+
+    {/* globe */}
+    <div style={delay(320)} className={`${REVEAL} absolute left-[431px] top-[448px] h-[420px] w-[418px] overflow-clip rounded-[999px]`}>
+      <MediaGlobe query={DESKTOP_QUERY} />
+    </div>
+
+    <HandCutout
+      box="left-[794px] top-[269.169px] h-[374.664px] w-[486px]"
+      mask="desk-mask-top.svg"
+      maskSize="486px 374.664px"
+      image="left-[-97.68%] top-[-17.2%] h-[170.95%] w-[197.68%]"
+    />
+
+    <HandCutout
+      box="left-0 top-[592.398px] h-[420.85px] w-[443px]"
+      mask="desk-mask-bottom.svg"
+      maskSize="443px 420.85px"
+      image="left-[-15.3%] top-[-63.32%] h-[163.32%] w-[232.73%]"
+    />
+
+    {/* stat card */}
+    <GlassCard
+      className="left-[339px] top-[504px] w-[169px] gap-[4px] rounded-[6px] border p-[16px]"
+      plate="left-1/2 top-1/2"
+      step={400}
+    >
+      <p className="relative w-full shrink-0 text-[20px] font-bold italic leading-[1.4] text-white">
+        95%
+      </p>
+      <p className="relative w-full shrink-0 text-[14px] leading-[1.4] text-white opacity-70">
+        Faster Global Hiring
+      </p>
+    </GlassCard>
+
+    {/* testimonial */}
+    <GlassCard
+      className="left-[803px] top-[685px] w-[246px] gap-[16px] rounded-[6px] border p-[14px]"
+      plate="left-[calc(50%-0.5px)] top-1/2"
+      step={480}
+    >
+      <p className="relative w-full shrink-0 text-[14px] leading-[1.4] text-white">
+        We expanded into 12 new markets in under 60 days without hiring.
+      </p>
+      <div className="relative flex w-full shrink-0 items-center gap-[6px]">
+        <div className="relative size-[32px] shrink-0">
+          <img
+            alt=""
+            className="absolute inset-0 block size-full max-w-none"
+            height="32"
+            width="32"
+            src={`${A}/avatar.png`}
+          />
+        </div>
+        <div className="relative flex w-[127px] shrink-0 flex-col items-start text-[12px] leading-[1.3] text-white">
+          <p className="relative w-full shrink-0 font-bold italic">Sarah Kim</p>
+          <p className="relative w-full shrink-0 opacity-70">VP People at NovaTech</p>
+        </div>
+      </div>
+    </GlassCard>
+  </div>
+);
+
 export const Sec2Hero = () => (
   <main className="w-full bg-[#101216]" style={{ fontFamily: HELVETICA }}>
-    <ScaleFrame frameWidth={402} className="w-full overflow-hidden">
-      <Sec2Frame />
+    <ScaleFrame frameWidth={402} className="w-full overflow-hidden min-[640px]:hidden">
+      <PhoneFrame />
+    </ScaleFrame>
+    <ScaleFrame
+      frameWidth={744}
+      className="hidden w-full overflow-hidden min-[640px]:block desktop-sm:hidden"
+    >
+      <TabletFrame />
+    </ScaleFrame>
+    <ScaleFrame frameWidth={1280} className="hidden w-full overflow-hidden desktop-sm:block">
+      <DesktopFrame />
     </ScaleFrame>
   </main>
 );

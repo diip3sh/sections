@@ -2,12 +2,16 @@ import localFont from "next/font/local";
 import {
   Audiowide,
   Baskervville,
+  DM_Mono,
   Geist,
+  Geist_Mono,
   Instrument_Sans,
   Instrument_Serif,
   Inter,
   Inter_Tight,
+  Lato,
   Manrope,
+  Monda,
   Outfit,
   Playfair_Display,
   Red_Hat_Display,
@@ -31,6 +35,30 @@ export const inter = Inter({
 export const interTight = Inter_Tight({
   variable: "--font-inter-tight",
   subsets: ["latin"],
+});
+
+export const geistMono = Geist_Mono({
+  variable: "--font-geist-mono-family",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+export const dmMono = DM_Mono({
+  variable: "--font-dm-mono-family",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
+
+export const monda = Monda({
+  variable: "--font-monda-family",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+export const lato = Lato({
+  variable: "--font-lato-family",
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 export const rethinkSans = Rethink_Sans({

@@ -22,6 +22,7 @@ import {
   SphereGeometry,
   MeshBasicMaterial,
   InstancedMesh,
+  Mesh,
   Matrix4,
   Group,
   Vector3,
@@ -43,6 +44,10 @@ interface ParticleSphereRefactorProps {
   cursorStrengthUI: number;
   clickForce: number;
   sphereColor: string;
+  /** Solid core rendered inside the sphere, e.g. "#000000". Off when unset. */
+  coreColor?: string;
+  /** Core radius as a fraction of the sphere radius. */
+  coreScale?: number;
   style?: React.CSSProperties;
 }
 
@@ -196,6 +201,8 @@ export default function ParticleSphereRefactor(
     cursorStrengthUI = 10,
     clickForce = 5,
     sphereColor = "#BF5321",
+    coreColor,
+    coreScale = 0.97,
     style,
   } = { ...COMPONENT_DEFAULTS, ...__props };
   // Flat controls rebuilt into the config objects the engine expects.
@@ -466,6 +473,20 @@ export default function ParticleSphereRefactor(
     // Create group to hold particles for rotation
     const particlesGroup = new Group();
     particlesGroupRef.current = particlesGroup;
+
+    // Solid core: a real sphere just inside the particle shell. Because it
+    // lives in the same group it rotates with the particles, and depth testing
+    // means a scattered particle reveals curved surface rather than a flat disc.
+    let coreMesh: any = null;
+    if (coreColor) {
+      const coreGeometry = new SphereGeometry(sphereRadius * coreScale, 64, 48);
+      const coreMaterial = new MeshBasicMaterial({
+        color: new Color(coreColor),
+      });
+      coreMesh = new Mesh(coreGeometry, coreMaterial);
+      particlesGroup.add(coreMesh);
+    }
+
     particlesGroup.add(particles);
     scene.add(particlesGroup);
 
@@ -1256,6 +1277,10 @@ export default function ParticleSphereRefactor(
             containerRef.current.removeChild(canvas);
           }
         }
+        if (coreMesh) {
+          coreMesh.geometry.dispose();
+          coreMesh.material.dispose();
+        }
         if (particlesRef.current) {
           if (particlesRef.current.geometry) {
             particlesRef.current.geometry.dispose();
@@ -1310,6 +1335,10 @@ export default function ParticleSphereRefactor(
           containerRef.current.removeChild(canvas);
         }
       }
+      if (coreMesh) {
+        coreMesh.geometry.dispose();
+        coreMesh.material.dispose();
+      }
       if (particlesRef.current) {
         if (particlesRef.current.geometry) {
           particlesRef.current.geometry.dispose();
@@ -1338,6 +1367,8 @@ export default function ParticleSphereRefactor(
     cursorRadius,
     cursorStrength,
     sphereColor,
+    coreColor,
+    coreScale,
     rotationSpeed,
     scaleMultiplier,
     particleSize,

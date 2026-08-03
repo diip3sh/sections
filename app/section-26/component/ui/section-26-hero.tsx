@@ -12,10 +12,11 @@ const PILL_SHEEN =
 
 export const Section26Hero = () => (
   <main className="relative min-h-dvh w-full overflow-hidden bg-black">
-    {/* 402x874 stage — every layer is positioned against these coordinates */}
-    <div className="relative h-[874px] overflow-hidden ipad:h-[1133px] desktop-sm:h-dvh desktop-sm:min-h-[840px]">
-      <Backdrop />
+    {/* Background runs edge to edge; only the composition below is capped */}
+    <Backdrop />
 
+    {/* 402x874 stage — every layer is positioned against these coordinates */}
+    <div className="relative h-[874px] overflow-hidden ipad:h-[1133px] desktop-sm:h-dvh desktop-sm:min-h-[840px] ultrawide:mx-auto ultrawide:h-[1080px] ultrawide:max-w-[1920px]">
       {/* Nav */}
       <nav className="absolute top-0 left-0 z-20 flex w-full items-center justify-between p-4 ipad:px-12 ipad:py-8 desktop-sm:px-25 desktop-sm:py-[52px]">
         <a href="/" className="flex items-center gap-2">
@@ -129,7 +130,7 @@ export const Section26Hero = () => (
         aria-hidden
         src="/section-26/hand.png"
         alt=""
-        className="pointer-events-none absolute top-[calc(50%+255px)] left-[calc(50%-4px)] z-10 h-[410px] w-[738px] max-w-none -translate-x-1/2 -translate-y-1/2 object-cover ipad:top-[894px] ipad:left-1/2 ipad:h-[502px] ipad:w-[902px] desktop-sm:top-auto desktop-sm:bottom-0 desktop-sm:h-auto desktop-sm:w-[86vw] desktop-sm:min-w-[1239px] desktop-sm:origin-bottom desktop-sm:scale-115 desktop-sm:translate-y-0"
+        className="pointer-events-none absolute top-[calc(50%+255px)] left-[calc(50%-4px)] z-10 h-[410px] w-[738px] max-w-none -translate-x-1/2 -translate-y-1/2 object-cover ipad:top-[894px] ipad:left-1/2 ipad:h-[502px] ipad:w-[902px] desktop-sm:top-auto desktop-sm:bottom-0 desktop-sm:h-auto desktop-sm:w-[86vw] desktop-sm:min-w-[1239px] desktop-sm:origin-bottom desktop-sm:scale-115 desktop-sm:translate-y-0 ultrawide:top-[430px] ultrawide:bottom-auto ultrawide:w-[1180px] ultrawide:min-w-0 ultrawide:scale-100"
       />
 
       <RecommendationCard />

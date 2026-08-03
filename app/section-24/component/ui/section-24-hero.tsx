@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import ParticleImage from "../originkit/svg-particle";
+import { BuildingParticles } from "./building-particles";
 import { GridRail } from "./grid-rail";
 import { Reveal, RevealGroup } from "./reveal";
 
@@ -41,12 +41,12 @@ const ArrowIcon = ({ src }: { src: string }) => (
 
 export const Section24Hero = () => (
   <main className="w-full bg-[#f5f5f2]">
-    <div className="relative mx-auto min-h-dvh w-full overflow-hidden ultrawide:max-w-[2000px]">
+    <div className="relative mx-auto flex min-h-dvh w-full flex-col items-center overflow-hidden ultrawide:max-w-[2000px]">
       <GridRail className="left-0" />
       <GridRail className="right-0" />
 
       {/* Nav */}
-      <Reveal>
+      <Reveal className="w-full">
         <nav className="relative z-10 mx-8 flex h-14 items-center justify-between p-4 ipad:mx-13 ipad:h-[74px] ipad:p-6 desktop-sm:mx-auto desktop-sm:h-[50px] desktop-sm:w-full desktop-sm:max-w-[752px] desktop-sm:p-0 desktop-sm:mt-[18px] full-hd:max-w-[1000px] full-hd:h-[64px] full-hd:mt-6 ultrawide:max-w-[1240px] ultrawide:h-[76px] ultrawide:mt-8">
           <a
             href="/"
@@ -198,27 +198,7 @@ export const Section24Hero = () => (
             "linear-gradient(to bottom, #000 0%, #000 var(--fade-start), rgba(0,0,0,0.55) var(--fade-mid), transparent 100%)",
         }}
       >
-        <ParticleImage
-          width="100%"
-          height="100%"
-          backgroundColor="transparent"
-          particleCount={500}
-          particleSize={6}
-          particleShape="circle"
-          particleColor="original"
-          hoverEnabled={true}
-          repulsionEnabled
-          repulsionConfig={{
-            repulsionMode: "outside",
-            repulsionForce: 10,
-            repulsionRadius: 60,
-          }}
-          imageConfig={{
-            image: "/section-24/building.png",
-            mode: "fill",
-            scale: 10,
-          }}
-        />
+        <BuildingParticles />
       </div>
     </div>
   </main>

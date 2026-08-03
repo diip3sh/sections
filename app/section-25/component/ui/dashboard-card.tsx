@@ -111,7 +111,11 @@ const RowContent = ({ metric }: { metric: Metric }) => (
 /** Floating supervision dashboard — Figma 2271:4897. Static, as designed. */
 export const DashboardCard = ({ className = "" }: { className?: string }) => (
   <div
-    className={`h-[218.812px] w-[325.863px] ipad:h-[267.953px] ipad:w-[400.615px] desktop-sm:h-[339px] desktop-sm:w-[505px] ${className}`}
+    // Heights track the rendered content (198.1 natural, x1.2294 / x1.5497),
+    // not Figma's frame box — the frame is ~10% taller than the rows actually
+    // occupy, and since the inner block is origin-top-left the slack all fell
+    // below the card, reading as off-centre.
+    className={`h-[198.1px] w-[325.863px] ipad:h-[243.55px] ipad:w-[400.615px] desktop-sm:h-[307px] desktop-sm:w-[505px] ${className}`}
   >
     <div className="w-[325.863px] origin-top-left bg-[#1d1d1d] p-[1.291px] ipad:scale-[1.2294] desktop-sm:scale-[1.5497]">
       <div className="w-full border-[0.645px] border-[#363534] bg-[#262626] p-[10.324px]">

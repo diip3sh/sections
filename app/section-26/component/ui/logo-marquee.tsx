@@ -25,7 +25,7 @@ export const LogoMarquee = () => (
           src="/section-26/logo-strip-marquee.svg"
           alt=""
           aria-hidden={copy === 1}
-          className="block h-[62.075px] w-[954.297px] max-w-none shrink-0 desktop-sm:h-[74.09px] desktop-sm:w-[1139px]"
+          className="block h-[62.075px] w-[954.297px] max-w-none shrink-0 desktop-sm:h-[74.09px] desktop-sm:w-[1139px] opacity-70"
         />
       ))}
     </div>

@@ -19,6 +19,14 @@ export const Section26Hero = () => (
     {/* Background runs edge to edge; only the composition below is capped */}
     <Backdrop />
 
+    {/* Overlay wash across the bottom — full-bleed like the backdrop, so its
+        edges never draw a box inside the capped stage. Evens out where the
+        backdrop layers meet so their seams stop reading as a band. */}
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[38%] bg-linear-to-b from-transparent via-black/25 to-black/60 mix-blend-overlay"
+    />
+
     {/* 402x874 stage — every layer is positioned against these coordinates */}
     <div className="relative h-[874px] overflow-hidden ipad:h-[1133px] desktop-sm:h-dvh desktop-sm:min-h-[840px] ultrawide:mx-auto ultrawide:h-[1080px] ultrawide:max-w-[1920px]">
       {/* Nav */}
@@ -122,7 +130,7 @@ export const Section26Hero = () => (
         aria-hidden
         src="/section-26/arcs-texture.png"
         alt=""
-        className="pointer-events-none absolute inset-0 z-0 block size-full max-w-none object-cover mix-blend-screen desktop-sm:hidden"
+        className="pointer-events-none absolute inset-0 z-0 block size-full max-w-none object-cover mix-blend-screen ipad:opacity-80 desktop-sm:hidden"
       />
 
       <div className="pointer-events-none absolute inset-0 z-10">
@@ -134,7 +142,7 @@ export const Section26Hero = () => (
         aria-hidden
         src="/section-26/hand.png"
         alt=""
-        className="pointer-events-none absolute top-[calc(50%+255px)] left-[calc(50%-4px)] z-10 h-[410px] w-[738px] max-w-none -translate-x-1/2 -translate-y-1/2 object-cover ipad:top-[894px] ipad:left-1/2 ipad:h-[502px] ipad:w-[902px] desktop-sm:top-auto desktop-sm:bottom-0 desktop-sm:h-auto desktop-sm:w-[86vw] desktop-sm:min-w-[1239px] desktop-sm:origin-bottom desktop-sm:scale-115 desktop-sm:translate-y-0 ultrawide:top-[430px] ultrawide:bottom-auto ultrawide:w-[1180px] ultrawide:min-w-0 ultrawide:scale-100"
+        className="pointer-events-none absolute top-[calc(50%+255px)] left-[calc(50%-4px)] z-10 h-[410px] w-[738px] max-w-none -translate-x-1/2 -translate-y-1/2 object-cover ipad:top-[894px] ipad:left-1/2 ipad:h-[502px] ipad:w-[902px] desktop-sm:top-auto desktop-sm:bottom-0 desktop-sm:h-auto desktop-sm:w-[86vw] desktop-sm:min-w-[1239px] desktop-sm:origin-bottom desktop-sm:scale-115 desktop-sm:translate-y-0 ultrawide:top-[384px] ultrawide:bottom-auto ultrawide:w-[1180px] ultrawide:min-w-0 ultrawide:scale-100"
         style={{
           // The export has a hard top edge, and once it is lifted off the floor
           // a hard base too. Feather both so it dissolves into the backdrop.

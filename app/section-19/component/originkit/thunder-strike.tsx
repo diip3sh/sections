@@ -5,6 +5,33 @@
 import { useEffect, useRef } from "react";
 
 type Rgb = { r: number; g: number; b: number };
+type Rgba = Rgb & { a: number };
+
+/**
+ * Resolve any CSS color string the browser understands — named colors,
+ * `transparent`, `color-mix()`, etc. — into a normalised form. Cached because
+ * colors are parsed once per animation frame.
+ */
+const cssColorCache = new Map<string, string | null>();
+function normalizeCssColor(s: string): string | null {
+  if (typeof document === "undefined") return null;
+  const hit = cssColorCache.get(s);
+  if (hit !== undefined) return hit;
+
+  let out: string | null = null;
+  const ctx = document.createElement("canvas").getContext("2d");
+  if (ctx) {
+    // An invalid value leaves fillStyle at its previous (sentinel) value.
+    ctx.fillStyle = "#000000";
+    ctx.fillStyle = s;
+    const first = ctx.fillStyle;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = s;
+    if (first === ctx.fillStyle) out = String(first);
+  }
+  cssColorCache.set(s, out);
+  return out;
+}
 
 /** Coerce tweak-panel / Framer Color values into a CSS color string. */
 function colorToCss(input: unknown): string {
@@ -56,11 +83,30 @@ function colorToCss(input: unknown): string {
   return String(input).trim();
 }
 
-/** Parse any common CSS / picker color into linear RGB in 0..1. Never returns NaN. */
-function colorToRgb(input: unknown): Rgb {
-  const fallback: Rgb = { r: 0, g: 0, b: 0 };
-  const s = colorToCss(input);
-  if (!s || /gradient\(/i.test(s) || /^oklch\(/i.test(s)) return fallback;
+/** Parse any common CSS / picker color into RGB + alpha in 0..1. Never returns NaN. */
+function colorToRgb(input: unknown): Rgba {
+  const fallback: Rgba = { r: 0, g: 0, b: 0, a: 1 };
+  let s = colorToCss(input);
+  if (!s || /gradient\(/i.test(s)) return fallback;
+
+  // Alpha can arrive as a separate channel on picker objects.
+  let alpha = 1;
+  if (input && typeof input === "object") {
+    const o = input as Record<string, unknown>;
+    const src = (o.__rgba as Record<string, number> | undefined) ?? o;
+    const rawAlpha = (src as Record<string, unknown>).a;
+    if (typeof rawAlpha === "number" && Number.isFinite(rawAlpha)) {
+      alpha = rawAlpha > 1 ? rawAlpha / 255 : rawAlpha;
+    }
+  }
+
+  // Hand anything we don't parse ourselves (keywords, `transparent`, oklch,
+  // color-mix) to the browser first.
+  if (!/^#|^rgba?\(|^hsla?\(/i.test(s)) {
+    const resolved = normalizeCssColor(s);
+    if (!resolved) return fallback;
+    s = resolved;
+  }
 
   let r = 0;
   let g = 0;
@@ -71,12 +117,14 @@ function colorToRgb(input: unknown): Rgb {
   if (hexMatch) {
     let hex = hexMatch[1];
     if (hex.length === 3 || hex.length === 4) {
+      if (hex.length === 4) alpha = parseInt(hex[3] + hex[3], 16) / 255;
       hex = hex
         .slice(0, 3)
         .split("")
         .map((c) => c + c)
         .join("");
     } else if (hex.length === 8) {
+      alpha = parseInt(hex.slice(6, 8), 16) / 255;
       hex = hex.slice(0, 6);
     }
     if (hex.length !== 6) return fallback;
@@ -97,6 +145,7 @@ function colorToRgb(input: unknown): Rgb {
       r = parts[0] / scale;
       g = parts[1] / scale;
       b = parts[2] / scale;
+      if (parts.length > 3 && Number.isFinite(parts[3])) alpha = parts[3];
     } else {
       m = s.match(/hsla?\(([^)]+)\)/i);
       if (!m) return fallback;
@@ -118,6 +167,7 @@ function colorToRgb(input: unknown): Rgb {
       r = f(0);
       g = f(8);
       b = f(4);
+      if (parts.length > 3 && Number.isFinite(parts[3])) alpha = parts[3];
     }
   }
 
@@ -126,6 +176,7 @@ function colorToRgb(input: unknown): Rgb {
     r: Math.min(1, Math.max(0, r)),
     g: Math.min(1, Math.max(0, g)),
     b: Math.min(1, Math.max(0, b)),
+    a: Number.isFinite(alpha) ? Math.min(1, Math.max(0, alpha)) : 1,
   };
 }
 
@@ -163,6 +214,12 @@ interface LightningProps {
   intensity?: number;
   size?: number;
   angle?: number;
+  /**
+   * Softness of the canvas-edge alpha falloff, 0–0.5 of the quad. Only applies
+   * when `backgroundColor` is (semi-)transparent — an opaque background fills
+   * the quad anyway, so there is no edge to hide. 0 disables it.
+   */
+  edgeFade?: number;
 }
 
 export default function Lightning({
@@ -173,6 +230,7 @@ export default function Lightning({
   intensity = 12,
   size = 50,
   angle = -27,
+  edgeFade = 0.22,
 }: LightningProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // Live prop bag — updated every render so the WebGL loop never tears down
@@ -185,6 +243,7 @@ export default function Lightning({
     intensity,
     size,
     angle,
+    edgeFade,
   });
   propsRef.current = {
     lightningColor,
@@ -194,6 +253,7 @@ export default function Lightning({
     intensity,
     size,
     angle,
+    edgeFade,
   };
 
   useEffect(() => {
@@ -250,6 +310,8 @@ export default function Lightning({
       iTime: gl.getUniformLocation(program, "iTime"),
       uHue: gl.getUniformLocation(program, "uHue"),
       uBackgroundHsv: gl.getUniformLocation(program, "uBackgroundHsv"),
+      uBackgroundAlpha: gl.getUniformLocation(program, "uBackgroundAlpha"),
+      uEdgeFade: gl.getUniformLocation(program, "uEdgeFade"),
       uXOffset: gl.getUniformLocation(program, "uXOffset"),
       uSpeed: gl.getUniformLocation(program, "uSpeed"),
       uIntensity: gl.getUniformLocation(program, "uIntensity"),
@@ -295,7 +357,14 @@ export default function Lightning({
       }
 
       const bolt = rgbToHsv(colorToRgb(p.lightningColor));
-      const bg = rgbToHsv(colorToRgb(p.backgroundColor));
+      const bgRgba = colorToRgb(p.backgroundColor);
+      const bg = rgbToHsv(bgRgba);
+      if (uniforms.uBackgroundAlpha) {
+        gl.uniform1f(
+          uniforms.uBackgroundAlpha,
+          Number.isFinite(bgRgba.a) ? bgRgba.a : 1,
+        );
+      }
       if (uniforms.uHue)
         gl.uniform1f(uniforms.uHue, Number.isFinite(bolt.h) ? bolt.h : 0);
       if (uniforms.uBackgroundHsv) {
@@ -304,6 +373,12 @@ export default function Lightning({
           (Number.isFinite(bg.h) ? bg.h : 0) / 360,
           Number.isFinite(bg.s) ? bg.s : 0,
           Number.isFinite(bg.v) ? bg.v : 0,
+        );
+      }
+      if (uniforms.uEdgeFade) {
+        gl.uniform1f(
+          uniforms.uEdgeFade,
+          Math.min(0.5, Math.max(1e-4, p.edgeFade)),
         );
       }
       if (uniforms.uXOffset) gl.uniform1f(uniforms.uXOffset, -p.xOffset / 25);
@@ -363,6 +438,8 @@ uniform vec2 iResolution;
 uniform float iTime;
 uniform float uHue;
 uniform vec3 uBackgroundHsv;  // x: hue (0-1), y: saturation (0-1), z: value (0-1)
+uniform float uBackgroundAlpha;
+uniform float uEdgeFade;
 uniform float uXOffset;
 uniform float uSpeed;
 uniform float uIntensity;
@@ -434,9 +511,37 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     vec3 baseColor = hsv2rgb(vec3(uHue / 360.0, 0.7, 0.8));
     vec3 bgColor = hsv2rgb(vec3(uBackgroundHsv.x, uBackgroundHsv.y, uBackgroundHsv.z));
     vec3 lightningEffect = baseColor * pow(mix(0.0, 0.07, hash11(iTime * uSpeed)) / dist, 1.0) * uIntensity;
-    vec3 col = mix(bgColor, lightningEffect, clamp(lightningEffect.r, 0.0, 1.0));
-    col = pow(col, vec3(1.0));
-    fragColor = vec4(col, 1.0);
+
+    // Coverage of the bolt at this pixel, used both to blend colour and to
+    // carry the bolt through when the background is transparent.
+    float boltPeak = clamp(max(lightningEffect.r, max(lightningEffect.g, lightningEffect.b)), 0.0, 1.0);
+    // Drop the sub-2% haze that covers the whole quad — over an opaque bg it is
+    // invisible, but over a transparent one it reads as a dark rectangle.
+    float boltAlpha = clamp((boltPeak - 0.02) / 0.98, 0.0, 1.0);
+
+    // Unit-brightness bolt colour: keeps the hue in faint areas instead of
+    // fading to black, which would smear over a transparent background.
+    vec3 boltColor = lightningEffect / max(boltPeak, 1e-4);
+
+    // Source-over: bolt composited on top of the (possibly transparent) bg.
+    float bgA = clamp(uBackgroundAlpha, 0.0, 1.0) * (1.0 - boltAlpha);
+    float outA = boltAlpha + bgA;
+    vec3 col = outA > 0.0
+        ? (boltColor * boltAlpha + bgColor * bgA) / outA
+        : bgColor;
+
+    // Transparent backgrounds let whatever sits behind the canvas show through,
+    // so the quad's own rectangle must not be visible. Feather alpha toward the
+    // edges; fully skipped when the background is opaque (nothing to blend into).
+    vec2 suv = fragCoord / iResolution.xy;
+    float edge =
+        smoothstep(0.0, uEdgeFade, suv.x) *
+        smoothstep(0.0, uEdgeFade, 1.0 - suv.x) *
+        smoothstep(0.0, uEdgeFade, suv.y) *
+        smoothstep(0.0, uEdgeFade, 1.0 - suv.y);
+    outA *= mix(edge, 1.0, clamp(uBackgroundAlpha, 0.0, 1.0));
+
+    fragColor = vec4(col, outA);
 }
 
 void main() {

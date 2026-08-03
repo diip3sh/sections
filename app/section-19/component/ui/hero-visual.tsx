@@ -245,7 +245,7 @@ export const HeroVisual = ({
         {/* {[Array(10)].map((_, index) => ( */}
         <Lightning
           // xOffset={-4}
-          backgroundColor={"#tranparent"}
+          backgroundColor="transparent"
           lightningColor="#C862FF"
           speed={55}
           intensity={50}

@@ -41,25 +41,25 @@ type BreakpointStickers = {
  */
 const BREAKPOINTS: BreakpointStickers[] = [
   {
-    // < 768
-    gapY: 32,
-    centerDrop: 100,
+    // < 768 — Figma 402×779: CTA bottom 506 → sticker top 546, centre drops to 671
+    gapY: 40,
+    centerDrop: 125,
     width: 73,
     height: 72,
     visibility: "ipad:hidden",
-    leftClass: "left-[4.5%]",
-    rightClass: "left-[78%]",
+    leftClass: "left-0",
+    rightClass: "right-0 translate-x-[3px]",
     centerClass: "left-1/2 -translate-x-1/2",
   },
   {
-    // 768 – 1023
-    gapY: 80,
-    centerDrop: 200,
-    width: 96,
-    height: 96,
+    // 768 – 1023 — Figma 744×1133: CTA bottom 809 → sticker top 851, centre 1005
+    gapY: 42,
+    centerDrop: 154,
+    width: 93,
+    height: 92,
     visibility: "hidden ipad:block ipad-landscape:hidden desktop-sm:hidden",
-    leftClass: "left-0 -translate-x-[5%]",
-    rightClass: "right-0 translate-x-[1%]",
+    leftClass: "left-0",
+    rightClass: "right-0",
     centerClass: "left-1/2 -translate-x-1/2",
   },
   {
@@ -182,9 +182,12 @@ export const CtaStickerSpacer = () => {
   );
 };
 
-/** Pixel-wash config — iPad bands pin to bottom; mobile uses a separate wash in HeroContent */
-export const IPAD_PIXEL_WASH: { visibility: string; height: number }[] =
-  BREAKPOINTS.filter((bp) => bp.visibility !== "ipad:hidden").map((bp) => ({
+/**
+ * Pixel-wash bands — pinned to the bottom of the hero content and sized to the
+ * sticker footprint, so the wash never extends past the cluster.
+ */
+export const PIXEL_WASH: { visibility: string; height: number }[] =
+  BREAKPOINTS.map((bp) => ({
     visibility: bp.visibility,
     height: stickerFootprint(bp) + 48,
   }));

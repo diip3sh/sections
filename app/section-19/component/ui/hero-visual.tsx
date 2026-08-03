@@ -239,20 +239,20 @@ export const HeroVisual = ({
         />
       </div>
       <div
-        style={{ width: 100, height: thunderMaskH }}
-        className="absolute top-0 left-1/2 z-10 -translate-x-1/2 overflow-visible ipad:-translate-y-[9%] desktop-sm:translate-y-[-11%]"
+        style={{ width: 80, height: 420, top: Math.max(0, circleTop - 320) }}
+        className="absolute left-1/2 z-9 -translate-x-1/2 overflow-visible"
       >
-        {[Array(10)].map((_, index) => (
-          <Lightning
-            // xOffset={7}
-            backgroundColor={"#fff"}
-            lightningColor="#C862FF"
-            speed={55}
-            intensity={2}
-            size={20}
-            angle={0}
-          />
-        ))}
+        {/* {[Array(10)].map((_, index) => ( */}
+        <Lightning
+          xOffset={-4}
+          backgroundColor={"#fff"}
+          lightningColor="#C862FF"
+          speed={55}
+          intensity={50}
+          size={20}
+          angle={0}
+        />
+        {/* ))} */}
       </div>
 
       {/* Circle + mask — above thunder strike; pixels shimmer on top of the orb */}

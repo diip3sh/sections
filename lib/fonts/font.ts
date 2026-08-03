@@ -7,6 +7,7 @@ import {
   Instrument_Serif,
   Inter,
   Inter_Tight,
+  Lato,
   Manrope,
   Outfit,
   Playfair_Display,
@@ -31,6 +32,12 @@ export const inter = Inter({
 export const interTight = Inter_Tight({
   variable: "--font-inter-tight",
   subsets: ["latin"],
+});
+
+export const lato = Lato({
+  variable: "--font-lato-family",
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 export const rethinkSans = Rethink_Sans({

@@ -1,0 +1,217 @@
+import Image from "next/image";
+
+import ParticleImage from "../originkit/svg-particle";
+import { GridRail } from "./grid-rail";
+
+const CornerTicks = ({ size = 8.667, width = 0.722 }) => (
+  <>
+    {[
+      "left-0 top-0 border-l border-t",
+      "right-0 top-0 border-r border-t",
+      "bottom-0 left-0 border-b border-l",
+      "right-0 bottom-0 border-r border-b",
+    ].map((position) => (
+      <span
+        key={position}
+        aria-hidden
+        className={`absolute border-black/20 ${position}`}
+        style={{
+          width: size,
+          height: size,
+          borderWidth: 0,
+          borderTopWidth: position.includes("border-t") ? width : 0,
+          borderBottomWidth: position.includes("border-b") ? width : 0,
+          borderLeftWidth: position.includes("border-l") ? width : 0,
+          borderRightWidth: position.includes("border-r") ? width : 0,
+          margin: -width,
+        }}
+      />
+    ))}
+  </>
+);
+
+const ArrowIcon = ({ src }: { src: string }) => (
+  <span className="relative block size-[22px] shrink-0 transition-transform duration-200 ease-out group-hover:translate-x-[3px]">
+    <span className="absolute inset-[28.66%_35.71%_23.78%_35.72%] block">
+      <Image src={src} alt="" fill sizes="22px" className="object-contain" />
+    </span>
+  </span>
+);
+
+export const Section24Hero = () => (
+  <main className="w-full bg-[#f5f5f2]">
+    <div className="relative mx-auto min-h-dvh w-full overflow-hidden">
+      <GridRail className="left-0" />
+      <GridRail className="right-0" />
+
+      {/* Nav */}
+      <nav className="relative z-10 mx-8 flex h-14 items-center justify-between p-4 ipad:mx-13 ipad:h-[74px] ipad:p-6 desktop-sm:mx-auto desktop-sm:h-[50px] desktop-sm:w-full desktop-sm:max-w-[752px] desktop-sm:p-0 desktop-sm:mt-[18px] full-hd:max-w-[1000px] full-hd:h-[64px] full-hd:mt-6 ultrawide:max-w-[1240px] ultrawide:h-[76px] ultrawide:mt-8">
+        <a
+          href="/"
+          className="flex items-center gap-[6.154px] transition-opacity duration-200 ease-out ipad:gap-2 [@media(hover:hover)]:hover:opacity-70"
+        >
+          <Image
+            src="/section-24/logo-mark.svg"
+            alt=""
+            width={14}
+            height={16}
+            className="h-[15.385px] w-[13.846px] ipad:h-5 ipad:w-[18px] full-hd:h-6 full-hd:w-[21px] ultrawide:h-7 ultrawide:w-[25px]"
+          />
+          <span className="font-sans text-[15.385px] leading-[19.615px] font-semibold tracking-[-0.3077px] text-[#121212] ipad:text-[20px] ipad:leading-[25.5px] ipad:tracking-[-0.4px] full-hd:text-[24px] full-hd:leading-[30px] full-hd:tracking-[-0.48px] ultrawide:text-[28px] ultrawide:leading-[36px] ultrawide:tracking-[-0.56px]">
+            ArchiFlow
+          </span>
+        </a>
+        {/* desktop links */}
+        <ul className="hidden items-center gap-6 font-tight text-[17px] leading-[25.5px] tracking-[-0.34px] text-black desktop-sm:flex full-hd:gap-8 full-hd:text-[19px] ultrawide:gap-10 ultrawide:text-[22px] ultrawide:leading-[30px]">
+          {["Explore", "Plans", "Gallery", "Pricing"].map((item) => (
+            <li key={item}>
+              <a
+                href="#"
+                className="relative whitespace-nowrap text-black/70 transition-colors duration-200 ease-out after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:origin-right after:scale-x-0 after:bg-current after:transition-transform after:duration-200 after:ease-out [@media(hover:hover)]:hover:text-black [@media(hover:hover)]:hover:after:origin-left [@media(hover:hover)]:hover:after:scale-x-100"
+              >
+                {item}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        {/* desktop CTA */}
+        <button
+          type="button"
+          className="group hidden cursor-pointer items-center justify-center gap-[10px] rounded-[10px] border border-black/10 bg-black/[0.02] py-[14px] pr-[12px] pl-[20px] transition-colors duration-200 ease-out desktop-sm:flex [@media(hover:hover)]:hover:border-black/20 [@media(hover:hover)]:hover:bg-black/[0.05]"
+        >
+          <span className="font-lato text-[14px] leading-[1.5] font-bold tracking-[-0.42px] whitespace-nowrap text-[#121212]">
+            Start Free
+          </span>
+          <ArrowIcon src="/section-24/arrow-dark.svg" />
+        </button>
+
+        <button
+          type="button"
+          aria-label="Open menu"
+          className="size-6 cursor-pointer transition-opacity duration-200 ease-out desktop-sm:hidden [@media(hover:hover)]:hover:opacity-60"
+        >
+          <Image
+            src="/section-24/menu.svg"
+            alt=""
+            width={24}
+            height={24}
+            className="size-6"
+          />
+        </button>
+      </nav>
+
+      {/* Hero */}
+      <section className="relative z-10 mx-auto mt-[113px] flex w-full max-w-[402px] flex-col items-center gap-8 px-[43.5px] ipad:mt-[126px] ipad:max-w-[745px] ipad:px-[73px] desktop-sm:mt-[95.5px] desktop-sm:max-w-[599px] desktop-sm:px-0 full-hd:mt-[128px] full-hd:max-w-[760px] full-hd:gap-10 ultrawide:mt-[176px] ultrawide:max-w-[940px] ultrawide:gap-12">
+        <div className="flex flex-col items-center gap-5">
+          {/* Badge */}
+          <div className="relative flex items-center justify-center gap-[7.222px] border-[0.722px] border-dashed border-[rgba(2,2,2,0.1)] px-4 py-3">
+            <CornerTicks />
+            <span
+              aria-hidden
+              className="absolute top-1/2 left-1/2 h-[44px] w-[222px] -translate-x-1/2 -translate-y-1/2 opacity-5"
+              style={{
+                backgroundImage: "url('/section-24/diagonal-lines.png')",
+                backgroundSize: "5.056px 5.056px",
+              }}
+            />
+            <span className="relative flex items-center gap-[10px]">
+              <Image
+                src="/section-24/crop.svg"
+                alt=""
+                width={18}
+                height={18}
+                className="size-[18px]"
+              />
+              <span className="font-lato text-[14px] leading-[1.5] font-bold tracking-[-0.42px] text-[#121212]">
+                Designed for Modern Living
+              </span>
+            </span>
+          </div>
+
+          <div className="flex flex-col items-center gap-4">
+            <h1 className="text-center font-instrument-serif text-[44px] leading-[1.1] tracking-[-1.32px] text-[#121212] ipad:text-[68px] ipad:leading-[77px] ipad:tracking-[-2.04px] full-hd:text-[86px] full-hd:leading-[97px] full-hd:tracking-[-2.58px] ultrawide:text-[106px] ultrawide:leading-[120px] ultrawide:tracking-[-3.18px]">
+              Designed for Living,
+              <br />
+              Built for You
+            </h1>
+            <p className="w-[316px] text-center font-tight text-[16px] leading-[27px] tracking-[-0.32px] text-[#121212] opacity-60 ipad:w-[415px] ipad:text-[18px] ipad:tracking-[-0.36px] full-hd:w-[520px] full-hd:text-[21px] full-hd:leading-[32px] full-hd:tracking-[-0.42px] ultrawide:w-[640px] ultrawide:text-[25px] ultrawide:leading-[38px] ultrawide:tracking-[-0.5px]">
+              Crafted house plans for modern living—designed to make your dream
+              home a reality.
+            </p>
+          </div>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex items-center gap-4 px-2">
+          <button
+            type="button"
+            className="group relative flex cursor-pointer items-center justify-between overflow-hidden rounded-[12px] border-t border-white/15 transition-transform duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-[2px] py-[14px] pr-[14px] pl-[24px] shadow-[0px_63px_18px_0px_rgba(16,16,16,0),0px_40px_16px_0px_rgba(11,11,11,0.01),0px_23px_14px_0px_rgba(8,8,8,0.05),0px_10px_10px_0px_rgba(5,5,5,0.09),0px_3px_6px_0px_rgba(0,0,0,0.1)]"
+          >
+            <span
+              aria-hidden
+              className="absolute inset-0 rounded-[12px]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(180deg, rgba(255,255,255,0.2) 4.0988%, rgba(255,255,255,0) 43.902%), linear-gradient(90deg, rgb(41,41,41) 0%, rgb(41,41,41) 100%)",
+              }}
+            />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_1px_1px_0px_rgba(255,255,255,0.3)]"
+            />
+            <span className="relative font-lato text-[16px] leading-[1.5] font-bold tracking-[-0.32px] whitespace-nowrap text-white">
+              Explore AI
+            </span>
+            <span className="relative">
+              <ArrowIcon src="/section-24/arrow-light.svg" />
+            </span>
+          </button>
+
+          <button
+            type="button"
+            className="group flex cursor-pointer items-center justify-center gap-[10px] self-stretch rounded-[10px] border border-black/10 bg-black/[0.02] py-[14px] pr-[14px] pl-[24px] transition-colors duration-200 ease-out [@media(hover:hover)]:hover:border-black/20 [@media(hover:hover)]:hover:bg-black/[0.05]"
+          >
+            <span className="font-lato text-[14px] leading-[1.5] font-bold tracking-[-0.42px] whitespace-nowrap text-[#121212]">
+              Request Demo
+            </span>
+            <ArrowIcon src="/section-24/arrow-dark.svg" />
+          </button>
+        </div>
+      </section>
+
+      {/* Particle building render — sits inside the rails, scales with the screen */}
+      <div
+        className="absolute top-125 left-1/2 w-[calc(100%-64px)] -translate-x-1/2 aspect-1383/942 ipad:top-[60%] ipad:w-[calc(100%-104px)] desktop-sm:top-[100px] desktop-sm:w-full ultrawide:top-[250px] ultrawide:max-w-[2000px]"
+        style={{
+          maskImage:
+            "linear-gradient(to bottom, #000 0%, #000 72%, rgba(0,0,0,0.55) 88%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, #000 0%, #000 72%, rgba(0,0,0,0.55) 88%, transparent 100%)",
+        }}
+      >
+        <ParticleImage
+          width="100%"
+          height="100%"
+          backgroundColor="transparent"
+          particleCount={500}
+          particleSize={6}
+          particleShape="circle"
+          particleColor="original"
+          hoverEnabled={true}
+          repulsionEnabled
+          repulsionConfig={{
+            repulsionMode: "outside",
+            repulsionForce: 10,
+            repulsionRadius: 60,
+          }}
+          imageConfig={{
+            image: "/section-24/building.png",
+            mode: "fill",
+            scale: 10,
+          }}
+        />
+      </div>
+    </div>
+  </main>
+);

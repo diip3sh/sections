@@ -340,8 +340,8 @@ export const NeuralDiagram = () => {
           width="100%"
           height="100%"
           backgroundColor="transparent"
-          particleCount={40}
-          particleSize={10}
+          particleCount={20}
+          particleSize={20}
           particleShape="circle"
           particleColor="single"
           singleColor="#d9d9d9"
@@ -355,7 +355,7 @@ export const NeuralDiagram = () => {
           }}
           // repulsionEnabled
           // repulsionConfig={{
-          //   repulsionMode: "outside",
+          //   repulsionMode: "random",
           //   repulsionForce: 8,
           //   repulsionRadius: 55,
           // }}

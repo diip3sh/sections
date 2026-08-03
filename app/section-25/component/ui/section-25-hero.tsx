@@ -116,7 +116,7 @@ export const Section25Hero = () => (
             </a>
             <button
               type="button"
-              className="h-[45px] w-[113.63px] cursor-pointer rounded-[4px] bg-[#ff7038] text-center font-geist text-[15px] leading-[21px] font-medium text-[#121212] transition-[transform,background-color] duration-300 ease-out [@media(hover:hover)]:hover:-translate-y-[2px] [@media(hover:hover)]:hover:bg-[#d95a2b]"
+              className="h-[45px] w-[113.63px] cursor-pointer rounded-[4px] bg-[#ff7038] text-center font-geist text-[15px] leading-[21px] font-medium text-[#121212] transition-colors duration-300 ease-out [@media(hover:hover)]:hover:bg-[#d95a2b]"
             >
               Get Started
             </button>
@@ -189,7 +189,7 @@ export const Section25Hero = () => (
               <Reveal className="mt-5 flex items-center gap-[18px] ipad:mt-[38px]">
                 <button
                   type="button"
-                  className="flex w-[137px] cursor-pointer items-center justify-center rounded-[4px] bg-[#ff7038] px-6 py-4 font-geist text-[18px] leading-normal font-medium tracking-[-0.36px] whitespace-nowrap text-[#121212] transition-[transform,background-color] duration-300 ease-out [@media(hover:hover)]:hover:-translate-y-[2px] [@media(hover:hover)]:hover:bg-[#d95a2b]"
+                  className="flex w-[137px] cursor-pointer items-center justify-center rounded-[4px] bg-[#ff7038] px-6 py-4 font-geist text-[18px] leading-normal font-medium tracking-[-0.36px] whitespace-nowrap text-[#121212] transition-colors duration-300 ease-out [@media(hover:hover)]:hover:bg-[#d95a2b]"
                 >
                   Start Building
                 </button>
@@ -258,7 +258,7 @@ export const Section25Hero = () => (
         <div className="relative desktop-sm:min-h-full">
           <div
             aria-hidden
-            className="absolute inset-0 border border-[rgba(241,230,219,0.12)]"
+            className="absolute inset-0 border desktop-sm:border-r desktop-sm:border-l-0 desktop-sm:border-t-0 desktop-sm:border-b border-[rgba(241,230,219,0.12)]"
           >
             <ASCIIWaves
               characters=" .:-+*=%@#"
@@ -277,7 +277,7 @@ export const Section25Hero = () => (
             />
           </div>
 
-          <div className="pointer-events-none relative flex justify-center px-[17px] py-[33px] ipad:py-[42px] desktop-sm:pt-[197px]">
+          <div className="pointer-events-none relative flex justify-center px-[17px] py-[33px] ipad:py-[42px] desktop-sm:py-[120px]">
             <Reveal className="pointer-events-auto">
               <DashboardCard />
             </Reveal>

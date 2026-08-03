@@ -1,125 +1,193 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
 import ParticleSphere from "../originkit/particle-sphere";
 import { MaskGroup } from "./mask-group";
 
 /**
- * Dotted orb resting above the hand — Figma "Group 2147241484" (2282:6148).
+ * Dotted orb resting above the hand — Figma "Group 2147241484" (2282:6148),
+ * iPad 2280:5842.
  *
- * Group box in frame coordinates: 61.33, 499 — 228.39 x 269.82.
- *
- * With `scale: 10` the sphere engine uses radius 1.25 world units at camera z 3;
- * the 2.5x canvas overflow widens the FOV to 98.78deg, so the visible plane
- * spans 6.994 units across 493.3px of canvas:
- *
- *   2.5 / 6.994 * 493.3 = 176.3px  <- SPHERE_DIAMETER
+ * The group is placed against the frame (mobile 61.33, 499 — 228.39 x 269.82;
+ * iPad 185.49, 607 — 324.3 x 383.12), but everything *inside* it is centred
+ * with layout rather than coordinates: the sphere box is centred horizontally
+ * with flex, and the glow, disc and sphere share one grid cell with
+ * `place-items-center`, so they stay concentric at any size.
  *
  * Layers, bottom to top:
  *   z-0  MaskGroup — halo + wash, unmasked, bleeding out around the sphere
+ *   z-20 dark core, between the glow and the sphere
  *   z-30 the particle sphere
- *   z-40 rim highlight, the one place masking is still used: a blurred warm
- *        ellipse clipped to the sphere's top arc so the glow reads as a
- *        highlight sitting on the surface, not a shape inside it.
+ *
+ * The core is masked with a soft hole that follows the cursor, sized to the
+ * sphere's `cursorRadiusUI`. Where the particles scatter away from the pointer
+ * the core dissolves with them, so no hard disc edge is exposed. It is an
+ * approximation — the hole is a circle, the scatter is not.
  */
 
 /** Projected diameter of the particle sphere, in px. */
-const SPHERE_DIAMETER = 197;
-/** Sphere centre within the group box. */
-const CENTRE_X = 120.47;
-const CENTRE_Y = 98;
+const SPHERE_DIAMETER = 190;
+/** iPad scales the whole group by 1.42 (324.3 / 228.39). */
+const TABLET_SCALE = 1.42;
+const SPHERE_DIAMETER_TABLET = SPHERE_DIAMETER * TABLET_SCALE;
+/**
+ * Desktop — the sphere box is 396 x 362, and the engine projects the sphere at
+ * 2.5 / 6.994 of the canvas height (box x 2.5): 0.3574 * 905 = 323px, matched
+ * to the same 1.078 visual bump the mobile value carries.
+ */
+const DESKTOP_SCALE = 275 / SPHERE_DIAMETER;
+const SPHERE_DIAMETER_DESKTOP = SPHERE_DIAMETER * DESKTOP_SCALE;
 
-/** Rim ring is r 81.7624 in a 173.336 x 168.431 viewBox. */
-const RIM_SCALE = SPHERE_DIAMETER / (81.7624 * 2);
+/**
+ * Matches the sphere's cursorRadiusUI, widened because particles fling well
+ * past the cursor radius — the hole has to cover where they land, not just
+ * where they started.
+ */
+const CURSOR_RADIUS = 75 * 1.6;
+/** Floor for the hole radius; 0 would invalidate the gradient. */
+const MIN_HOLE = 0.01;
 
-export const Orb = () => (
-  <div
-    aria-hidden
-    className="absolute top-[499px] left-[61.33px] h-[269.816px] w-[228.39px]"
-  >
-    {/* Glow behind the sphere */}
+const CORE_FILL =
+  "radial-gradient(circle at 50% 50%, #090402 0%, #090402 58%, rgba(9,4,2,0.9) 74%, rgba(9,4,2,0.55) 88%, rgba(9,4,2,0) 100%)";
+/** Punches a feathered hole at the pointer; --hole-r collapses to 0 on leave. */
+const CORE_MASK =
+  "radial-gradient(circle var(--hole-r, 0px) at var(--hole-x, 50%) var(--hole-y, 50%), transparent 0%, transparent 68%, rgba(0,0,0,0.55) 86%, #000 100%)";
+
+export const Orb = () => {
+  const coreRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * The hole follows the pointer off a window-level listener rather than
+   * enter/leave on the sphere: the canvas overflows its box by 2.5x, so
+   * leave fired while the cursor was still visibly over the orb and the hole
+   * snapped shut. Position is eased in a rAF loop, so the hole glides instead
+   * of stepping between pointer events.
+   */
+  useEffect(() => {
+    const core = coreRef.current;
+    if (!core) return;
+
+    const pointer = { x: 0, y: 0, inside: false };
+    const eased = { x: 0, y: 0, r: MIN_HOLE };
+    let frame = 0;
+    let seeded = false;
+
+    const onMove = (event: PointerEvent) => {
+      const box = core.getBoundingClientRect();
+      const x = event.clientX - box.left - box.width / 2;
+      const y = event.clientY - box.top - box.height / 2;
+      // Keep the hole alive anywhere within the core plus one hole radius, so
+      // brushing the glow around the sphere does not drop tracking.
+      const reach = box.width / 2 + CURSOR_RADIUS;
+      pointer.inside = Math.hypot(x, y) < reach;
+      pointer.x = x;
+      pointer.y = y;
+
+      if (!seeded && pointer.inside) {
+        eased.x = x;
+        eased.y = y;
+        seeded = true;
+      }
+    };
+
+    const tick = () => {
+      // Never let the radius reach 0: radial-gradient(circle 0px ...) is
+      // invalid and the browser throws the entire mask away, which made the
+      // core snap back to a hard-edged disc.
+      const targetR = pointer.inside ? CURSOR_RADIUS : MIN_HOLE;
+      eased.x += (pointer.x - eased.x) * 0.22;
+      eased.y += (pointer.y - eased.y) * 0.22;
+      eased.r += (targetR - eased.r) * 0.14;
+
+      core.style.setProperty("--hole-x", `calc(50% + ${eased.x.toFixed(1)}px)`);
+      core.style.setProperty("--hole-y", `calc(50% + ${eased.y.toFixed(1)}px)`);
+      core.style.setProperty("--hole-r", `${eased.r.toFixed(1)}px`);
+
+      frame = requestAnimationFrame(tick);
+    };
+
+    window.addEventListener("pointermove", onMove, { passive: true });
+    frame = requestAnimationFrame(tick);
+
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  return (
     <div
-      className="absolute z-0"
-      style={{ left: CENTRE_X, top: CENTRE_Y, width: 0, height: 0 }}
+      aria-hidden
+      className="absolute top-[499px] left-1/2 flex h-[269.816px] w-[228.39px] -translate-x-1/2 justify-center ipad:top-151.75 ipad:h-[383.119px] ipad:w-[324.3px] desktop-sm:top-[178px] desktop-sm:h-[311px] desktop-sm:w-[340px] desktop-sm:translate-y-10"
     >
-      <MaskGroup size={SPHERE_DIAMETER} />
-    </div>
+      {/* Sphere box — every layer below sits in the same grid cell, centred */}
+      <div className="relative grid h-[197.32px] w-[215.853px] shrink-0 place-items-center ipad:h-[280.18px] ipad:w-[306.495px] desktop-sm:h-[311px] desktop-sm:w-[340px]">
+        {/* Glow behind the sphere — MaskGroup anchors to a zero-size point */}
+        <div className="relative z-0 col-start-1 row-start-1 size-0 blur-md ipad:hidden">
+          <MaskGroup size={SPHERE_DIAMETER} />
+        </div>
+        <div className="relative z-0 col-start-1 row-start-1 hidden size-0 blur-md ipad:block desktop-sm:hidden">
+          <MaskGroup size={SPHERE_DIAMETER_TABLET} />
+        </div>
+        <div className="relative z-0 col-start-1 row-start-1 hidden size-0 -translate-y-8 blur-md desktop-sm:block">
+          <MaskGroup size={SPHERE_DIAMETER_DESKTOP} />
+        </div>
 
-    {/* Live particle sphere, in place of Figma's flat "image 3083449" */}
-    <div className="pointer-events-auto absolute top-0 left-[12.54px] z-30 h-[197.32px] w-[215.853px]">
-      <ParticleSphere
-        particlesCount={10000}
-        particleScale={7}
-        rotationDirection="clockwise"
-        speed={20}
-        scale={10}
-        drag
-        smoothing={7}
-        dragSpeed={5}
-        stopOnHover={false}
-        cursorOn
-        cursorRadiusUI={75}
-        cursorStrengthUI={10}
-        clickForce={5}
-        sphereColor="#BF5321"
-      />
-    </div>
-
-    {/* Rim highlight — blurred warm ellipse masked to the sphere's top arc */}
-    {/* <svg
-      className="pointer-events-none absolute z-40"
-      style={{
-        width: 173.336 * RIM_SCALE,
-        height: 168.431 * RIM_SCALE,
-        left: CENTRE_X - 86.6687 * RIM_SCALE,
-        top: CENTRE_Y - 86.6677 * RIM_SCALE,
-      }}
-      viewBox="0 0 174 169"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <mask
-        id="orb-rim-mask"
-        style={{ maskType: "alpha" }}
-        maskUnits="userSpaceOnUse"
-        x="4"
-        y="4"
-        width="165"
-        height="83"
-      >
-        <path
-          d="M168.431 86.6677C168.431 75.9305 166.316 65.2985 162.207 55.3786C158.098 45.4587 152.076 36.4453 144.483 28.8529C136.891 21.2606 127.878 15.238 117.958 11.1291C108.038 7.02012 97.4059 4.90527 86.6687 4.90527C75.9315 4.90527 65.2994 7.02012 55.3796 11.1291C45.4597 15.238 36.4463 21.2606 28.8539 28.8529C21.2616 36.4453 15.239 45.4587 11.13 55.3786C7.0211 65.2985 4.90625 75.9305 4.90625 86.6677L7.91987 86.6677C7.91987 76.3263 9.95677 66.0861 13.9143 56.5318C17.8718 46.9776 23.6724 38.2964 30.9849 30.9839C38.2974 23.6714 46.9786 17.8708 56.5328 13.9133C66.0871 9.95579 76.3272 7.91889 86.6687 7.91889C97.0101 7.91889 107.25 9.95579 116.805 13.9133C126.359 17.8708 135.04 23.6714 142.353 30.9839C149.665 38.2964 155.466 46.9776 159.423 56.5318C163.381 66.0861 165.418 76.3263 165.418 86.6677L168.431 86.6677Z"
-          fill="#FFFFA3"
+        {/* Dark core — the same sphere in black, so the backdrop keeps its
+          particle structure and reacts to the cursor instead of reading as a
+          flat disc once the orange layer scatters. */}
+        {/* <div className="pointer-events-none z-20 col-start-1 row-start-1 size-full">
+        <ParticleSphere
+          particlesCount={10000}
+          particleScale={7}
+          rotationDirection="clockwise"
+          speed={20}
+          scale={10}
+          drag
+          smoothing={7}
+          dragSpeed={5}
+          stopOnHover={false}
+          cursorOn
+          cursorRadiusUI={75}
+          cursorStrengthUI={10}
+          clickForce={5}
+          sphereColor="#121212"
         />
-      </mask>
-      <g mask="url(#orb-rim-mask)">
-        <g opacity="0.8" filter="url(#orb-rim-blur)">
-          <ellipse
-            cx="86.6687"
-            cy="51.5108"
-            rx="81.7624"
-            ry="62.9571"
-            fill="#FFFF93"
+      </div> */}
+        {/* Dark core — dissolves under the cursor, so the scattered particles
+            never expose a hard disc edge */}
+        <div
+          ref={coreRef}
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 left-1/2 z-20 size-47.5 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl ipad:size-67.5 desktop-sm:size-[310px]"
+          style={{
+            backgroundImage: CORE_FILL,
+            maskImage: CORE_MASK,
+            WebkitMaskImage: CORE_MASK,
+          }}
+        />
+
+        {/* Live particle sphere, in place of Figma's flat "image 3083449" */}
+        <div className="pointer-events-auto z-30 col-start-1 row-start-1 size-full">
+          <ParticleSphere
+            particlesCount={10000}
+            particleScale={7}
+            rotationDirection="clockwise"
+            speed={20}
+            scale={10}
+            drag
+            smoothing={7}
+            dragSpeed={5}
+            stopOnHover={false}
+            cursorOn
+            cursorRadiusUI={75}
+            cursorStrengthUI={10}
+            clickForce={5}
+            sphereColor="#FF3B00"
           />
-        </g>
-      </g>
-      <defs>
-        <filter
-          id="orb-rim-blur"
-          x="-23.4381"
-          y="-39.7906"
-          width="220.214"
-          height="182.603"
-          filterUnits="userSpaceOnUse"
-          colorInterpolationFilters="sRGB"
-        >
-          <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur stdDeviation="14.1722" result="blur" />
-        </filter>
-      </defs>
-    </svg> */}
-  </div>
-);
+        </div>
+      </div>
+    </div>
+  );
+};

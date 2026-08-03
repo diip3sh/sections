@@ -41,7 +41,7 @@ const ArrowIcon = ({ src }: { src: string }) => (
 
 export const Section24Hero = () => (
   <main className="w-full bg-[#f5f5f2]">
-    <div className="relative mx-auto min-h-dvh w-full overflow-hidden">
+    <div className="relative mx-auto min-h-dvh w-full overflow-hidden ultrawide:max-w-[2000px]">
       <GridRail className="left-0" />
       <GridRail className="right-0" />
 
@@ -190,12 +190,12 @@ export const Section24Hero = () => (
 
       {/* Particle building render — sits inside the rails, scales with the screen */}
       <div
-        className="absolute top-125 left-1/2 w-[calc(100%-64px)] -translate-x-1/2 aspect-1383/942 ipad:top-[60%] ipad:w-[calc(100%-104px)] desktop-sm:top-[100px] desktop-sm:w-full ultrawide:top-[250px] ultrawide:max-w-[2000px]"
+        className="absolute top-125 left-1/2 aspect-1383/942 w-[calc(100%-64px)] -translate-x-1/2 ipad:top-[60%] ipad:w-[calc(100%-104px)] desktop-sm:top-[100px] desktop-sm:w-[calc(100%-144px)] ultrawide:top-[350px] ultrawide:max-w-[calc(2000px-144px)] [--fade-start:72%] [--fade-mid:88%] ultrawide:[--fade-start:48%] ultrawide:[--fade-mid:72%]"
         style={{
           maskImage:
-            "linear-gradient(to bottom, #000 0%, #000 72%, rgba(0,0,0,0.55) 88%, transparent 100%)",
+            "linear-gradient(to bottom, #000 0%, #000 var(--fade-start), rgba(0,0,0,0.55) var(--fade-mid), transparent 100%)",
           WebkitMaskImage:
-            "linear-gradient(to bottom, #000 0%, #000 72%, rgba(0,0,0,0.55) 88%, transparent 100%)",
+            "linear-gradient(to bottom, #000 0%, #000 var(--fade-start), rgba(0,0,0,0.55) var(--fade-mid), transparent 100%)",
         }}
       >
         <ParticleImage

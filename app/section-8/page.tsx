@@ -317,30 +317,38 @@ const ElitePlan = ({
           backgroundPosition: "top left",
         }}
       />
-      {/* Soft bottom-right light — blends under feature lists */}
+      {/* Soft blue ambient fill in the corner */}
       <div
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 95% 85% at 100% 100%, rgba(255,255,255,0.42) 0%, rgba(105,161,241,0.28) 22%, rgba(48,111,232,0.12) 42%, transparent 68%)",
+            "radial-gradient(ellipse 85% 80% at 100% 100%, rgba(105,161,241,0.35) 0%, rgba(48,111,232,0.14) 40%, transparent 70%)",
         }}
       />
-      <div className="absolute right-0 bottom-0 h-[min(100%,28rem)] w-[min(100%,32rem)]">
+      {/* Bright cool-white diagonal ridge → bottom-right */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(135deg, transparent 38%, rgba(105,161,241,0.2) 55%, rgba(224,230,239,0.45) 72%, rgba(240,244,250,0.72) 100%)",
+        }}
+      />
+      <div className="absolute right-0 bottom-0 h-[min(100%,28rem)] w-[min(100%,36rem)]">
         <Image
           src="/section-8/elite-glow-1.svg"
           alt=""
           width={504}
           height={451}
-          className="absolute right-[-8%] bottom-[-6%] h-auto w-[110%] max-w-none opacity-90 [mask-image:radial-gradient(ellipse_70%_70%_at_100%_100%,black_20%,transparent_78%)] [-webkit-mask-image:radial-gradient(ellipse_70%_70%_at_100%_100%,black_20%,transparent_78%)]"
+          className="absolute right-[-6%] bottom-[-4%] h-auto w-[105%] max-w-none opacity-95"
         />
       </div>
-      <div className="absolute right-0 bottom-0 h-[min(100%,36rem)] w-[min(100%,42rem)]">
+      <div className="absolute right-0 bottom-0 h-[min(100%,36rem)] w-[min(100%,44rem)]">
         <Image
           src="/section-8/elite-glow-2.svg"
           alt=""
           width={898}
           height={693}
-          className="absolute right-[-18%] bottom-[-22%] h-auto w-[130%] max-w-none opacity-50 [mask-image:radial-gradient(ellipse_75%_75%_at_100%_100%,black_15%,transparent_72%)] [-webkit-mask-image:radial-gradient(ellipse_75%_75%_at_100%_100%,black_15%,transparent_72%)]"
+          className="absolute right-[-16%] bottom-[-20%] h-auto w-[125%] max-w-none opacity-60"
         />
       </div>
     </div>

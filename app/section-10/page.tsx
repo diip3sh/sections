@@ -367,7 +367,7 @@ const Section10 = () => {
           <div className="relative flex w-full flex-col items-center gap-0 pt-10">
             <PhonesHero />
 
-            <div className="relative z-20 -mt-14 flex w-full animate-hero-reveal flex-col items-center gap-5 px-0 pt-8 md:pt-6 text-center motion-reduce:animate-none android-sm:-mt-16 ipad:-mt-20 [animation-delay:80ms]">
+            <div className="relative z-20 -mt-14 flex w-full animate-hero-reveal flex-col items-center gap-5 px-0 pt-8 md:pt-6 text-center motion-reduce:animate-none android-sm:-mt-16 ipad:-mt-20 [animation-delay:80ms] desktop-sm:max-w-[695px]">
               <h1 className="font-urbanist text-[30px] font-bold leading-[1.2] text-[#0d0d0d] text-pretty lg:text-[45px] xl:text-[58px]">
                 Download Capable and Connect Today
               </h1>

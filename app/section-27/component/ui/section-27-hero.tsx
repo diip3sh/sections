@@ -128,12 +128,12 @@ export const Section27Hero = () => (
         <div className="flex w-full flex-col items-center gap-5 ipad:w-auto ipad:flex-row ipad:items-start">
           <button
             type="button"
-            className="flex w-full max-w-[323px] cursor-pointer items-center justify-center gap-1 rounded-[1px] bg-white py-2 pr-2 pl-5 shadow-[2px_2px_0px_0px_#0b0b0c,3px_3px_0px_0px_white] ipad:w-auto"
+            className="group flex w-full max-w-[323px] cursor-pointer items-center justify-center gap-1 rounded-[1px] bg-white py-2 pr-2 pl-5 shadow-[2px_2px_0px_0px_#0b0b0c,3px_3px_0px_0px_white] transition-[transform,box-shadow] duration-200 ease-out ipad:w-auto [@media(hover:hover)]:hover:-translate-x-px [@media(hover:hover)]:hover:-translate-y-px [@media(hover:hover)]:hover:shadow-[3px_3px_0px_0px_#0b0b0c,5px_5px_0px_0px_white] active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0px_0px_#0b0b0c,2px_2px_0px_0px_white]"
           >
             <span className="font-geist text-[15px] leading-[1.5] font-semibold tracking-[-0.3px] whitespace-nowrap text-[#0b0b0c]">
               Explore System
             </span>
-            <span className="relative block size-[23px] shrink-0">
+            <span className="relative block size-[23px] shrink-0 transition-transform duration-200 ease-out group-hover:translate-x-0.5">
               <img
                 src="/section-27/arrow.svg"
                 alt=""
@@ -144,7 +144,7 @@ export const Section27Hero = () => (
 
           <button
             type="button"
-            className="flex w-full max-w-[323px] cursor-pointer items-center justify-center rounded-[1px] bg-white/5 px-5 py-2 shadow-[2px_2px_0px_0px_#0b0b0c,3px_3px_0px_0px_#171718] ipad:w-auto"
+            className="flex w-full max-w-[323px] cursor-pointer items-center justify-center rounded-[1px] bg-white/5 px-5 py-2 shadow-[2px_2px_0px_0px_#0b0b0c,3px_3px_0px_0px_#171718] transition-[transform,box-shadow,background-color] duration-200 ease-out ipad:w-auto [@media(hover:hover)]:hover:-translate-x-px [@media(hover:hover)]:hover:-translate-y-px [@media(hover:hover)]:hover:bg-white/10 [@media(hover:hover)]:hover:shadow-[3px_3px_0px_0px_#0b0b0c,5px_5px_0px_0px_#171718] active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0px_0px_#0b0b0c,2px_2px_0px_0px_#171718]"
           >
             <span className="font-geist text-[15px] leading-[1.5] font-semibold tracking-[-0.3px] whitespace-nowrap text-white">
               Live Preview

@@ -6,6 +6,10 @@ import { RecommendationCard } from "./recommendation-card";
 /** Desktop pill nav — Figma 2280:5904. */
 const NAV_LINKS = ["Home", "Service", "Proudct", "About Us"];
 
+/** Feathers the hand's top and base into the backdrop. */
+const HAND_MASK =
+  "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.35) 7%, #000 20%, #000 86%, rgba(0,0,0,0.5) 95%, transparent 100%)";
+
 /** Radial sheen Figma bakes into the pill nav's fill. */
 const PILL_SHEEN =
   "radial-gradient(120% 100% at 0% 50%, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%), linear-gradient(90deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 100%)";
@@ -131,6 +135,12 @@ export const Section26Hero = () => (
         src="/section-26/hand.png"
         alt=""
         className="pointer-events-none absolute top-[calc(50%+255px)] left-[calc(50%-4px)] z-10 h-[410px] w-[738px] max-w-none -translate-x-1/2 -translate-y-1/2 object-cover ipad:top-[894px] ipad:left-1/2 ipad:h-[502px] ipad:w-[902px] desktop-sm:top-auto desktop-sm:bottom-0 desktop-sm:h-auto desktop-sm:w-[86vw] desktop-sm:min-w-[1239px] desktop-sm:origin-bottom desktop-sm:scale-115 desktop-sm:translate-y-0 ultrawide:top-[430px] ultrawide:bottom-auto ultrawide:w-[1180px] ultrawide:min-w-0 ultrawide:scale-100"
+        style={{
+          // The export has a hard top edge, and once it is lifted off the floor
+          // a hard base too. Feather both so it dissolves into the backdrop.
+          maskImage: HAND_MASK,
+          WebkitMaskImage: HAND_MASK,
+        }}
       />
 
       <RecommendationCard />

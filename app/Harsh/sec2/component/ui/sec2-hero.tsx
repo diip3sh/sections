@@ -40,7 +40,7 @@ const GetStartedButton = ({ className }: { className: string }) => (
           "linear-gradient(180deg, rgba(255, 255, 255, 0.33) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(90deg, rgb(240, 240, 240) 0%, rgb(240, 240, 240) 100%)",
       }}
     />
-    <p className="relative shrink-0 whitespace-nowrap text-[16px] leading-normal tracking-[-0.32px] text-[#060e08]">
+    <p className="relative shrink-0 whitespace-nowrap text-[16px] leading-[1.15] tracking-[-0.32px] text-[#060e08]">
       Get started
     </p>
     <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_1px_1px_0px_white,inset_0px_-1.5px_0px_0px_rgba(0,0,0,0.1)]" />
@@ -118,7 +118,7 @@ const PhoneFrame = () => (
       className={`${REVEAL} absolute left-0 top-0 flex w-[402px] items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] p-[16px]`}
     >
       <div className="relative flex min-w-px flex-[1_0_0] items-center justify-between">
-        <p className="relative shrink-0 whitespace-nowrap text-[22px] leading-normal tracking-[-0.66px] text-white">
+        <p className="relative shrink-0 whitespace-nowrap text-[22px] leading-[1.15] tracking-[-0.66px] text-white">
           Hirefy
         </p>
         <div className="relative size-[24px] shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-70">
@@ -138,7 +138,7 @@ const PhoneFrame = () => (
         </h1>
         <p
           style={delay(160)}
-          className={`${REVEAL} relative w-full shrink-0 text-[14px] leading-[1.5] opacity-70`}
+          className={`${REVEAL} relative w-full shrink-0 text-[14px] leading-[1.5] text-[rgba(255,255,255,0.7)]`}
         >
           Hire exceptional talent across 180+ countries, automate compliance, and manage
           international payroll.
@@ -153,7 +153,7 @@ const PhoneFrame = () => (
           type="button"
           className="relative flex w-full shrink-0 cursor-pointer items-center justify-center rounded-[999px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#252525] px-[24px] py-[14px] transition-opacity duration-200 hover:opacity-80"
         >
-          <p className="relative shrink-0 whitespace-nowrap text-[16px] leading-normal tracking-[-0.32px] text-white">
+          <p className="relative shrink-0 whitespace-nowrap text-[16px] leading-[1.15] tracking-[-0.32px] text-white">
             Book a Call
           </p>
         </button>
@@ -233,7 +233,7 @@ const TabletFrame = () => (
       className={`${REVEAL} absolute left-0 top-0 flex h-[64px] w-[744px] items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] px-[32px] py-[16px]`}
     >
       <div className="relative flex min-w-px flex-[1_0_0] items-center justify-between">
-        <p className="relative shrink-0 whitespace-nowrap text-[28px] leading-normal tracking-[-0.84px] text-white">
+        <p className="relative shrink-0 whitespace-nowrap text-[28px] leading-[1.15] tracking-[-0.84px] text-white">
           Hirefy
         </p>
         <div className="relative size-[24px] shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-70">
@@ -253,7 +253,7 @@ const TabletFrame = () => (
         </h1>
         <p
           style={delay(160)}
-          className={`${REVEAL} relative w-full shrink-0 text-[16px] leading-[1.5] opacity-70`}
+          className={`${REVEAL} relative w-full shrink-0 text-[16px] leading-[1.5] text-[rgba(255,255,255,0.7)]`}
         >
           Hire exceptional talent across 180+ countries, automate compliance, and manage
           international payroll.
@@ -268,7 +268,7 @@ const TabletFrame = () => (
           type="button"
           className="relative flex shrink-0 cursor-pointer items-center justify-center rounded-[999px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#252525] px-[24px] py-[16px] transition-opacity duration-200 hover:opacity-80"
         >
-          <p className="relative shrink-0 whitespace-nowrap text-[16px] leading-normal tracking-[-0.32px] text-white">
+          <p className="relative shrink-0 whitespace-nowrap text-[16px] leading-[1.15] tracking-[-0.32px] text-white">
             Book a Call
           </p>
         </button>
@@ -348,11 +348,11 @@ const DesktopFrame = () => (
       className={`${REVEAL} absolute left-0 top-0 flex h-[74px] w-[1280px] items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] px-[32px] py-[16px]`}
     >
       <div className="relative flex w-[1200px] shrink-0 items-center justify-between">
-        <p className="relative shrink-0 whitespace-nowrap text-[28px] leading-normal tracking-[-0.84px] text-white">
+        <p className="relative shrink-0 whitespace-nowrap text-[28px] leading-[1.15] tracking-[-0.84px] text-white">
           Hirefy
         </p>
         <GetStartedButton className="px-[16px] py-[12px]" />
-        <div className="absolute left-1/2 top-[calc(50%-0.5px)] flex -translate-x-1/2 -translate-y-1/2 items-center gap-[24px] whitespace-nowrap text-[16px] leading-normal text-white">
+        <div className="absolute left-1/2 top-[calc(50%-0.5px)] flex -translate-x-1/2 -translate-y-1/2 items-center gap-[24px] whitespace-nowrap text-[16px] leading-[1.15] text-white">
           {NAV_LINKS.map((link) => (
             <p
               key={link}
@@ -376,7 +376,7 @@ const DesktopFrame = () => (
         </h1>
         <p
           style={delay(160)}
-          className={`${REVEAL} relative w-full shrink-0 text-[16px] leading-[1.5] opacity-70`}
+          className={`${REVEAL} relative w-full shrink-0 text-[16px] leading-[1.5] text-[rgba(255,255,255,0.7)]`}
         >
           Hire exceptional talent across 180+ countries, automate compliance, and manage
           international payroll.
@@ -391,7 +391,7 @@ const DesktopFrame = () => (
           type="button"
           className="relative flex shrink-0 cursor-pointer items-center justify-center rounded-[999px] border border-solid border-[rgba(255,255,255,0.1)] bg-[#252525] px-[24px] py-[16px] transition-opacity duration-200 hover:opacity-80"
         >
-          <p className="relative shrink-0 whitespace-nowrap text-[16px] leading-normal tracking-[-0.32px] text-white">
+          <p className="relative shrink-0 whitespace-nowrap text-[16px] leading-[1.15] tracking-[-0.32px] text-white">
             Book a Call
           </p>
         </button>

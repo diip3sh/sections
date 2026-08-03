@@ -296,11 +296,11 @@ const BIG_CARD_RIGHT = {
 };
 
 const CARD_SHADOW_LEFT_DESKTOP =
-  "drop-shadow-[0px_86px_12px_rgba(186,186,186,0),0px_55px_11px_rgba(186,186,186,0.01),0px_31px_9.5px_rgba(186,186,186,0.05),0px_14px_7px_rgba(186,186,186,0.09),0px_3px_4px_rgba(186,186,186,0.1)]";
+  "shadow-[0px_86px_24px_0px_rgba(186,186,186,0),0px_55px_22px_0px_rgba(186,186,186,0.01),0px_31px_19px_0px_rgba(186,186,186,0.05),0px_14px_14px_0px_rgba(186,186,186,0.09),0px_3px_8px_0px_rgba(186,186,186,0.1)]";
 const CARD_SHADOW_RIGHT_DESKTOP =
   "shadow-[0px_86px_24px_0px_rgba(186,186,186,0),0px_55px_22px_0px_rgba(186,186,186,0.01),0px_31px_19px_0px_rgba(186,186,186,0.05),0px_14px_14px_0px_rgba(186,186,186,0.09),0px_3px_8px_0px_rgba(186,186,186,0.1)]";
 const CARD_SHADOW_LEFT_MOBILE =
-  "drop-shadow-[0px_35.467px_4.949px_rgba(186,186,186,0),0px_22.683px_4.537px_rgba(186,186,186,0.01),0px_12.785px_3.918px_rgba(186,186,186,0.05),0px_5.774px_2.887px_rgba(186,186,186,0.09),0px_1.237px_1.65px_rgba(186,186,186,0.1)]";
+  "shadow-[0px_35.467px_9.898px_0px_rgba(186,186,186,0),0px_22.683px_9.073px_0px_rgba(186,186,186,0.01),0px_12.785px_7.836px_0px_rgba(186,186,186,0.05),0px_5.774px_5.774px_0px_rgba(186,186,186,0.09),0px_1.237px_3.299px_0px_rgba(186,186,186,0.1)]";
 const CARD_SHADOW_RIGHT_MOBILE =
   "shadow-[0px_35.467px_9.898px_0px_rgba(186,186,186,0),0px_22.683px_9.073px_0px_rgba(186,186,186,0.01),0px_12.785px_7.836px_0px_rgba(186,186,186,0.05),0px_5.774px_5.774px_0px_rgba(186,186,186,0.09),0px_1.237px_3.299px_0px_rgba(186,186,186,0.1)]";
 
@@ -445,7 +445,7 @@ const MobileLayout = () => (
             </h1>
             <p
               style={delay(240)}
-              className={`${REVEAL} relative w-full shrink-0 text-[14px] leading-[1.5] opacity-60`}
+              className={`${REVEAL} relative w-full shrink-0 text-[14px] leading-[1.5] text-[rgba(255,255,255,0.6)]`}
             >
               Hire exceptional talent across 180+ countries, automate compliance, &amp; manage
               international payroll.
@@ -567,7 +567,7 @@ const IpadLayout = () => (
             </h1>
             <p
               style={delay(240)}
-              className={`${REVEAL} relative w-full shrink-0 text-[16px] leading-[1.5] opacity-60`}
+              className={`${REVEAL} relative w-full shrink-0 text-[16px] leading-[1.5] text-[rgba(255,255,255,0.6)]`}
             >
               Hire exceptional talent across 180+ countries, automate compliance, and manage
               international payroll.
@@ -628,8 +628,13 @@ const DesktopLayout = () => (
   // width (1184 = 100vw − 96) so the whole section grows with the screen.
   <div className="hidden w-full flex-col items-start gap-[16px] p-[16px_48px] desktop-sm:flex">
     {/* Top Nav */}
-    <div style={delay(0)} className={`${REVEAL} relative flex w-full items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] bg-[#0f0f0f] px-[32px] py-[16px]`}>
-      <div className="relative flex min-w-px flex-[1_0_0] items-center justify-between">
+    <div
+      style={delay(0)}
+      className={`${REVEAL} relative flex w-full items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] bg-[#0f0f0f] px-[32px] py-[16px]`}
+    >
+      {/* the bar spans the viewport; only its contents are capped, so a 4K
+          screen does not spread the logo and CTA to the far corners */}
+      <div className="relative mx-auto flex min-w-px max-w-[1600px] flex-[1_0_0] items-center justify-between">
         <div className="relative h-[28px] w-[40px] shrink-0 overflow-clip">
           <img alt="Logo" className="absolute inset-0 block size-full max-w-none" src={`${A}/logo.svg`} />
         </div>
@@ -674,7 +679,7 @@ const DesktopLayout = () => (
             </h1>
             <p
               style={delay(240)}
-              className={`${REVEAL} relative w-full shrink-0 text-[16px] leading-[1.5] opacity-60`}
+              className={`${REVEAL} relative w-full shrink-0 text-[16px] leading-[1.5] text-[rgba(255,255,255,0.6)]`}
             >
               Hire exceptional talent across 180+ countries, automate compliance, and manage
               international payroll.
@@ -691,7 +696,7 @@ const DesktopLayout = () => (
       </div>
 
       {/* globe — 898 / 1184 wide, frame 447 tall (49.78% of its own width) */}
-      <div className="absolute bottom-0 left-1/2 aspect-[898/447] w-[75.84%] -translate-x-1/2 overflow-clip">
+      <div className="absolute bottom-0 left-1/2 aspect-[898/447] w-[75.84%] -translate-x-1/2 overflow-clip full-hd:w-[62%] ultrawide:w-[54%]">
         <div
           style={delay(400)}
           className={`${REVEAL} absolute left-1/2 top-0 aspect-[898/900] w-full -translate-x-1/2 overflow-clip rounded-[999px]`}

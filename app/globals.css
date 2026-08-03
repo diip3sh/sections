@@ -9,12 +9,10 @@
   from {
     opacity: 0;
     transform: translateY(12px);
-    filter: blur(4px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0);
   }
 }
 
@@ -178,6 +176,7 @@
   --font-redhat: var(--font-redhat-family);
   --font-helvetica-neue: var(--font-helvetica-neue-family);
   --font-aeonik: var(--font-aeonik-family);
+  --font-canela: var(--font-canela-deck-family);
 
   --animate-hero-reveal: hero-reveal 300ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
   --animate-section-rise: section-rise 500ms cubic-bezier(0.23, 1, 0.32, 1) both;
@@ -230,12 +229,10 @@
     from {
       opacity: 0;
       transform: none;
-      filter: none;
     }
     to {
       opacity: 1;
       transform: none;
-      filter: none;
     }
   }
 

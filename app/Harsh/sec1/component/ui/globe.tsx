@@ -21,10 +21,33 @@ import {
     CatmullRomCurve3,
     Vector3,
     CanvasTexture,
+    BufferGeometry,
 } from "three";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { geoEquirectangular, geoPath } from "d3-geo";
 
 type Rgba = { r: number; g: number; b: number; a: number };
+
+/** The land outlines are a 2.7MB GeoJSON. It is served from this origin (not
+ *  GitHub) and fetched once per page — every globe instance, remount and
+ *  breakpoint switch reuses the same promise instead of re-downloading. */
+const LAND_URL = "/Harsh/globe/ne_50m_land.json";
+let landFeaturesPromise: Promise<any> | null = null;
+
+const loadLandFeatures = () => {
+    if (!landFeaturesPromise) {
+        landFeaturesPromise = fetch(LAND_URL)
+            .then((response) => {
+                if (!response.ok) throw new Error("Failed to load land data");
+                return response.json();
+            })
+            .catch((error) => {
+                landFeaturesPromise = null;
+                throw error;
+            });
+    }
+    return landFeaturesPromise;
+};
 
 function parseColorToRgba(input: string): Rgba {
     if (!input || input.trim() === "") return { r: 0, g: 0, b: 0, a: 0 };
@@ -337,9 +360,9 @@ export default function Globe({
                 const radius = (outlineWidth / 10) * 0.01;
                 const tubeGeometry = new TubeGeometry(
                     curve,
-                    outlinePoints.length * 2,
+                    outlinePoints.length,
                     radius,
-                    8,
+                    4,
                     false
                 );
                 globeOutlineMesh = new Mesh(tubeGeometry, outlineMaterial);
@@ -359,6 +382,9 @@ export default function Globe({
                 transparent: graticuleRgba.a < 1 || graticuleRgba.a === 0,
                 opacity: graticuleRgba.a,
             });
+            // One merged mesh instead of ~36 — the grid is static, so there
+            // is no reason to pay a draw call per line.
+            const graticuleGeometries: BufferGeometry[] = [];
             const gridSpacing = 15;
             for (let lat = -90; lat <= 90; lat += gridSpacing) {
                 const positions: number[] = [];
@@ -388,17 +414,12 @@ export default function Globe({
                         const radius = (gridWidth / 10) * 0.01;
                         const tubeGeometry = new TubeGeometry(
                             curve,
-                            points.length * 2,
+                            points.length,
                             radius,
-                            8,
+                            4,
                             false
                         );
-                        const tubeMesh = new Mesh(
-                            tubeGeometry,
-                            graticuleMaterial
-                        );
-                        tubeMesh.renderOrder = 0;
-                        graticuleGroup.add(tubeMesh);
+                        graticuleGeometries.push(tubeGeometry);
                     }
                 }
             }
@@ -430,18 +451,22 @@ export default function Globe({
                         const radius = (gridWidth / 10) * 0.01;
                         const tubeGeometry = new TubeGeometry(
                             curve,
-                            points.length * 2,
+                            points.length,
                             radius,
-                            8,
+                            4,
                             false
                         );
-                        const tubeMesh = new Mesh(
-                            tubeGeometry,
-                            graticuleMaterial
-                        );
-                        tubeMesh.renderOrder = 0;
-                        graticuleGroup.add(tubeMesh);
+                        graticuleGeometries.push(tubeGeometry);
                     }
+                }
+            }
+            if (graticuleGeometries.length > 0) {
+                const merged = mergeGeometries(graticuleGeometries, false);
+                graticuleGeometries.forEach((geometry) => geometry.dispose());
+                if (merged) {
+                    const tubeMesh = new Mesh(merged, graticuleMaterial);
+                    tubeMesh.renderOrder = 0;
+                    graticuleGroup.add(tubeMesh);
                 }
             }
         }
@@ -452,11 +477,7 @@ export default function Globe({
         const loadWorldData = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch(
-                    "https://raw.githubusercontent.com/martynafford/natural-earth-geojson/refs/heads/master/50m/physical/ne_50m_land.json"
-                );
-                if (!response.ok) throw new Error("Failed to load land data");
-                const landFeatures = await response.json();
+                const landFeatures = await loadLandFeatures();
 
                 while (continentOutlineGroup.children.length > 0) {
                     continentOutlineGroup.remove(
@@ -474,9 +495,21 @@ export default function Globe({
                     });
                     const projection = geoEquirectangular();
                     const pathGenerator = geoPath().projection(projection);
+                    // ~1400 coastline rings: collected first, then merged into
+                    // a single mesh so the globe costs one draw call, not 1400.
+                    const outlineGeometries: BufferGeometry[] = [];
                     let processedCount = 0;
                     let skippedCount = 0;
-                    landFeatures.features.forEach((feature: any) => {
+                    // Built in slices: ~1400 rings in one go blocks the main
+                    // thread for hundreds of ms, which is what made the globe
+                    // hitch while it appeared.
+                    let featureIndex = 0;
+                    for (const feature of landFeatures.features as any[]) {
+                        if (featureIndex++ % 120 === 119) {
+                            await new Promise((resolve) =>
+                                requestAnimationFrame(() => resolve(null))
+                            );
+                        }
                         const featureType =
                             feature.properties?.featurecla ||
                             feature.properties?.type ||
@@ -491,13 +524,13 @@ export default function Globe({
                             featureName.toLowerCase().includes("line")
                         ) {
                             skippedCount++;
-                            return;
+                            continue;
                         }
                         processedCount++;
                         const pathString = pathGenerator(feature);
-                        if (!pathString) return;
+                        if (!pathString) continue;
                         const commands = pathString.match(/[ML][^MLZ]*/g) || [];
-                        if (commands.length === 0) return;
+                        if (commands.length === 0) continue;
 
                         const geometry = feature.geometry;
                         if (!geometry || !geometry.coordinates) return;
@@ -539,17 +572,12 @@ export default function Globe({
                                     const radius = (outlineWidth / 10) * 0.01;
                                     const tubeGeometry = new TubeGeometry(
                                         curve,
-                                        points.length * 2,
+                                        points.length,
                                         radius,
-                                        8,
+                                        4,
                                         false
                                     );
-                                    const tubeMesh = new Mesh(
-                                        tubeGeometry,
-                                        outlineMaterial
-                                    );
-                                    tubeMesh.renderOrder = 0;
-                                    continentOutlineGroup.add(tubeMesh);
+                                    outlineGeometries.push(tubeGeometry);
                                 }
                             }
                         };
@@ -565,10 +593,20 @@ export default function Globe({
                                 }
                             });
                         }
-                    });
-                    console.log(
-                        `[Globe] Processed ${processedCount} land features, skipped ${skippedCount} grid features`
-                    );
+                    }
+                    void processedCount;
+                    void skippedCount;
+                    if (outlineGeometries.length > 0) {
+                        const merged = mergeGeometries(outlineGeometries, false);
+                        outlineGeometries.forEach((geometry) =>
+                            geometry.dispose()
+                        );
+                        if (merged) {
+                            const tubeMesh = new Mesh(merged, outlineMaterial);
+                            tubeMesh.renderOrder = 0;
+                            continentOutlineGroup.add(tubeMesh);
+                        }
+                    }
                 }
 
                 const bitmapWidth = 2048;
@@ -875,15 +913,11 @@ export default function Globe({
             const handleMouseMoveDrag = (moveEvent: MouseEvent) => {
                 const sensitivity = mapDragSpeedUiToSensitivity(dragSpeed);
                 const dx = moveEvent.clientX - lastMouseX;
-                const dy = moveEvent.clientY - lastMouseY;
+                // Spin only — the tilt stays at initialLatitude, so dragging
+                // can never roll the globe off its axis.
                 targetRotation.x += dx * sensitivity;
-                targetRotation.y += dy * sensitivity;
-                targetRotation.y = Math.max(
-                    -Math.PI / 2,
-                    Math.min(Math.PI / 2, targetRotation.y)
-                );
                 velocity.x = dx * sensitivity * 0.3;
-                velocity.y = dy * sensitivity * 0.3;
+                velocity.y = 0;
                 lastMouseX = moveEvent.clientX;
                 lastMouseY = moveEvent.clientY;
             };
@@ -912,9 +946,21 @@ export default function Globe({
             mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
             const intersects = raycaster.intersectObject(oceanMesh);
-            isHovering = intersects.length > 0;
+            const nextHovering = intersects.length > 0;
+            if (nextHovering !== isHovering) {
+                isHovering = nextHovering;
+                if (!isHovering) startAnimation();
+            }
+        };
+        // Without this the pointer can leave the canvas while isHovering is
+        // still true — no further mousemove fires, so the globe stays frozen.
+        const handleMouseLeave = () => {
+            if (!isHovering) return;
+            isHovering = false;
+            startAnimation();
         };
         canvas.addEventListener("mousemove", handleMouseMove);
+        canvas.addEventListener("mouseleave", handleMouseLeave);
 
         const resizeObserver = new ResizeObserver(() => {
             const newWidth =
@@ -954,6 +1000,7 @@ export default function Globe({
                 cancelAnimationFrame(animationFrameId);
             canvas.removeEventListener("mousedown", handleMouseDown);
             canvas.removeEventListener("mousemove", handleMouseMove);
+            canvas.removeEventListener("mouseleave", handleMouseLeave);
             document.removeEventListener(
                 "visibilitychange",
                 handleVisibilityChange

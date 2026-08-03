@@ -14,7 +14,6 @@ type Logo = { src: string; width: number; height: number; alt: string };
 const LOGOS: Logo[] = [
   { src: "/section-27/logos/logo-1.svg", width: 98, height: 18, alt: "" },
   { src: "/section-27/logos/logo-2.svg", width: 78.75, height: 18.75, alt: "" },
-  { src: "/section-27/logos/logo-3.svg", width: 108, height: 53, alt: "" },
   { src: "/section-27/logos/logo-4.svg", width: 108, height: 53, alt: "" },
   { src: "/section-27/logos/logo-5.svg", width: 108, height: 53, alt: "" },
   { src: "/section-27/logos/logo-6.svg", width: 93, height: 14, alt: "" },

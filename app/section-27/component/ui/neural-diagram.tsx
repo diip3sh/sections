@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
 import ParticleImage from "../originkit/svg-particle";
 
 /**
@@ -18,6 +22,22 @@ import ParticleImage from "../originkit/svg-particle";
  */
 
 type Box = { left: number; top: number; width: number; height: number };
+
+/**
+ * The particle canvas is exactly its container, so scattered particles are
+ * clipped at the head's own box. Widening the box gives them room to fly; the
+ * artwork keeps its size because `scale` is divided by the same factor.
+ */
+const SCATTER_PAD = 1.6;
+/** `scale` 10 = 100% of the contain-fit, so 10 / pad holds the art steady. */
+const SCATTER_SCALE = 10 / SCATTER_PAD;
+
+const padBox = (box: Box): Box => ({
+  left: box.left - (box.width * (SCATTER_PAD - 1)) / 2,
+  top: box.top - (box.height * (SCATTER_PAD - 1)) / 2,
+  width: box.width * SCATTER_PAD,
+  height: box.height * SCATTER_PAD,
+});
 
 /** Head group — mobile 2288:9696 at (83, 507); iPad 2288:6221 at (241, 395). */
 const HEAD: Box = { left: 83, top: 125, width: 236.264, height: 298.5 };
@@ -198,202 +218,291 @@ const boxVars = (mobile: Box, tablet: Box, desktop: Box) =>
 const BOX_CLASS =
   "absolute top-[var(--t)] left-[var(--l)] h-[var(--h)] w-[var(--w)] ipad:top-[var(--t-i)] ipad:left-[var(--l-i)] ipad:h-[var(--h-i)] ipad:w-[var(--w-i)] desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:h-[var(--h-d)] desktop-sm:w-[var(--w-d)]";
 
-export const NeuralDiagram = () => (
-  <div className="relative h-[423px] w-[402px] max-w-none shrink-0 ipad:h-[402px] ipad:w-[744px] desktop-sm:h-[468px] desktop-sm:w-[1440px]">
-    {/* Background arcs — iPad only */}
-    {ARCS.map((arc) => (
-      <svg
-        key={arc.id}
-        aria-hidden
-        className="pointer-events-none absolute top-[var(--t-i)] left-[var(--l-i)] hidden h-[var(--h-i)] w-[var(--w-i)] ipad:block desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:h-[var(--h-d)] desktop-sm:w-[var(--w-d)]"
-        style={
-          {
-            "--l-i": `${arc.box.left}px`,
-            "--t-i": `${arc.box.top}px`,
-            "--w-i": `${arc.box.width}px`,
-            "--h-i": `${arc.box.height}px`,
-            "--l-d": `${arc.boxDesktop.left}px`,
-            "--t-d": `${arc.boxDesktop.top}px`,
-            "--w-d": `${arc.boxDesktop.width}px`,
-            "--h-d": `${arc.boxDesktop.height}px`,
-          } as React.CSSProperties
-        }
-        viewBox={arc.viewBox}
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d={arc.path}
-          stroke="white"
-          strokeOpacity="0.1"
-          strokeWidth="0.843825"
-        />
-      </svg>
-    ))}
+export const NeuralDiagram = () => {
+  const blockRef = useRef<HTMLDivElement>(null);
+  /** Hover assembly is a desktop affordance; touch has no hover to give. */
+  const [isDesktop, setIsDesktop] = useState(false);
 
-    {/* Waypoint dots on the arcs — iPad and desktop only */}
-    {ARC_DOTS.map((dot) => (
-      <span
-        key={dot.id}
-        aria-hidden
-        className="pointer-events-none absolute top-[var(--t-i)] left-[var(--l-i)] hidden size-[8.438px] rounded-full border-[1.688px] border-solid border-[#0b0b0c] bg-[#c8c8cc] ipad:block desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:size-[10px] desktop-sm:border-2"
-        style={
-          {
-            "--l-i": `${dot.tablet.left}px`,
-            "--t-i": `${dot.tablet.top}px`,
-            "--l-d": `${dot.desktop.left}px`,
-            "--t-d": `${dot.desktop.top}px`,
-            backgroundClip: "padding-box",
-          } as React.CSSProperties
-        }
-      />
-    ))}
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 1280px)");
+    const sync = () => setIsDesktop(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
 
-    {/* Halftone head — particle field sampling the silhouette */}
-    <div className={BOX_CLASS} style={boxVars(HEAD, HEAD_TABLET, HEAD_DESKTOP)}>
-      <ParticleImage
-        width="100%"
-        height="100%"
-        backgroundColor="transparent"
-        particleCount={60}
-        particleSize={4}
-        particleShape="circle"
-        particleColor="single"
-        singleColor="#d9d9d9"
-        hoverEnabled={false}
-        repulsionEnabled
-        repulsionConfig={{
-          repulsionMode: "outside",
-          repulsionForce: 8,
-          repulsionRadius: 55,
-        }}
-        imageConfig={{
-          image: "/section-27/Vector.png",
-          mode: "fit",
-          scale: 10,
-        }}
-      />
-    </div>
+  /**
+   * The particle field only assembles while its own canvas is hovered, and the
+   * canvas is offset inside a padded box. Entering the diagram block forwards a
+   * mousemove to the canvas centre; leaving forwards a mouseout — so the
+   * component runs its own assemble/scatter transitions rather than being
+   * re-initialised, and the hover area is the diagram itself, not the page.
+   */
+  useEffect(() => {
+    const block = blockRef.current;
+    if (!block || !isDesktop) return;
 
-    {/* Brain, over the particle head */}
-    <img
-      aria-hidden
-      src="/section-27/brain-only.png"
-      alt=""
-      className={`${BOX_CLASS} pointer-events-none block max-w-none`}
-      style={boxVars(BRAIN, BRAIN_TABLET, BRAIN_DESKTOP)}
-    />
+    const canvas = () => block.querySelector("canvas");
 
-    {/* Connectors — mobile: vertical drop into the dot */}
-    {NODES.map((node) => (
-      <svg
-        key={`m-${node.label}`}
-        aria-hidden
-        className="pointer-events-none absolute overflow-visible ipad:hidden"
-        style={{
-          left: node.connector.left,
-          top: node.connector.top,
-          width: node.connector.width,
-          height: node.connector.height,
-        }}
-        viewBox={`0 0 ${node.connector.width} ${node.connector.height}`}
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d={node.connector.shadow} stroke="#0b0b0c" strokeWidth="1.5" />
-        <path d={node.connector.path} stroke={node.color} strokeWidth="1.5" />
-      </svg>
-    ))}
+    const assemble = () => {
+      const target = canvas();
+      if (!target) return;
+      const box = target.getBoundingClientRect();
+      target.dispatchEvent(
+        new MouseEvent("mousemove", {
+          clientX: box.left + box.width / 2,
+          clientY: box.top + box.height / 2,
+          bubbles: true,
+        }),
+      );
+    };
 
-    {/* Connectors — iPad: horizontal run out of the pill, diagonal into the dot */}
-    <svg
-      aria-hidden
-      className="pointer-events-none absolute inset-0 hidden h-full w-full ipad:block desktop-sm:hidden"
-      viewBox="0 0 744 402"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+    const scatter = () => {
+      // React synthesises onMouseLeave from a native mouseout whose
+      // relatedTarget sits outside the element; a dispatched "mouseleave"
+      // never reaches it, which is why the field stayed assembled.
+      canvas()?.dispatchEvent(
+        new MouseEvent("mouseout", {
+          bubbles: true,
+          relatedTarget: document.body,
+        }),
+      );
+    };
+
+    block.addEventListener("pointerenter", assemble);
+    block.addEventListener("pointerleave", scatter);
+    return () => {
+      block.removeEventListener("pointerenter", assemble);
+      block.removeEventListener("pointerleave", scatter);
+    };
+  }, [isDesktop]);
+
+  return (
+    <div
+      ref={blockRef}
+      className="relative h-[423px] w-[402px] max-w-none shrink-0 ipad:h-[402px] ipad:w-[744px] desktop-sm:h-[468px] desktop-sm:w-[1440px]"
     >
-      {NODES.map((node) => (
-        <path
-          key={`t-${node.label}`}
-          d={node.connectorTablet.path}
-          stroke={node.color}
-          strokeWidth="1.658"
-        />
-      ))}
-    </svg>
-
-    {/* Connectors — desktop */}
-    <svg
-      aria-hidden
-      className="pointer-events-none absolute inset-0 hidden h-full w-full desktop-sm:block"
-      viewBox="0 0 1440 468"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {NODES.map((node) => (
-        <path
-          key={`d-${node.label}`}
-          d={node.connectorDesktop.path}
-          stroke={node.color}
-          strokeWidth="2"
-        />
-      ))}
-    </svg>
-
-    {/* Node dots — translucent disc with a 3px black ring */}
-    {NODES.map((node) => (
-      <span
-        key={`dot-${node.label}`}
-        aria-hidden
-        className="pointer-events-none absolute top-[var(--t)] left-[var(--l)] size-[19.5px] rounded-full border-[3px] border-solid border-black ipad:top-[var(--t-i)] ipad:left-[var(--l-i)] ipad:size-[21.558px] desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:size-[26px]"
-        style={
-          {
-            "--l": `${node.dot.left}px`,
-            "--t": `${node.dot.top}px`,
-            "--l-i": `${node.dotTablet.left}px`,
-            "--t-i": `${node.dotTablet.top}px`,
-            "--l-d": `${node.dotDesktop.left}px`,
-            "--t-d": `${node.dotDesktop.top}px`,
-            backgroundColor: `${node.color}80`,
-            backgroundClip: "padding-box",
-          } as React.CSSProperties
-        }
-      />
-    ))}
-
-    {/* Labels */}
-    {NODES.map((node) => (
-      <div
-        key={`pill-${node.label}`}
-        className="pointer-events-none absolute top-[var(--t)] left-[var(--l)] flex h-[29px] w-[var(--w)] items-center justify-center gap-1.5 rounded-[0.75px] border-[0.75px] border-solid bg-[#0b0b0c] p-1.5 ipad:top-[var(--t-i)] ipad:left-[var(--l-i)] ipad:h-[32.5px] ipad:w-[var(--w-i)] ipad:gap-[6.751px] ipad:rounded-[0.844px] ipad:border-[0.844px] ipad:px-[10.126px] ipad:py-[6.751px] desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:h-[39px] desktop-sm:w-[var(--w-d)] desktop-sm:gap-2 desktop-sm:rounded-[1px] desktop-sm:border desktop-sm:px-3 desktop-sm:py-2"
-        style={
-          {
-            "--l": `${node.pill.left}px`,
-            "--t": `${node.pill.top}px`,
-            "--w": `${node.pill.width}px`,
-            "--l-i": `${node.pillTablet.left}px`,
-            "--t-i": `${node.pillTablet.top}px`,
-            "--w-i": `${node.pillTablet.width}px`,
-            "--l-d": `${node.pillDesktop.left}px`,
-            "--t-d": `${node.pillDesktop.top}px`,
-            "--w-d": `${node.pillDesktop.width}px`,
-            borderColor: node.color,
-            boxShadow: `1.5px 1.5px 0px 0px #0b0b0c, 2.25px 2.25px 0px 0px ${node.color}`,
-          } as React.CSSProperties
-        }
-      >
-        <span
-          className="size-[6.75px] shrink-0 ipad:size-[7.594px] desktop-sm:size-[9px]"
-          style={{ backgroundColor: node.color }}
-        />
-        <span
-          className="font-geist text-[11.25px] leading-normal font-semibold tracking-[-0.225px] whitespace-nowrap ipad:text-[12.657px] ipad:tracking-[-0.2531px] desktop-sm:text-[15px] desktop-sm:tracking-[-0.3px]"
-          style={{ color: node.color }}
+      {/* Background arcs — iPad only */}
+      {ARCS.map((arc) => (
+        <svg
+          key={arc.id}
+          aria-hidden
+          className="pointer-events-none absolute top-[var(--t-i)] left-[var(--l-i)] hidden h-[var(--h-i)] w-[var(--w-i)] ipad:block desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:h-[var(--h-d)] desktop-sm:w-[var(--w-d)]"
+          style={
+            {
+              "--l-i": `${arc.box.left}px`,
+              "--t-i": `${arc.box.top}px`,
+              "--w-i": `${arc.box.width}px`,
+              "--h-i": `${arc.box.height}px`,
+              "--l-d": `${arc.boxDesktop.left}px`,
+              "--t-d": `${arc.boxDesktop.top}px`,
+              "--w-d": `${arc.boxDesktop.width}px`,
+              "--h-d": `${arc.boxDesktop.height}px`,
+            } as React.CSSProperties
+          }
+          viewBox={arc.viewBox}
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          {node.label}
-        </span>
+          <path
+            d={arc.path}
+            stroke="white"
+            strokeOpacity="0.1"
+            strokeWidth="0.843825"
+          />
+        </svg>
+      ))}
+
+      {/* Waypoint dots on the arcs — iPad and desktop only */}
+      {ARC_DOTS.map((dot) => (
+        <span
+          key={dot.id}
+          aria-hidden
+          className="pointer-events-none absolute top-[var(--t-i)] left-[var(--l-i)] hidden size-[8.438px] rounded-full border-[1.688px] border-solid border-[#0b0b0c] bg-[#c8c8cc] ipad:block desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:size-[10px] desktop-sm:border-2"
+          style={
+            {
+              "--l-i": `${dot.tablet.left}px`,
+              "--t-i": `${dot.tablet.top}px`,
+              "--l-d": `${dot.desktop.left}px`,
+              "--t-d": `${dot.desktop.top}px`,
+              backgroundClip: "padding-box",
+            } as React.CSSProperties
+          }
+        />
+      ))}
+
+      {/* Halftone head — particle field sampling the silhouette */}
+      <div
+        className={BOX_CLASS}
+        style={boxVars(padBox(HEAD), padBox(HEAD_TABLET), padBox(HEAD_DESKTOP))}
+      >
+        <ParticleImage
+          width="100%"
+          height="100%"
+          backgroundColor="transparent"
+          particleCount={20}
+          particleSize={20}
+          particleShape="circle"
+          particleColor="single"
+          singleColor="#d9d9d9"
+          hoverEnabled={isDesktop}
+          hoverConfig={{
+            hoverType: "roam",
+            // Default roam area is a rectangle, which reads as a box of dots.
+            roamShape: "oval",
+            roamOpacity: 0.5,
+            transition: { duration: 0.8, ease: "easeInOut" },
+          }}
+          // repulsionEnabled
+          // repulsionConfig={{
+          //   repulsionMode: "random",
+          //   repulsionForce: 8,
+          //   repulsionRadius: 55,
+          // }}
+          imageConfig={{
+            image: "/section-27/Vector.png",
+            mode: "fit",
+            scale: SCATTER_SCALE,
+          }}
+        />
       </div>
-    ))}
-  </div>
-);
+
+      {/* Brain, over the particle head */}
+      <img
+        aria-hidden
+        src="/section-27/brain-only.png"
+        alt=""
+        className={`${BOX_CLASS} pointer-events-none block max-w-none`}
+        style={boxVars(BRAIN, BRAIN_TABLET, BRAIN_DESKTOP)}
+      />
+
+      {/* Connectors — mobile: vertical drop into the dot */}
+      {NODES.map((node) => (
+        <svg
+          key={`m-${node.label}`}
+          aria-hidden
+          className="pointer-events-none absolute overflow-visible ipad:hidden"
+          style={{
+            left: node.connector.left,
+            top: node.connector.top,
+            width: node.connector.width,
+            height: node.connector.height,
+          }}
+          viewBox={`0 0 ${node.connector.width} ${node.connector.height}`}
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d={node.connector.shadow} stroke="#0b0b0c" strokeWidth="1.5" />
+          <path d={node.connector.path} stroke={node.color} strokeWidth="1.5" />
+        </svg>
+      ))}
+
+      {/* Connectors — iPad: horizontal run out of the pill, diagonal into the dot */}
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute inset-0 hidden h-full w-full ipad:block desktop-sm:hidden"
+        viewBox="0 0 744 402"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {NODES.map((node) => (
+          <g key={`t-${node.label}`}>
+            {/* Dark backing stroke, offset like Figma's paired vector */}
+            <path
+              d={node.connectorTablet.path}
+              stroke="#0b0b0c"
+              strokeWidth="1.658"
+              transform="translate(1.4 1.4)"
+            />
+            <path
+              d={node.connectorTablet.path}
+              stroke={node.color}
+              strokeWidth="1.658"
+            />
+          </g>
+        ))}
+      </svg>
+
+      {/* Connectors — desktop */}
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute inset-0 hidden h-full w-full desktop-sm:block"
+        viewBox="0 0 1440 468"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {NODES.map((node) => (
+          <g key={`d-${node.label}`}>
+            {/* Dark backing stroke, offset like Figma's paired vector */}
+            <path
+              d={node.connectorDesktop.path}
+              stroke="#0b0b0c"
+              strokeWidth="2"
+              transform="translate(1.7 1.7)"
+            />
+            <path
+              d={node.connectorDesktop.path}
+              stroke={node.color}
+              strokeWidth="2"
+            />
+          </g>
+        ))}
+      </svg>
+
+      {/* Node dots — translucent disc with a 3px black ring */}
+      {NODES.map((node) => (
+        <span
+          key={`dot-${node.label}`}
+          aria-hidden
+          className="pointer-events-none absolute top-[var(--t)] left-[var(--l)] size-[19.5px] rounded-full border-[3px] border-solid border-black ipad:top-[var(--t-i)] ipad:left-[var(--l-i)] ipad:size-[21.558px] desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:size-[26px]"
+          style={
+            {
+              "--l": `${node.dot.left}px`,
+              "--t": `${node.dot.top}px`,
+              "--l-i": `${node.dotTablet.left}px`,
+              "--t-i": `${node.dotTablet.top}px`,
+              "--l-d": `${node.dotDesktop.left}px`,
+              "--t-d": `${node.dotDesktop.top}px`,
+              backgroundColor: `${node.color}80`,
+              backgroundClip: "padding-box",
+            } as React.CSSProperties
+          }
+        />
+      ))}
+
+      {/* Labels */}
+      {NODES.map((node) => (
+        <div
+          key={`pill-${node.label}`}
+          className="pointer-events-none absolute top-[var(--t)] left-[var(--l)] flex h-[29px] w-[var(--w)] items-center justify-center gap-1.5 rounded-[0.75px] border-[0.75px] border-solid bg-[#0b0b0c] p-1.5 ipad:top-[var(--t-i)] ipad:left-[var(--l-i)] ipad:h-[32.5px] ipad:w-[var(--w-i)] ipad:gap-[6.751px] ipad:rounded-[0.844px] ipad:border-[0.844px] ipad:px-[10.126px] ipad:py-[6.751px] desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:h-[39px] desktop-sm:w-[var(--w-d)] desktop-sm:gap-2 desktop-sm:rounded-[1px] desktop-sm:border desktop-sm:px-3 desktop-sm:py-2"
+          style={
+            {
+              "--l": `${node.pill.left}px`,
+              "--t": `${node.pill.top}px`,
+              "--w": `${node.pill.width}px`,
+              "--l-i": `${node.pillTablet.left}px`,
+              "--t-i": `${node.pillTablet.top}px`,
+              "--w-i": `${node.pillTablet.width}px`,
+              "--l-d": `${node.pillDesktop.left}px`,
+              "--t-d": `${node.pillDesktop.top}px`,
+              "--w-d": `${node.pillDesktop.width}px`,
+              borderColor: node.color,
+              boxShadow: `1.5px 1.5px 0px 0px #0b0b0c, 2.25px 2.25px 0px 0px ${node.color}`,
+            } as React.CSSProperties
+          }
+        >
+          <span
+            className="size-[6.75px] shrink-0 ipad:size-[7.594px] desktop-sm:size-[9px]"
+            style={{ backgroundColor: node.color }}
+          />
+          <span
+            className="font-geist text-[11.25px] leading-normal font-semibold tracking-[-0.225px] whitespace-nowrap ipad:text-[12.657px] ipad:tracking-[-0.2531px] desktop-sm:text-[15px] desktop-sm:tracking-[-0.3px]"
+            style={{ color: node.color }}
+          >
+            {node.label}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};

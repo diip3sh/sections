@@ -344,6 +344,7 @@ export default function Lightning({
       <canvas
         ref={canvasRef}
         style={{ width: "100%", height: "100%", position: "relative" }}
+        className="max-w-[70px] mx-auto px-2"
       />
     </div>
   );

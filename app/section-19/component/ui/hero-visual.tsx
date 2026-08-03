@@ -239,17 +239,17 @@ export const HeroVisual = ({
         />
       </div>
       <div
-        style={{ width: 80, height: 420, top: Math.max(0, circleTop - 320) }}
+        style={{ width: 100, height: 420, top: Math.max(0, circleTop - 320) }}
         className="absolute left-1/2 z-9 -translate-x-1/2 overflow-visible"
       >
         {/* {[Array(10)].map((_, index) => ( */}
         <Lightning
-          xOffset={-4}
-          backgroundColor={"#fff"}
+          // xOffset={-4}
+          backgroundColor={"#tranparent"}
           lightningColor="#C862FF"
           speed={55}
           intensity={50}
-          size={20}
+          size={10}
           angle={0}
         />
         {/* ))} */}

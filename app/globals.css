@@ -162,6 +162,9 @@
   --font-sans: var(--font-inter);
   --font-tight: var(--font-inter-tight);
   --font-lato: var(--font-lato-family);
+  --font-geist-mono: var(--font-geist-mono-family);
+  --font-dm-mono: var(--font-dm-mono-family);
+  --font-monda: var(--font-monda-family);
   --font-clash: var(--font-clash-grotesk-family);
   --font-switzer: var(--font-switzer-family);
   --font-rethink: var(--font-rethink-sans);

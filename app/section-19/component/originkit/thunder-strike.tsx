@@ -163,8 +163,6 @@ interface LightningProps {
   intensity?: number;
   size?: number;
   angle?: number;
-  direction?: number;
-  wander?: number;
 }
 
 export default function Lightning({
@@ -172,11 +170,9 @@ export default function Lightning({
   backgroundColor = "rgb(0, 0, 0)",
   xOffset = 1,
   speed = 55,
-  intensity = 1,
+  intensity = 12,
   size = 50,
   angle = -27,
-  direction = 90,
-  wander = 50,
 }: LightningProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // Live prop bag — updated every render so the WebGL loop never tears down
@@ -189,8 +185,6 @@ export default function Lightning({
     intensity,
     size,
     angle,
-    direction,
-    wander,
   });
   propsRef.current = {
     lightningColor,
@@ -200,8 +194,6 @@ export default function Lightning({
     intensity,
     size,
     angle,
-    direction,
-    wander,
   };
 
   useEffect(() => {
@@ -263,8 +255,6 @@ export default function Lightning({
       uIntensity: gl.getUniformLocation(program, "uIntensity"),
       uSize: gl.getUniformLocation(program, "uSize"),
       uAngle: gl.getUniformLocation(program, "uAngle"),
-      uDirection: gl.getUniformLocation(program, "uDirection"),
-      uWander: gl.getUniformLocation(program, "uWander"),
     };
 
     const vertices = new Float32Array([
@@ -323,9 +313,6 @@ export default function Lightning({
       if (uniforms.uSize) gl.uniform1f(uniforms.uSize, p.size * 0.03);
       if (uniforms.uAngle)
         gl.uniform1f(uniforms.uAngle, (p.angle * Math.PI) / 180);
-      if (uniforms.uDirection)
-        gl.uniform1f(uniforms.uDirection, (p.direction * Math.PI) / 180);
-      if (uniforms.uWander) gl.uniform1f(uniforms.uWander, p.wander / 50);
 
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       if (!isDestroyed) {
@@ -357,6 +344,7 @@ export default function Lightning({
       <canvas
         ref={canvasRef}
         style={{ width: "100%", height: "100%", position: "relative" }}
+        className="max-w-[70px] mx-auto px-2"
       />
     </div>
   );
@@ -380,8 +368,6 @@ uniform float uSpeed;
 uniform float uIntensity;
 uniform float uSize;
 uniform float uAngle;
-uniform float uDirection;    // travel direction of the bolt noise, radians (0 = +X axis)
-uniform float uWander;       // how far the bolt strays from its base line (0 = pinned)
 
 #define OCTAVE_COUNT 10
 
@@ -442,21 +428,15 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
 
     uv.x += uXOffset;
 
-    vec2 flowDir = vec2(cos(uDirection), sin(uDirection));
-    // The horizontal shape is frozen in place — only the vertical zigzag
-    // animates, so the bolt never sways side to side.
-    float fieldX = fbm(uv * uSize);
-    float fieldY = fbm(uv * uSize + flowDir * uWander * 0.8 * iTime * uSpeed);
-    uv += vec2((fieldX * 2.0 - 1.0) * 0.35, fieldY * 2.0 - 1.0);
+    uv += 2.0 * fbm(uv * uSize + 0.8 * iTime * uSpeed) - 1.0;
 
     float dist = abs(uv.x);
     vec3 baseColor = hsv2rgb(vec3(uHue / 360.0, 0.7, 0.8));
     vec3 bgColor = hsv2rgb(vec3(uBackgroundHsv.x, uBackgroundHsv.y, uBackgroundHsv.z));
     vec3 lightningEffect = baseColor * pow(mix(0.0, 0.07, hash11(iTime * uSpeed)) / dist, 1.0) * uIntensity;
-    float coverage = clamp(lightningEffect.r, 0.0, 1.0);
-    vec3 col = mix(bgColor, lightningEffect, coverage);
+    vec3 col = mix(bgColor, lightningEffect, clamp(lightningEffect.r, 0.0, 1.0));
     col = pow(col, vec3(1.0));
-    fragColor = vec4(col, coverage);
+    fragColor = vec4(col, 1.0);
 }
 
 void main() {

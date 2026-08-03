@@ -13,6 +13,12 @@ const GLOBE_DOTS = {
   allDots: false,
 } as const;
 
+/** Vertical falloff plus an x-axis fade at both ends of the flag rows. */
+const FLAG_MASK = [
+  "linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%)",
+  "linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%)",
+].join(", ");
+
 const FLAG_ROWS = [
   [
     { src: "/section-23/flags/brazil.svg", alt: "Brazil" },
@@ -63,6 +69,14 @@ const getGlowStyle = (flagIndex: number) =>
     animationDelay: `${flagIndex * 0.15}s`,
   }) as const;
 
+/**
+ * How many times each half repeats its flag list. A half must be at least as
+ * wide as the viewport, otherwise translateX(-50%) runs past the content and
+ * the row shows a gap before snapping back — which is what the short rows did
+ * on wide screens.
+ */
+const HALF_REPEATS = 3;
+
 /** One half of a seamless track — duplicated so translateX(-50%) loops without a jump. */
 const FlagMarqueeHalf = ({
   flags,
@@ -79,15 +93,17 @@ const FlagMarqueeHalf = ({
     className="flex shrink-0 items-center gap-5 pr-5 ipad:gap-8 ipad:pr-8"
     aria-hidden={duplicate ? true : undefined}
   >
-    {flags.map((flag, flagIndex) => (
-      <div
-        key={`${duplicate ? "dup" : "a"}-${flag.alt}-${rowIndex}-${flagIndex}`}
-        className="shrink-0"
-        style={reducedMotion ? undefined : getGlowStyle(flagIndex)}
-      >
-        <FlagPill flagSrc={flag.src} flagAlt="" />
-      </div>
-    ))}
+    {Array.from({ length: HALF_REPEATS }).flatMap((_, repeat) =>
+      flags.map((flag, flagIndex) => (
+        <div
+          key={`${duplicate ? "dup" : "a"}-${repeat}-${flag.alt}-${rowIndex}-${flagIndex}`}
+          className="shrink-0"
+          style={reducedMotion ? undefined : getGlowStyle(flagIndex)}
+        >
+          <FlagPill flagSrc={flag.src} flagAlt="" />
+        </div>
+      )),
+    )}
   </div>
 );
 
@@ -100,8 +116,7 @@ const FlagMarqueeRow = ({
   rowIndex: number;
   reducedMotion: boolean | null;
 }) => {
-  const rowClass =
-    rowIndex >= 3 ? "block desktop-sm:hidden" : undefined;
+  const rowClass = rowIndex >= 3 ? "block desktop-sm:hidden" : undefined;
   const durationSec = 42 + rowIndex * 8;
   const reverse = rowIndex % 2 === 1;
 
@@ -111,7 +126,10 @@ const FlagMarqueeRow = ({
         className={`flex w-full items-center justify-center gap-5 overflow-hidden ipad:gap-8 ${rowClass ?? ""}`}
       >
         {flags.map((flag, flagIndex) => (
-          <div key={`${flag.alt}-${rowIndex}-${flagIndex}`} className="shrink-0">
+          <div
+            key={`${flag.alt}-${rowIndex}-${flagIndex}`}
+            className="shrink-0"
+          >
             <FlagPill flagSrc={flag.src} flagAlt="" />
           </div>
         ))}
@@ -214,17 +232,19 @@ export const Section23Hero = () => {
             />
 
             {/* Visual stage: flags + globe */}
-            <div className="relative mx-auto flex w-full max-w-[1084px] flex-col items-center pt-10 ipad:pt-12 desktop-sm:min-h-[380px] desktop-sm:pt-12">
+            <div className="relative mx-auto flex w-full flex-col items-center pt-10 ipad:pt-12 desktop-sm:min-h-[380px] desktop-sm:pt-12">
               <div className="relative flex w-full items-center justify-center pb-4 ipad:pb-6 desktop-sm:pb-0">
                 {/* Flag pills — behind globe, seamless horizontal marquee */}
                 <motion.div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-x-0 top-0 z-10 flex flex-col gap-5 px-1 ipad:gap-8 ipad:px-0"
                   style={{
-                    maskImage:
-                      "linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%)",
-                    WebkitMaskImage:
-                      "linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%)",
+                    // Fades down the y-axis and out at both x edges, so the
+                    // rows dissolve into the panel instead of being clipped.
+                    maskImage: FLAG_MASK,
+                    WebkitMaskImage: FLAG_MASK,
+                    maskComposite: "intersect",
+                    WebkitMaskComposite: "source-in",
                   }}
                   initial={prefersReducedMotion ? false : { opacity: 0 }}
                   animate={{ opacity: 1 }}

@@ -1,4 +1,14 @@
+import { LogoMarquee } from "./logo-marquee";
 import { NeuralDiagram } from "./neural-diagram";
+
+/** Desktop nav — Figma 2288:13181; "Solutions" is the active item. */
+const NAV_LINKS = [
+  { label: "Platform", active: false },
+  { label: "Solutions", active: true },
+  { label: "Architecture", active: false },
+  { label: "Resources", active: false },
+  { label: "Contact", active: false },
+];
 
 /**
  * Figma "iPhone 16 & 17 Pro - 32" (2288:9670).
@@ -13,36 +23,74 @@ import { NeuralDiagram } from "./neural-diagram";
  */
 export const Section27Hero = () => (
   <main className="w-full bg-[#0b0b0c]">
-    <div className="relative flex w-full flex-col items-center overflow-hidden bg-[#0b0b0c]">
-      {/* Nav — Figma 2288:9671, auto-layout row */}
-      <nav className="z-20 flex h-14 w-full items-center justify-between bg-white p-4">
-        <a href="/" className="block h-[18.535px] w-[90px]">
-          <img
-            src="/section-27/wordmark.svg"
-            alt="Aurra"
-            className="block size-full max-w-none"
-          />
-        </a>
-        <button type="button" aria-label="Open menu" className="size-6">
-          <img
-            src="/section-27/menu.svg"
-            alt=""
-            className="block size-6 max-w-none"
-          />
-        </button>
+    <div className="relative flex w-full min-w-[402px] flex-col items-center overflow-hidden bg-[#0b0b0c]">
+      {/* Nav — Figma 2288:9671 (mobile) / 2288:13174 (desktop) */}
+      <nav className="z-20 w-full bg-white">
+        <div className="mx-auto flex h-14 w-full items-center justify-between p-4 ipad:px-12 desktop-sm:h-[67px] desktop-sm:max-w-[1223px] desktop-sm:px-[10px] desktop-sm:py-[10px]">
+          <a href="/" className="block h-[18.535px] w-[90px]">
+            <img
+              src="/section-27/wordmark.svg"
+              alt="Aurra"
+              className="block size-full max-w-none"
+            />
+          </a>
+
+          {/* desktop links + actions */}
+          <div className="hidden items-center gap-10 desktop-sm:flex">
+            <ul className="flex items-center gap-7 font-geist text-[15px] leading-[1.5] font-medium tracking-[-0.3px] whitespace-nowrap">
+              {NAV_LINKS.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href="#"
+                    className={`transition-opacity duration-200 ease-out [@media(hover:hover)]:hover:opacity-70 ${
+                      link.active ? "text-[#0b0b0c]" : "text-[#424643]"
+                    }`}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <div className="flex items-start gap-[10px]">
+              <button
+                type="button"
+                className="flex cursor-pointer items-center justify-center rounded-[1px] bg-[#0b0b0c] px-8 py-3 font-geist text-[15px] leading-[1.5] font-semibold tracking-[-0.3px] whitespace-nowrap text-white transition-opacity duration-200 ease-out [@media(hover:hover)]:hover:opacity-85"
+              >
+                Sign in
+              </button>
+              <button
+                type="button"
+                className="flex cursor-pointer items-center justify-center rounded-[1px] border border-solid border-[#0b0b0c] bg-white px-8 py-3 font-geist text-[15px] leading-[1.5] font-medium tracking-[-0.3px] whitespace-nowrap text-[#0b0b0c] transition-colors duration-200 ease-out [@media(hover:hover)]:hover:bg-[#f2f2f2]"
+              >
+                Request Access
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            aria-label="Open menu"
+            className="size-6 desktop-sm:hidden"
+          >
+            <img
+              src="/section-27/menu.svg"
+              alt=""
+              className="block size-6 max-w-none"
+            />
+          </button>
+        </div>
       </nav>
 
-      {/* Edge textures — Figma 2288:9679 (rule on its left edge) and 2288:9680
-          (rule on its right edge). Same noise fill: 600 x 621.6 from the
-          top-left at 7% opacity. */}
-      {[
-        { side: "left-0", rule: "border-l" },
-        { side: "right-0", rule: "border-r" },
-      ].map(({ side, rule }) => (
+      {/* Edge textures — Figma 2288:9679 / 2288:9680. Noise fill drawn at
+          600 x 621.6 from the top-left at 7% opacity, ruled on both edges so
+          each strip reads as a channel. Pinned to the screen edges, with the
+          stage held at 402 minimum so they never ride over the node pills. */}
+      {["left-0", "right-0"].map((side) => (
         <span
           key={side}
           aria-hidden
-          className={`absolute top-14 z-0 block h-[817px] w-4 border-solid border-[#19191a] ${rule} ${side}`}
+          className={`pointer-events-none absolute top-14 z-0 block h-[817px] w-4 border-x border-solid border-[#19191a] ipad:h-[1077px] ipad:w-8 desktop-sm:h-[817px] desktop-sm:w-[38px] ${side}`}
         >
           <span
             className="absolute inset-0 opacity-[0.07]"
@@ -56,31 +104,31 @@ export const Section27Hero = () => (
       ))}
 
       {/* Headline + CTAs — Figma 2288:9681, auto-layout column, gap 24, px 8 */}
-      <section className="z-20 mt-11 flex w-[367px] flex-col items-center gap-6 px-2">
-        <div className="flex w-full flex-col items-center gap-4">
-          <h1 className="relative h-24 w-full text-center font-geist text-[40px] leading-[48px] font-medium tracking-[-0.8px] text-white">
+      <section className="z-20 mt-11 flex w-[367px] flex-col items-center gap-6 px-2 ipad:mt-[74px] ipad:w-[603px] desktop-sm:mt-16 ipad:gap-[50px] ipad:p-[10px]">
+        <div className="flex w-full flex-col items-center gap-4 ipad:gap-0">
+          <h1 className="relative h-24 w-full text-center font-geist text-[40px] leading-[48px] font-medium tracking-[-0.8px] text-white ipad:h-[58px] ipad:text-[48px] ipad:leading-[57.6px] ipad:tracking-[-0.96px] ipad:whitespace-nowrap">
             <img
               src="/section-27/highlight.svg"
               alt=""
               aria-hidden
-              className="absolute top-[48px] right-[58px] block h-[53px] w-[131px] max-w-none"
+              className="absolute top-[48px] right-[58px] block h-[53px] w-[131px] max-w-none ipad:top-0 ipad:right-[-0.5px] ipad:h-[58px] ipad:w-[154px]"
             />
             <span className="relative">Systems That Think </span>
-            <span className="relative font-playfair leading-[48px] text-[#0b0b0c]">
+            <span className="relative font-canela-deck leading-[48px] text-[#0b0b0c]">
               Ahead.
             </span>
           </h1>
 
-          <p className="w-[307px] text-center font-geist text-[16px] leading-[1.5] font-medium tracking-[-0.32px] text-[#aaadac]">
+          <p className="w-[307px] text-center font-geist text-[16px] leading-[1.5] font-medium tracking-[-0.32px] text-[#aaadac] ipad:w-full ipad:text-[17px] ipad:tracking-[-0.34px]">
             AI infrastructure for autonomous decisions and realtime
             intelligence.
           </p>
         </div>
 
-        <div className="flex w-full flex-col items-center gap-5">
+        <div className="flex w-full flex-col items-center gap-5 ipad:w-auto ipad:flex-row ipad:items-start">
           <button
             type="button"
-            className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-[1px] bg-white py-2 pr-2 pl-5 shadow-[2px_2px_0px_0px_#0b0b0c,3px_3px_0px_0px_white] max-w-[323px]"
+            className="flex w-full max-w-[323px] cursor-pointer items-center justify-center gap-1 rounded-[1px] bg-white py-2 pr-2 pl-5 shadow-[2px_2px_0px_0px_#0b0b0c,3px_3px_0px_0px_white] ipad:w-auto"
           >
             <span className="font-geist text-[15px] leading-[1.5] font-semibold tracking-[-0.3px] whitespace-nowrap text-[#0b0b0c]">
               Explore System
@@ -96,7 +144,7 @@ export const Section27Hero = () => (
 
           <button
             type="button"
-            className="flex w-full cursor-pointer items-center justify-center rounded-[1px] bg-white/5 px-5 py-2 shadow-[2px_2px_0px_0px_#0b0b0c,3px_3px_0px_0px_#171718] max-w-[323px]"
+            className="flex w-full max-w-[323px] cursor-pointer items-center justify-center rounded-[1px] bg-white/5 px-5 py-2 shadow-[2px_2px_0px_0px_#0b0b0c,3px_3px_0px_0px_#171718] ipad:w-auto"
           >
             <span className="font-geist text-[15px] leading-[1.5] font-semibold tracking-[-0.3px] whitespace-nowrap text-white">
               Live Preview
@@ -111,15 +159,11 @@ export const Section27Hero = () => (
       </div>
 
       {/* Trusted strip — Figma 2288:13045, auto-layout column, gap 28 */}
-      <section className="z-20 flex w-full flex-col items-center gap-7 overflow-hidden bg-white px-4 py-8">
-        <p className="w-[232px] text-center font-geist text-[15px] leading-[1.4] font-medium text-[#646568]">
+      <section className="z-20 flex w-full flex-col items-center gap-7 overflow-hidden bg-white px-4 py-8 ipad:px-0 ipad:py-10">
+        <p className="w-[232px] text-center font-geist text-[15px] leading-[1.4] font-medium text-[#646568] ipad:w-full">
           TRUSTED BY 180+ PRODUCT COMPANY WORLD WIDE
         </p>
-        <img
-          src="/section-27/logos.png"
-          alt=""
-          className="block h-[52.5px] w-[754px] max-w-none shrink-0"
-        />
+        <LogoMarquee />
       </section>
     </div>
   </main>

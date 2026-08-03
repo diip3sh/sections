@@ -1,38 +1,73 @@
 import ParticleImage from "../originkit/svg-particle";
 
 /**
- * Head, brain and labelled nodes — Figma 2288:9696 plus the sibling pills, dots
- * and connectors.
+ * Head, brain and labelled nodes — Figma 2288:9696 (mobile) and 2288:6221 /
+ * 2288:6203 (iPad).
  *
  * The halftone head is rendered live by the particle field (sampling
- * Vector.png, the head silhouette) instead of the flat export; the brain sits
- * on top of it as its own image, and the connectors run from each pill down to
- * its node dot.
+ * Vector.png, the head silhouette); the brain sits on top of it, and each pill
+ * connects to its node dot.
  *
- * These are the only nodes Figma positions absolutely (no auto-layout), so they
- * keep absolute coordinates. They are re-based to this 402x423 block: the frame
- * places it at y382, so every Figma y here is the original minus 382.
+ * These are the only nodes Figma positions absolutely, so they keep absolute
+ * coordinates, re-based to this block: the mobile frame places it at y382, the
+ * iPad frame at y323, so each Figma y is the original minus that.
+ *
+ * The layout changes shape between breakpoints — mobile stacks the pills above
+ * the head, iPad pushes them out to the sides — so both geometries are held as
+ * data and swapped with CSS variables.
  */
 
-const BLOCK_WIDTH = 402;
-const BLOCK_HEIGHT = 423;
+type Box = { left: number; top: number; width: number; height: number };
 
-/** Head group — Figma 2288:9696 at (83, 507), 236.264 x 298.5. */
-const HEAD = { left: 83, top: 125, width: 236.264, height: 298.5 };
-/** Brain — Figma "image 18649", 183.75 x 156.75, offset inside the head group. */
-const BRAIN = {
+/** Head group — mobile 2288:9696 at (83, 507); iPad 2288:6221 at (241, 395). */
+const HEAD: Box = { left: 83, top: 125, width: 236.264, height: 298.5 };
+const HEAD_TABLET: Box = { left: 241, top: 72, width: 261.194, height: 330 };
+/** Desktop — Figma 2288:13213 at (562.99, 394); that block starts at y324. */
+const HEAD_DESKTOP: Box = {
+  left: 562.99,
+  top: 70,
+  width: 315.018,
+  height: 398,
+};
+
+/** Brain — Figma "image 18649", offset inside the head group. */
+const BRAIN: Box = {
   left: HEAD.left + 13.3,
   top: HEAD.top + 16,
   width: 183.75,
   height: 156.75,
+};
+const BRAIN_TABLET: Box = {
+  left: HEAD_TABLET.left + 14.7,
+  top: HEAD_TABLET.top + 17.7,
+  width: 203.14,
+  height: 173.291,
+};
+const BRAIN_DESKTOP: Box = {
+  left: HEAD_DESKTOP.left + 17.7,
+  top: HEAD_DESKTOP.top + 21.3,
+  width: 245,
+  height: 209,
 };
 
 type Node = {
   label: string;
   color: string;
   pill: { left: number; top: number; width: number };
+  pillTablet: { left: number; top: number; width: number };
+  pillDesktop: { left: number; top: number; width: number };
+  /** Dot is 19.5px on mobile, 21.558px on iPad. */
   dot: { left: number; top: number };
-  line: { x1: number; y1: number; x2: number; y2: number };
+  dotTablet: { left: number; top: number };
+  dotDesktop: { left: number; top: number };
+  /** Mobile connector: its own box plus the coloured and backing paths. */
+  connector: Box & { path: string; shadow: string };
+  /**
+   * iPad connector, drawn in block space: a horizontal run out of the pill and
+   * a short diagonal into the dot, matching Figma 2288:9553-9558.
+   */
+  connectorTablet: { path: string };
+  connectorDesktop: { path: string };
 };
 
 const NODES: Node[] = [
@@ -40,37 +75,182 @@ const NODES: Node[] = [
     label: "Decision Engine",
     color: "#aafc81",
     pill: { left: 147, top: 40, width: 107.75 },
+    pillTablet: { left: 72, top: 73.5, width: 128.597 },
+    pillDesktop: { left: 374, top: 69, width: 152 },
     dot: { left: 195, top: 163 },
-    line: { x1: 205, y1: 71, x2: 204.75, y2: 172.75 },
+    dotTablet: { left: 358.22, top: 112.24 },
+    dotDesktop: { left: 713, top: 111 },
+    connector: {
+      left: 204.34,
+      top: 71,
+      width: 16.4056,
+      height: 102.364,
+      path: "M15.6556 0V75L0.655616 102",
+      shadow: "M14.6556 0V74.5L1.15562 101",
+    },
+    connectorTablet: { path: "M200.6 89.75H342.5L369 123" },
+    connectorDesktop: { path: "M526 88.5H699L726 124" },
   },
   {
     label: "Neural Processing",
     color: "#746ffc",
     pill: { left: 25, top: 85, width: 119.75 },
+    pillTablet: { left: 58, top: 145, width: 141.597 },
+    pillDesktop: { left: 328, top: 165, width: 168 },
     dot: { left: 161.5, top: 220.75 },
-    line: { x1: 99, y1: 116, x2: 171.25, y2: 230.5 },
+    dotTablet: { left: 293, top: 181 },
+    dotDesktop: { left: 609, top: 208 },
+    connector: {
+      left: 98.4,
+      top: 115.53,
+      width: 73.5876,
+      height: 116.483,
+      path: "M72.8376 114.969V89.4687L1.58757 0.468722",
+      shadow: "M72.0876 116.469V89.9687L0.58757 0.468722",
+    },
+    connectorTablet: { path: "M199.6 161.25H277.3L303.8 191.8" },
+    connectorDesktop: { path: "M496 184.5H595L622 221" },
   },
   {
     label: "Agent Coordination",
     color: "#b801c1",
     pill: { left: 249, top: 92, width: 125.75 },
+    pillTablet: { left: 534, top: 156, width: 148.597 },
+    pillDesktop: { left: 983, top: 130, width: 175 },
     dot: { left: 220, top: 204.75 },
-    line: { x1: 308, y1: 123, x2: 229.75, y2: 214.5 },
+    dotTablet: { left: 357, top: 188.41 },
+    dotDesktop: { left: 767, top: 174 },
+    connector: {
+      left: 230.5,
+      top: 122.42,
+      width: 77.9827,
+      height: 93.5766,
+      path: "M0.75 92.0766V63.5766L76.5 0.576634",
+      shadow: "M2 93.5766V64.0766L77.5 0.576634",
+    },
+    connectorTablet: { path: "M534 172.25H394.3L367.8 199.2" },
+    connectorDesktop: { path: "M983 149.5H807L780 187" },
   },
 ];
 
+/** Background arcs — Figma 2288:6204 / 6205, iPad only. */
+const ARCS = [
+  {
+    id: "arc-wide",
+    box: { left: -157, top: 66, width: 1059.65, height: 357.622 },
+    boxDesktop: { left: 86, top: 73, width: 1255, height: 423 },
+    viewBox: "0 0 1059.65 357.622",
+    path: "M0.324945 357.36C0.324945 357.36 289.716 -0.340318 531.513 0.423133C772.18 1.18302 1059.32 357.36 1059.32 357.36",
+  },
+  {
+    id: "arc-inner",
+    box: { left: 75.89, top: 66, width: 593.968, height: 342.348 },
+    boxDesktop: { left: 362, top: 66, width: 703, height: 405 },
+    viewBox: "0 0 593.968 342.348",
+    path: "M0.379579 342.171C0.379579 342.171 162.484 -0.307883 297.929 0.423081C432.741 1.15063 593.588 342.171 593.588 342.171",
+  },
+];
+
+/**
+ * Waypoint dots sitting on the arcs — Figma 2288:6212-6215 (iPad) and
+ * 2288:13169-13172 (desktop): r4 #C8C8CC with a 2px #0B0B0C ring.
+ */
+const ARC_DOTS = [
+  {
+    id: "arc-dot-1",
+    tablet: { left: 643.79, top: 362.18 },
+    desktop: { left: 1035, top: 417 },
+  },
+  {
+    id: "arc-dot-2",
+    tablet: { left: 626.91, top: 169.79 },
+    desktop: { left: 1015, top: 189 },
+  },
+  {
+    id: "arc-dot-3",
+    tablet: { left: 176.31, top: 222.95 },
+    desktop: { left: 481, top: 252 },
+  },
+  {
+    id: "arc-dot-4",
+    tablet: { left: -36.33, top: 292.14 },
+    desktop: { left: 229, top: 334 },
+  },
+];
+
+/** Both geometries as CSS variables; the ipad: variants pick the second set. */
+const boxVars = (mobile: Box, tablet: Box, desktop: Box) =>
+  ({
+    "--l": `${mobile.left}px`,
+    "--t": `${mobile.top}px`,
+    "--w": `${mobile.width}px`,
+    "--h": `${mobile.height}px`,
+    "--l-i": `${tablet.left}px`,
+    "--t-i": `${tablet.top}px`,
+    "--w-i": `${tablet.width}px`,
+    "--h-i": `${tablet.height}px`,
+    "--l-d": `${desktop.left}px`,
+    "--t-d": `${desktop.top}px`,
+    "--w-d": `${desktop.width}px`,
+    "--h-d": `${desktop.height}px`,
+  }) as React.CSSProperties;
+
+const BOX_CLASS =
+  "absolute top-[var(--t)] left-[var(--l)] h-[var(--h)] w-[var(--w)] ipad:top-[var(--t-i)] ipad:left-[var(--l-i)] ipad:h-[var(--h-i)] ipad:w-[var(--w-i)] desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:h-[var(--h-d)] desktop-sm:w-[var(--w-d)]";
+
 export const NeuralDiagram = () => (
-  <div className="relative h-[423px] w-[402px] max-w-none shrink-0">
+  <div className="relative h-[423px] w-[402px] max-w-none shrink-0 ipad:h-[402px] ipad:w-[744px] desktop-sm:h-[468px] desktop-sm:w-[1440px]">
+    {/* Background arcs — iPad only */}
+    {ARCS.map((arc) => (
+      <svg
+        key={arc.id}
+        aria-hidden
+        className="pointer-events-none absolute top-[var(--t-i)] left-[var(--l-i)] hidden h-[var(--h-i)] w-[var(--w-i)] ipad:block desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:h-[var(--h-d)] desktop-sm:w-[var(--w-d)]"
+        style={
+          {
+            "--l-i": `${arc.box.left}px`,
+            "--t-i": `${arc.box.top}px`,
+            "--w-i": `${arc.box.width}px`,
+            "--h-i": `${arc.box.height}px`,
+            "--l-d": `${arc.boxDesktop.left}px`,
+            "--t-d": `${arc.boxDesktop.top}px`,
+            "--w-d": `${arc.boxDesktop.width}px`,
+            "--h-d": `${arc.boxDesktop.height}px`,
+          } as React.CSSProperties
+        }
+        viewBox={arc.viewBox}
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d={arc.path}
+          stroke="white"
+          strokeOpacity="0.1"
+          strokeWidth="0.843825"
+        />
+      </svg>
+    ))}
+
+    {/* Waypoint dots on the arcs — iPad and desktop only */}
+    {ARC_DOTS.map((dot) => (
+      <span
+        key={dot.id}
+        aria-hidden
+        className="pointer-events-none absolute top-[var(--t-i)] left-[var(--l-i)] hidden size-[8.438px] rounded-full border-[1.688px] border-solid border-[#0b0b0c] bg-[#c8c8cc] ipad:block desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:size-[10px] desktop-sm:border-2"
+        style={
+          {
+            "--l-i": `${dot.tablet.left}px`,
+            "--t-i": `${dot.tablet.top}px`,
+            "--l-d": `${dot.desktop.left}px`,
+            "--t-d": `${dot.desktop.top}px`,
+            backgroundClip: "padding-box",
+          } as React.CSSProperties
+        }
+      />
+    ))}
+
     {/* Halftone head — particle field sampling the silhouette */}
-    <div
-      className="absolute"
-      style={{
-        left: HEAD.left,
-        top: HEAD.top,
-        width: HEAD.width,
-        height: HEAD.height,
-      }}
-    >
+    <div className={BOX_CLASS} style={boxVars(HEAD, HEAD_TABLET, HEAD_DESKTOP)}>
       <ParticleImage
         width="100%"
         height="100%"
@@ -100,71 +280,115 @@ export const NeuralDiagram = () => (
       aria-hidden
       src="/section-27/brain-only.png"
       alt=""
-      className="pointer-events-none absolute block max-w-none"
-      style={{
-        left: BRAIN.left,
-        top: BRAIN.top,
-        width: BRAIN.width,
-        height: BRAIN.height,
-      }}
+      className={`${BOX_CLASS} pointer-events-none block max-w-none`}
+      style={boxVars(BRAIN, BRAIN_TABLET, BRAIN_DESKTOP)}
     />
 
-    {/* Connectors */}
+    {/* Connectors — mobile: vertical drop into the dot */}
+    {NODES.map((node) => (
+      <svg
+        key={`m-${node.label}`}
+        aria-hidden
+        className="pointer-events-none absolute overflow-visible ipad:hidden"
+        style={{
+          left: node.connector.left,
+          top: node.connector.top,
+          width: node.connector.width,
+          height: node.connector.height,
+        }}
+        viewBox={`0 0 ${node.connector.width} ${node.connector.height}`}
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d={node.connector.shadow} stroke="#0b0b0c" strokeWidth="1.5" />
+        <path d={node.connector.path} stroke={node.color} strokeWidth="1.5" />
+      </svg>
+    ))}
+
+    {/* Connectors — iPad: horizontal run out of the pill, diagonal into the dot */}
     <svg
       aria-hidden
-      className="pointer-events-none absolute inset-0 h-full w-full"
-      viewBox={`0 0 ${BLOCK_WIDTH} ${BLOCK_HEIGHT}`}
+      className="pointer-events-none absolute inset-0 hidden h-full w-full ipad:block desktop-sm:hidden"
+      viewBox="0 0 744 402"
       fill="none"
-      preserveAspectRatio="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       {NODES.map((node) => (
-        <line
-          key={node.label}
-          x1={node.line.x1}
-          y1={node.line.y1}
-          x2={node.line.x2}
-          y2={node.line.y2}
+        <path
+          key={`t-${node.label}`}
+          d={node.connectorTablet.path}
           stroke={node.color}
-          strokeWidth="1"
+          strokeWidth="1.658"
         />
       ))}
     </svg>
 
-    {/* Node dots */}
+    {/* Connectors — desktop */}
+    <svg
+      aria-hidden
+      className="pointer-events-none absolute inset-0 hidden h-full w-full desktop-sm:block"
+      viewBox="0 0 1440 468"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {NODES.map((node) => (
+        <path
+          key={`d-${node.label}`}
+          d={node.connectorDesktop.path}
+          stroke={node.color}
+          strokeWidth="2"
+        />
+      ))}
+    </svg>
+
+    {/* Node dots — translucent disc with a 3px black ring */}
     {NODES.map((node) => (
       <span
-        key={node.label}
+        key={`dot-${node.label}`}
         aria-hidden
-        className="pointer-events-none absolute size-[19.5px] rounded-full"
-        style={{
-          left: node.dot.left,
-          top: node.dot.top,
-          backgroundColor: node.color,
-          boxShadow: `0 0 0 1.5px ${node.color}40`,
-        }}
+        className="pointer-events-none absolute top-[var(--t)] left-[var(--l)] size-[19.5px] rounded-full border-[3px] border-solid border-black ipad:top-[var(--t-i)] ipad:left-[var(--l-i)] ipad:size-[21.558px] desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:size-[26px]"
+        style={
+          {
+            "--l": `${node.dot.left}px`,
+            "--t": `${node.dot.top}px`,
+            "--l-i": `${node.dotTablet.left}px`,
+            "--t-i": `${node.dotTablet.top}px`,
+            "--l-d": `${node.dotDesktop.left}px`,
+            "--t-d": `${node.dotDesktop.top}px`,
+            backgroundColor: `${node.color}80`,
+            backgroundClip: "padding-box",
+          } as React.CSSProperties
+        }
       />
     ))}
 
     {/* Labels */}
     {NODES.map((node) => (
       <div
-        key={node.label}
-        className="pointer-events-none absolute flex h-[29px] items-center justify-center gap-1.5 rounded-[0.75px] border-[0.75px] border-solid bg-[#0b0b0c] p-1.5"
-        style={{
-          left: node.pill.left,
-          top: node.pill.top,
-          width: node.pill.width,
-          borderColor: node.color,
-          boxShadow: `1.5px 1.5px 0px 0px #0b0b0c, 2.25px 2.25px 0px 0px ${node.color}`,
-        }}
+        key={`pill-${node.label}`}
+        className="pointer-events-none absolute top-[var(--t)] left-[var(--l)] flex h-[29px] w-[var(--w)] items-center justify-center gap-1.5 rounded-[0.75px] border-[0.75px] border-solid bg-[#0b0b0c] p-1.5 ipad:top-[var(--t-i)] ipad:left-[var(--l-i)] ipad:h-[32.5px] ipad:w-[var(--w-i)] ipad:gap-[6.751px] ipad:rounded-[0.844px] ipad:border-[0.844px] ipad:px-[10.126px] ipad:py-[6.751px] desktop-sm:top-[var(--t-d)] desktop-sm:left-[var(--l-d)] desktop-sm:h-[39px] desktop-sm:w-[var(--w-d)] desktop-sm:gap-2 desktop-sm:rounded-[1px] desktop-sm:border desktop-sm:px-3 desktop-sm:py-2"
+        style={
+          {
+            "--l": `${node.pill.left}px`,
+            "--t": `${node.pill.top}px`,
+            "--w": `${node.pill.width}px`,
+            "--l-i": `${node.pillTablet.left}px`,
+            "--t-i": `${node.pillTablet.top}px`,
+            "--w-i": `${node.pillTablet.width}px`,
+            "--l-d": `${node.pillDesktop.left}px`,
+            "--t-d": `${node.pillDesktop.top}px`,
+            "--w-d": `${node.pillDesktop.width}px`,
+            borderColor: node.color,
+            boxShadow: `1.5px 1.5px 0px 0px #0b0b0c, 2.25px 2.25px 0px 0px ${node.color}`,
+          } as React.CSSProperties
+        }
       >
         <span
-          className="size-[6.75px] shrink-0"
+          className="size-[6.75px] shrink-0 ipad:size-[7.594px] desktop-sm:size-[9px]"
           style={{ backgroundColor: node.color }}
         />
         <span
-          className="font-geist text-[11.25px] leading-normal font-semibold tracking-[-0.225px] whitespace-nowrap"
+          className="font-geist text-[11.25px] leading-normal font-semibold tracking-[-0.225px] whitespace-nowrap ipad:text-[12.657px] ipad:tracking-[-0.2531px] desktop-sm:text-[15px] desktop-sm:tracking-[-0.3px]"
           style={{ color: node.color }}
         >
           {node.label}

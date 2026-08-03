@@ -310,45 +310,45 @@ const ElitePlan = ({
     >
       <div className="absolute inset-0 bg-linear-to-b from-[#292f33] to-[#1b1f22]" />
       <div
-        className="absolute inset-0 opacity-40 mix-blend-screen"
+        className="absolute inset-0 opacity-[0.08] mix-blend-screen"
         style={{
           backgroundImage: "url(/section-8/elite-bg.png)",
           backgroundSize: "14px 14px",
           backgroundPosition: "top left",
         }}
       />
-      {/* Soft blue ambient fill in the corner */}
+      {/* Soft corner fill — matches quiet reference flare */}
       <div
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 85% 80% at 100% 100%, rgba(105,161,241,0.35) 0%, rgba(48,111,232,0.14) 40%, transparent 70%)",
+            "radial-gradient(ellipse 50% 52% at 100% 100%, rgba(105,161,241,0.14) 0%, rgba(48,111,232,0.05) 36%, transparent 58%)",
         }}
       />
-      {/* Bright cool-white diagonal ridge → bottom-right */}
+      {/* Soft cool-white diagonal beam */}
       <div
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "linear-gradient(135deg, transparent 38%, rgba(105,161,241,0.2) 55%, rgba(224,230,239,0.45) 72%, rgba(240,244,250,0.72) 100%)",
+            "linear-gradient(135deg, transparent 60%, rgba(105,161,241,0.08) 72%, rgba(224,230,239,0.14) 86%, rgba(240,244,250,0.22) 100%)",
         }}
       />
-      <div className="absolute right-0 bottom-0 h-[min(100%,28rem)] w-[min(100%,36rem)]">
+      <div className="absolute -right-6 -bottom-4 h-88 w-105 overflow-hidden opacity-28">
         <Image
           src="/section-8/elite-glow-1.svg"
           alt=""
           width={504}
           height={451}
-          className="absolute right-[-6%] bottom-[-4%] h-auto w-[105%] max-w-none opacity-95"
+          className="absolute top-0 right-0 h-auto w-[30rem] max-w-none"
         />
       </div>
-      <div className="absolute right-0 bottom-0 h-[min(100%,36rem)] w-[min(100%,44rem)]">
+      <div className="absolute -right-20 -bottom-32 h-110 w-150 overflow-hidden opacity-[0.14]">
         <Image
           src="/section-8/elite-glow-2.svg"
           alt=""
           width={898}
           height={693}
-          className="absolute right-[-16%] bottom-[-20%] h-auto w-[125%] max-w-none opacity-60"
+          className="absolute right-0 bottom-0 h-auto w-[38rem] max-w-none"
         />
       </div>
     </div>

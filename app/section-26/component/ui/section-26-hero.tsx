@@ -102,8 +102,12 @@ export const Section26Hero = () => (
         </button>
       </nav>
 
-      {/* Headline + logo strip */}
-      <div className="absolute top-[155px] left-[calc(50%+0.5px)] z-20 flex -translate-x-1/2 flex-col items-center gap-8 ipad:top-[245px] desktop-sm:top-[339px] desktop-sm:left-25 desktop-sm:translate-x-0 desktop-sm:items-start desktop-sm:gap-[52px]">
+      {/* Headline + logo strip.
+          Desktop anchors the block to the bottom of the stage rather than the
+          top: the stage is h-dvh (1080 on ultrawide), so a fixed top left the
+          copy floating higher as the viewport grew. 134px reproduces the
+          Figma standoff at the 900px reference height. */}
+      <div className="absolute top-[155px] left-[calc(50%+0.5px)] z-20 flex -translate-x-1/2 flex-col items-center gap-8 ipad:top-[245px] desktop-sm:top-auto desktop-sm:bottom-33.5 desktop-sm:left-25 desktop-sm:translate-x-0 desktop-sm:items-start desktop-sm:gap-[52px]">
         <div className="flex flex-col items-center gap-3 text-center text-white desktop-sm:w-[491px] desktop-sm:items-start desktop-sm:text-left">
           <h1 className="font-instrument-serif text-[56px] leading-[1.1] tracking-[-1.68px] whitespace-nowrap ipad:text-[66px] ipad:tracking-[-1.98px] desktop-sm:text-[88px] desktop-sm:leading-[104px] desktop-sm:tracking-[-1.76px]">
             Your Everyday

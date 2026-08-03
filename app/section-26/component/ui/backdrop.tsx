@@ -37,7 +37,12 @@ export const Backdrop = () => (
       alt=""
       className="pointer-events-none absolute top-0 left-0 z-0 hidden h-[710px] w-full max-w-none mix-blend-screen ipad:block desktop-sm:hidden"
     />
-    {/* Desktop: ceiling lamp, then arcs, then grain — three stacked exports */}
+    {/* Desktop: ceiling lamp, then arcs, then grain — three stacked exports.
+        These size against <main> (min-h-dvh), but the composition stage is
+        capped at 1080 on ultrawide — so on a taller viewport the backgrounds
+        kept running past the hero, and object-cover scaled the 2200x1283 arc up
+        to fill, dragging its glow hundreds of px below the hand. Capping their
+        height to the stage keeps light and composition on the same footing. */}
     <img
       aria-hidden
       src="/section-26/bg-shapes-desktop.png"
@@ -54,7 +59,7 @@ export const Backdrop = () => (
       aria-hidden
       src="/section-26/arcs-desktop.png"
       alt=""
-      className="pointer-events-none absolute inset-0 z-0 hidden size-full max-w-none object-cover object-top mix-blend-screen desktop-sm:block"
+      className="pointer-events-none absolute inset-0 z-0 hidden size-full max-w-none object-cover object-top mix-blend-screen desktop-sm:block ultrawide:h-270"
     />
     {/* Grain + soft ellipse wash — Figma "texture" (2280:5870), over the arcs.
         Mobile and iPad carry this baked into their own exports. */}
@@ -62,7 +67,7 @@ export const Backdrop = () => (
       aria-hidden
       src="/section-26/texture-desktop.png"
       alt=""
-      className="pointer-events-none absolute inset-0 z-0 hidden size-full max-w-none object-cover object-top mix-blend-screen desktop-sm:block"
+      className="pointer-events-none absolute inset-0 z-0 hidden size-full max-w-none object-cover object-top mix-blend-screen desktop-sm:block ultrawide:h-270"
     />
   </>
 );

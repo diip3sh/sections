@@ -154,6 +154,12 @@ export const HelveticaNeueNormal = localFont({
   display: "swap",
 });
 
+export const canelaDeck = localFont({
+  src: "./canela-deck-bold.ttf",
+  variable: "--font-canela-deck-family",
+  display: "swap",
+});
+
 export const Aeonik = localFont({
   src: "./aeonik.ttf",
   variable: "--font-aeonik-family",

@@ -3,6 +3,7 @@ import {
   Aeonik,
   audiowide,
   baskervville,
+  canelaDeck,
   clash,
   geist,
   HelveticaNeueNormal,
@@ -42,6 +43,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${interTight.variable} ${lato.variable} ${geistMono.variable} ${dmMono.variable} ${monda.variable} ${switzer.variable} ${rethinkSans.variable} ${geist.variable} ${tillana.variable} ${instrumentSans.variable} ${instrumentSerif.variable} ${manrope.variable} ${baskervville.variable} ${playfairDisplay.variable} ${urbanist.variable} ${spaceGrotesk.variable} ${clash.variable} ${audiowide.variable} ${outfit.variable} ${redHatDisplay.variable} ${HelveticaNeueNormal.variable} ${Aeonik.variable} ${CanelaDeck.variable} h-full antialiased`}
+      className={`${inter.variable} ${interTight.variable} ${switzer.variable} ${rethinkSans.variable} ${geist.variable} ${tillana.variable} ${instrumentSans.variable} ${instrumentSerif.variable} ${manrope.variable} ${baskervville.variable} ${playfairDisplay.variable} ${urbanist.variable} ${spaceGrotesk.variable} ${clash.variable} ${audiowide.variable} ${outfit.variable} ${redHatDisplay.variable} ${HelveticaNeueNormal.variable} ${Aeonik.variable} ${canelaDeck.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>

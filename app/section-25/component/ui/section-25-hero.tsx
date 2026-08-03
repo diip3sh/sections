@@ -56,7 +56,7 @@ export const Section25Hero = () => (
   <main className="relative min-h-dvh w-full overflow-hidden bg-[#262626]">
     <div className="relative mx-auto flex min-h-dvh w-full max-w-[1920px] flex-col px-5 pt-5 ipad:px-8 desktop-sm:px-[50px] desktop-sm:pt-[13px]">
       {/* Nav + noise strip */}
-      <div className="relative desktop-sm:border-y desktop-sm:border-[rgba(241,230,219,0.12)]">
+      <div className="relative desktop-sm:border-b desktop-sm:border-[rgba(241,230,219,0.12)]">
         <div className="relative flex h-[64.495px] items-center justify-between px-3 py-5 ipad:h-20 ipad:px-4 ipad:py-6 desktop-sm:h-[76px] desktop-sm:px-[30px] desktop-sm:py-0">
           {CORNERS.map((position) => (
             <Image
@@ -116,7 +116,7 @@ export const Section25Hero = () => (
             </a>
             <button
               type="button"
-              className="h-[45px] w-[113.63px] cursor-pointer rounded-[4px] bg-[#ff7038] text-center font-geist text-[15px] leading-[21px] font-medium text-[#121212] transition-[transform,background-color,box-shadow] duration-300 ease-out [@media(hover:hover)]:hover:-translate-y-[2px] [@media(hover:hover)]:hover:bg-[#ff8355] [@media(hover:hover)]:hover:shadow-[0_8px_20px_rgba(255,112,56,0.28)]"
+              className="h-[45px] w-[113.63px] cursor-pointer rounded-[4px] bg-[#ff7038] text-center font-geist text-[15px] leading-[21px] font-medium text-[#121212] transition-[transform,background-color] duration-300 ease-out [@media(hover:hover)]:hover:-translate-y-[2px] [@media(hover:hover)]:hover:bg-[#d95a2b]"
             >
               Get Started
             </button>
@@ -189,7 +189,7 @@ export const Section25Hero = () => (
               <Reveal className="mt-5 flex items-center gap-[18px] ipad:mt-[38px]">
                 <button
                   type="button"
-                  className="flex w-[137px] cursor-pointer items-center justify-center rounded-[4px] bg-[#ff7038] px-6 py-4 font-geist text-[18px] leading-normal font-medium tracking-[-0.36px] whitespace-nowrap text-[#121212] transition-[transform,background-color,box-shadow] duration-300 ease-out [@media(hover:hover)]:hover:-translate-y-[2px] [@media(hover:hover)]:hover:bg-[#ff8355] [@media(hover:hover)]:hover:shadow-[0_10px_24px_rgba(255,112,56,0.28)]"
+                  className="flex w-[137px] cursor-pointer items-center justify-center rounded-[4px] bg-[#ff7038] px-6 py-4 font-geist text-[18px] leading-normal font-medium tracking-[-0.36px] whitespace-nowrap text-[#121212] transition-[transform,background-color] duration-300 ease-out [@media(hover:hover)]:hover:-translate-y-[2px] [@media(hover:hover)]:hover:bg-[#d95a2b]"
                 >
                   Start Building
                 </button>
@@ -218,7 +218,7 @@ export const Section25Hero = () => (
           </section>
 
           {/* Trusted by teams */}
-          <section className="relative mt-6 border-y border-[rgba(241,230,219,0.12)] p-5 ipad:mt-[50px] ipad:px-[30px] ipad:py-[50px] desktop-sm:mt-[51.5px]">
+          <section className="relative mt-6 border-t desktop-sm:border-y border-[rgba(241,230,219,0.12)] p-5 ipad:mt-[50px] ipad:px-[30px] ipad:py-[50px] desktop-sm:mt-[51.5px]">
             <Reveal>
               <p className="font-dm-mono text-[14px] leading-[1.5] font-medium tracking-[0.14px] text-[#cfc7b5] uppercase">
                 Trusted By Teams
@@ -258,7 +258,7 @@ export const Section25Hero = () => (
         <div className="relative desktop-sm:min-h-full">
           <div
             aria-hidden
-            className="absolute inset-0 border-y border-[rgba(241,230,219,0.12)]"
+            className="absolute inset-0 border border-[rgba(241,230,219,0.12)]"
           >
             <ASCIIWaves
               characters=" .:-+*=%@#"

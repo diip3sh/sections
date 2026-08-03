@@ -302,7 +302,7 @@ const ElitePlan = ({
 }) => (
   <section
     aria-labelledby="elite-heading"
-    className="relative z-1 flex w-full flex-col overflow-clip rounded-tl-xl rounded-tr-xl rounded-br-[30px] rounded-bl-[30px] ipad-landscape:flex-row ipad-landscape:items-stretch"
+    className="relative z-1 flex w-full flex-col overflow-clip rounded-tl-xl rounded-tr-xl rounded-br-[30px] rounded-bl-[30px] border border-solid border-transparent ipad-landscape:flex-row ipad-landscape:items-stretch"
   >
     <div
       aria-hidden="true"
@@ -310,42 +310,50 @@ const ElitePlan = ({
     >
       <div className="absolute inset-0 bg-linear-to-b from-[#292f33] to-[#1b1f22]" />
       <div
-        className="absolute inset-0 opacity-40 mix-blend-screen"
+        className="absolute inset-0 opacity-[0.08] mix-blend-screen"
         style={{
           backgroundImage: "url(/section-8/elite-bg.png)",
           backgroundSize: "14px 14px",
           backgroundPosition: "top left",
         }}
       />
-      {/* Soft bottom-right light — blends under feature lists */}
+      {/* Soft corner fill — matches quiet reference flare */}
       <div
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 95% 85% at 100% 100%, rgba(255,255,255,0.42) 0%, rgba(105,161,241,0.28) 22%, rgba(48,111,232,0.12) 42%, transparent 68%)",
+            "radial-gradient(ellipse 38% 42% at 100% 100%, rgba(105,161,241,0.11) 0%, rgba(48,111,232,0.04) 34%, transparent 56%)",
         }}
       />
-      <div className="absolute right-0 bottom-0 h-[min(100%,28rem)] w-[min(100%,32rem)]">
+      {/* Soft cool-white diagonal beam */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(135deg, transparent 74%, rgba(105,161,241,0.06) 84%, rgba(224,230,239,0.10) 93%, rgba(240,244,250,0.16) 100%)",
+        }}
+      />
+      <div className="absolute -right-6 -bottom-4 h-64 w-76 overflow-hidden opacity-20">
         <Image
           src="/section-8/elite-glow-1.svg"
           alt=""
           width={504}
           height={451}
-          className="absolute right-[-8%] bottom-[-6%] h-auto w-[110%] max-w-none opacity-90 [mask-image:radial-gradient(ellipse_70%_70%_at_100%_100%,black_20%,transparent_78%)] [-webkit-mask-image:radial-gradient(ellipse_70%_70%_at_100%_100%,black_20%,transparent_78%)]"
+          className="absolute top-0 right-0 h-auto w-[22rem] max-w-none"
         />
       </div>
-      <div className="absolute right-0 bottom-0 h-[min(100%,36rem)] w-[min(100%,42rem)]">
+      <div className="absolute -right-16 -bottom-24 h-80 w-110 overflow-hidden opacity-[0.09]">
         <Image
           src="/section-8/elite-glow-2.svg"
           alt=""
           width={898}
           height={693}
-          className="absolute right-[-18%] bottom-[-22%] h-auto w-[130%] max-w-none opacity-50 [mask-image:radial-gradient(ellipse_75%_75%_at_100%_100%,black_15%,transparent_72%)] [-webkit-mask-image:radial-gradient(ellipse_75%_75%_at_100%_100%,black_15%,transparent_72%)]"
+          className="absolute right-0 bottom-0 h-auto w-[28rem] max-w-none"
         />
       </div>
     </div>
 
-    <div className="relative flex min-w-0 flex-1 flex-col items-start gap-6 p-6 iphone:p-8 ipad-landscape:p-12.5">
+    <div className="relative flex min-w-0 flex-1 flex-col items-start gap-6 p-6 iphone:p-8 ipad-landscape:grow-0 ipad-landscape:basis-1/3 ipad-landscape:p-12.5">
       <div className="flex w-full flex-col items-start gap-10 ipad-landscape:gap-15">
         <div className="flex w-full flex-col gap-1 leading-normal">
           <h3
@@ -380,13 +388,13 @@ const ElitePlan = ({
       <CtaButton variant="blue" />
     </div>
 
-    <ul className="relative flex min-w-0 flex-1 flex-col items-start justify-start gap-3 bg-transparent px-6 pt-8 pb-0 iphone:px-8 ipad-landscape:border-t-0 ipad-landscape:border-x ipad-landscape:border-[#2d3339] ipad-landscape:px-7.5 ipad-landscape:py-12.5">
+    <ul className="relative flex min-w-0 flex-1 flex-col items-start justify-start gap-3 bg-transparent px-6 pt-8 pb-0 iphone:px-8 ipad-landscape:grow-0 ipad-landscape:basis-1/3 ipad-landscape:border-x ipad-landscape:border-t-0 ipad-landscape:border-[#2d3339] ipad-landscape:px-7.5 ipad-landscape:py-12.5">
       {ELITE_FEATURES_LEFT.map((feature) => (
         <FeatureItem key={feature.text} {...feature} tone="dark" />
       ))}
     </ul>
 
-    <ul className="relative flex min-w-0 flex-1 flex-col items-start justify-start gap-3 bg-transparent px-6 pt-3 pb-8 iphone:px-8 ipad-landscape:border-t-0 ipad-landscape:px-7.5 ipad-landscape:pt-12.5 ipad-landscape:pb-12.5">
+    <ul className="relative flex min-w-0 flex-1 flex-col items-start justify-start gap-3 bg-transparent px-6 pt-3 pb-8 iphone:px-8 ipad-landscape:grow-0 ipad-landscape:basis-1/3 ipad-landscape:border-t-0 ipad-landscape:px-7.5 ipad-landscape:pt-12.5 ipad-landscape:pb-12.5">
       {ELITE_FEATURES_RIGHT.map((feature) => (
         <FeatureItem key={feature.text} {...feature} tone="dark" />
       ))}

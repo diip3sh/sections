@@ -55,24 +55,93 @@ const fadeUp = {
   },
 };
 
-const getFlagVisibility = (rowIndex: number, flagIndex: number) => {
-  // Mobile: denser cloud — show most pills
-  // Tablet+: show fuller rows; desktop trims outer pills on row 0/1
-  if (rowIndex === 0) {
-    if (flagIndex === 0 || flagIndex === 4) {
-      return "hidden ipad:block";
-    }
+type Flag = (typeof FLAG_ROWS)[number][number];
+
+const getGlowStyle = (flagIndex: number) =>
+  ({
+    animation: `section-18-glow ${3.5 + (flagIndex % 3) * 0.4}s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite alternate`,
+    animationDelay: `${flagIndex * 0.15}s`,
+  }) as const;
+
+/** One half of a seamless track — duplicated so translateX(-50%) loops without a jump. */
+const FlagMarqueeHalf = ({
+  flags,
+  rowIndex,
+  duplicate = false,
+  reducedMotion,
+}: {
+  flags: readonly Flag[];
+  rowIndex: number;
+  duplicate?: boolean;
+  reducedMotion: boolean | null;
+}) => (
+  <div
+    className="flex shrink-0 items-center gap-5 pr-5 ipad:gap-8 ipad:pr-8"
+    aria-hidden={duplicate ? true : undefined}
+  >
+    {flags.map((flag, flagIndex) => (
+      <div
+        key={`${duplicate ? "dup" : "a"}-${flag.alt}-${rowIndex}-${flagIndex}`}
+        className="shrink-0"
+        style={reducedMotion ? undefined : getGlowStyle(flagIndex)}
+      >
+        <FlagPill flagSrc={flag.src} flagAlt="" />
+      </div>
+    ))}
+  </div>
+);
+
+const FlagMarqueeRow = ({
+  flags,
+  rowIndex,
+  reducedMotion,
+}: {
+  flags: readonly Flag[];
+  rowIndex: number;
+  reducedMotion: boolean | null;
+}) => {
+  const rowClass =
+    rowIndex >= 3 ? "block desktop-sm:hidden" : undefined;
+  const durationSec = 42 + rowIndex * 8;
+  const reverse = rowIndex % 2 === 1;
+
+  if (reducedMotion) {
+    return (
+      <div
+        className={`flex w-full items-center justify-center gap-5 overflow-hidden ipad:gap-8 ${rowClass ?? ""}`}
+      >
+        {flags.map((flag, flagIndex) => (
+          <div key={`${flag.alt}-${rowIndex}-${flagIndex}`} className="shrink-0">
+            <FlagPill flagSrc={flag.src} flagAlt="" />
+          </div>
+        ))}
+      </div>
+    );
   }
-  if (rowIndex === 1) {
-    if (flagIndex === 0 || flagIndex === 5) {
-      return "hidden ipad:block";
-    }
-  }
-  // Extra mobile/tablet depth row — hide on desktop
-  if (rowIndex >= 3) {
-    return "block desktop-sm:hidden";
-  }
-  return undefined;
+
+  return (
+    <div className={`w-full overflow-hidden ${rowClass ?? ""}`}>
+      <div
+        className="flex w-max items-center animate-trusted-marquee will-change-transform"
+        style={{
+          animationDuration: `${durationSec}s`,
+          animationDirection: reverse ? "reverse" : "normal",
+        }}
+      >
+        <FlagMarqueeHalf
+          flags={flags}
+          rowIndex={rowIndex}
+          reducedMotion={reducedMotion}
+        />
+        <FlagMarqueeHalf
+          flags={flags}
+          rowIndex={rowIndex}
+          duplicate
+          reducedMotion={reducedMotion}
+        />
+      </div>
+    </div>
+  );
 };
 
 export const Section23Hero = () => {
@@ -147,7 +216,7 @@ export const Section23Hero = () => {
             {/* Visual stage: flags + globe */}
             <div className="relative mx-auto flex w-full max-w-[1084px] flex-col items-center pt-10 ipad:pt-12 desktop-sm:min-h-[380px] desktop-sm:pt-12">
               <div className="relative flex w-full items-center justify-center pb-4 ipad:pb-6 desktop-sm:pb-0">
-                {/* Flag pills — behind globe */}
+                {/* Flag pills — behind globe, seamless horizontal marquee */}
                 <motion.div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-x-0 top-0 z-10 flex flex-col gap-5 px-1 ipad:gap-8 ipad:px-0"
@@ -157,43 +226,17 @@ export const Section23Hero = () => {
                     WebkitMaskImage:
                       "linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%)",
                   }}
-                  initial="hidden"
-                  animate="show"
-                  variants={{
-                    hidden: {},
-                    show: {
-                      transition: {
-                        staggerChildren: prefersReducedMotion ? 0 : 0.06,
-                        delayChildren: prefersReducedMotion ? 0 : 0.2,
-                      },
-                    },
-                  }}
+                  initial={prefersReducedMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, ease: EASE_OUT, delay: 0.15 }}
                 >
                   {FLAG_ROWS.map((row, rowIndex) => (
-                    <div
+                    <FlagMarqueeRow
                       key={rowIndex}
-                      className={`flex w-full items-center justify-center gap-5 ipad:gap-8 ${
-                        rowIndex % 2 === 0 ? "px-2 ipad:px-10" : "px-0"
-                      }`}
-                    >
-                      {row.map((flag, flagIndex) => (
-                        <motion.div
-                          key={`${flag.alt}-${rowIndex}-${flagIndex}`}
-                          variants={fadeUp}
-                          className={getFlagVisibility(rowIndex, flagIndex)}
-                          style={
-                            prefersReducedMotion
-                              ? undefined
-                              : {
-                                  animation: `section-18-glow ${3.5 + (flagIndex % 3) * 0.4}s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite alternate`,
-                                  animationDelay: `${flagIndex * 0.15}s`,
-                                }
-                          }
-                        >
-                          <FlagPill flagSrc={flag.src} flagAlt="" />
-                        </motion.div>
-                      ))}
-                    </div>
+                      flags={row}
+                      rowIndex={rowIndex}
+                      reducedMotion={prefersReducedMotion}
+                    />
                   ))}
                 </motion.div>
 

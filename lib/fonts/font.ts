@@ -165,3 +165,9 @@ export const Aeonik = localFont({
   variable: "--font-aeonik-family",
   display: "swap",
 });
+
+export const CanelaDeck = localFont({
+  src: "./canela-deck-trial.otf",
+  variable: "--font-canela-deck-trail-family",
+  display: "swap",
+});

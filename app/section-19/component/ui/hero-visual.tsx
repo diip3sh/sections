@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import PixelCard from "../originkit/pixel-card";
-import Lightning from "../originkit/thunder-strike";
+import { ElectricLine } from "../originkit/electric-line";
 
 /**
  * Hero visual layers (Figma element 2146:692 / desktop 1:1670).
@@ -18,13 +18,15 @@ type Breakpoint = "mobile" | "ipad" | "desktop";
 const CIRCLE_SIZE = {
   mobile: 317,
   ipad: 542,
-  desktop: 550,
+  desktop: 624,
 } as const;
 
+/** Kept at ~1.27× the circle so the halo scales with the orb rather than
+ *  clinging to it as the circle grows. */
 const MASK_SIZE = {
   mobile: 400,
   ipad: 700,
-  desktop: 700,
+  desktop: 794,
 } as const;
 
 /** Native asset aspect 299×637 — height is derived from width. */
@@ -40,6 +42,14 @@ const THUNDER_MASK_H = {
   ipad: Math.round(THUNDER_MASK_W.ipad * THUNDER_ASPECT),
   desktop: Math.round(THUNDER_MASK_W.desktop * THUNDER_ASPECT),
 } as const;
+
+const BOLT_MASK = [
+  "linear-gradient(to bottom, transparent 0%, #000 12%, #000 84%, transparent 100%)",
+  "linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%)",
+].join(", ");
+
+/** How far the lightning bolt continues past `circleTop`, into the orb. */
+const THUNDER_BOLT_DIP = 90;
 
 /** How far the beam dips into the circle so they visually join. */
 const THUNDER_OVERLAP = {
@@ -238,23 +248,27 @@ export const HeroVisual = ({
           className="hidden ipad:block pointer-events-none absolute inset-0 size-full max-w-none object-contain mix-blend-screen"
         />
       </div>
+      {/*
+        Bolt runs the length of the beam and dips into the orb, so it spans from
+        the top of the thunder mask down past `circleTop`. Masked at both ends so
+        it fades into the glow instead of stopping at the canvas edge.
+      */}
       <div
-        style={{ width: 100, height: 420, top: Math.max(0, circleTop - 320) }}
-        className="absolute left-1/2 z-9 -translate-x-1/2 overflow-visible"
+        style={{
+          // Native aspect of the Figma frame (58 × 575) so the turbulence is
+          // not stretched sideways, which would smear the kinks into waves.
+          width: (circleTop + THUNDER_BOLT_DIP) * (58 / 575) * 1.35,
+          height: circleTop + THUNDER_BOLT_DIP,
+          // Both axes: the additive halo is wide, and without a horizontal fade
+          // it gets sliced flat at the canvas edges.
+          maskImage: BOLT_MASK,
+          WebkitMaskImage: BOLT_MASK,
+          maskComposite: "intersect",
+          WebkitMaskComposite: "source-in",
+        }}
+        className="pointer-events-none absolute top-0 left-1/2 z-9 -translate-x-1/2"
       >
-        {/* {[Array(10)].map((_, index) => ( */}
-        <Lightning
-          // xOffset={-4}
-          backgroundColor="transparent"
-          lightningColor="#C862FF"
-          speed={55}
-          intensity={14}
-          size={45}
-          angle={0}
-          glowCutoff={0.35}
-          className="mx-auto max-w-[70px]"
-        />
-        {/* ))} */}
+        <ElectricLine weight={1.8} strands={3} className="size-full" />
       </div>
 
       {/* Circle + mask — above thunder strike; pixels shimmer on top of the orb */}

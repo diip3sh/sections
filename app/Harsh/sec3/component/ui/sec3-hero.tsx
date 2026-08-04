@@ -70,8 +70,10 @@ const LogoMarquee = ({
   const cell = sm ? "h-[45px] w-[141.75px]" : "h-[70px] w-[220.5px]";
 
   return (
-    <div className={`relative w-full shrink-0 overflow-hidden ${className}`}>
-      <div className="flex w-max animate-trusted-marquee items-center">
+    <div
+      className={`relative w-full shrink-0 overflow-hidden mask-[linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] ${className}`}
+    >
+      <div className="flex w-max animate-trusted-marquee items-center will-change-transform motion-reduce:animate-none">
         {[...TRUSTED_LOGOS, ...TRUSTED_LOGOS].map((logo, i) => (
           <div
             key={`${logo.key}-${i}`}
@@ -503,9 +505,10 @@ const DesktopFrame = () => (
       </p>
       {/* all seven now: the row scrolls, so it no longer has to be trimmed to
           the six cells that happened to fit the 1323 strip exactly. Capped to
-          the same 1223 as the nav row above, so the logos travel between the
-          header's gutters instead of running edge to edge. */}
-      <LogoMarquee size="lg" className="mx-auto max-w-[1223px]" />
+          the 1440 design canvas, so on wide screens the strip stops growing
+          instead of running edge to edge. One copy is 1543.5px, so the track
+          always overflows the window and the -50% loop never shows a gap. */}
+      <LogoMarquee size="lg" className="mx-auto max-w-360" />
     </div>
   </div>
 );

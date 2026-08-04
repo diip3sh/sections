@@ -114,11 +114,11 @@ export const Section26Hero = () => (
             <br />
             Wellness Partner
           </h1>
-          <p className="w-[399px] font-sans text-[16px] leading-[1.4] tracking-[-0.32px] opacity-60 ipad:w-[617px] ipad:text-[18px] ipad:tracking-[-0.36px] desktop-sm:w-[491px] desktop-sm:font-tight desktop-sm:leading-normal desktop-sm:opacity-70">
+          <p className="w-[399px] max-w-[350px] font-sans text-[16px] leading-[1.4] tracking-[-0.32px] opacity-60 ipad:max-w-none ipad:w-[617px] ipad:text-[18px] ipad:tracking-[-0.36px] desktop-sm:w-[491px] desktop-sm:font-tight desktop-sm:leading-normal desktop-sm:opacity-70">
             Stay on top of your health with a trusted partner by your side-track
-            habits, monitor progress, and
+            habits, monitor progress, and{" "}
             <br className="block ipad:hidden" />
-            receive personalized guidance for a
+            receive personalized guidance for a{" "}
             <br className="hidden ipad:block" />
             balanced, healthier life every day.
           </p>

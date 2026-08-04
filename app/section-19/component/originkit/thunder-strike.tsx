@@ -220,6 +220,19 @@ interface LightningProps {
    * the quad anyway, so there is no edge to hide. 0 disables it.
    */
   edgeFade?: number;
+  /**
+   * Alpha below which the ambient glow is cut away entirely, 0–1. The shader
+   * lights the whole quad faintly; over an opaque background that is invisible,
+   * but over a transparent one it reads as a haze rectangle. Raise this to keep
+   * only the strike itself. Ignored when the background is opaque.
+   */
+  glowCutoff?: number;
+  /**
+   * Class applied to the canvas. Do not add padding — the drawing buffer is
+   * sized from `clientWidth`/`clientHeight`, which include padding, so any
+   * padding scales (and distorts) the rendered bolt.
+   */
+  className?: string;
 }
 
 export default function Lightning({
@@ -231,6 +244,8 @@ export default function Lightning({
   size = 50,
   angle = -27,
   edgeFade = 0.22,
+  glowCutoff = 0.02,
+  className,
 }: LightningProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // Live prop bag — updated every render so the WebGL loop never tears down
@@ -244,6 +259,7 @@ export default function Lightning({
     size,
     angle,
     edgeFade,
+    glowCutoff,
   });
   propsRef.current = {
     lightningColor,
@@ -254,6 +270,7 @@ export default function Lightning({
     size,
     angle,
     edgeFade,
+    glowCutoff,
   };
 
   useEffect(() => {
@@ -312,6 +329,7 @@ export default function Lightning({
       uBackgroundHsv: gl.getUniformLocation(program, "uBackgroundHsv"),
       uBackgroundAlpha: gl.getUniformLocation(program, "uBackgroundAlpha"),
       uEdgeFade: gl.getUniformLocation(program, "uEdgeFade"),
+      uGlowCutoff: gl.getUniformLocation(program, "uGlowCutoff"),
       uXOffset: gl.getUniformLocation(program, "uXOffset"),
       uSpeed: gl.getUniformLocation(program, "uSpeed"),
       uIntensity: gl.getUniformLocation(program, "uIntensity"),
@@ -381,6 +399,12 @@ export default function Lightning({
           Math.min(0.5, Math.max(1e-4, p.edgeFade)),
         );
       }
+      if (uniforms.uGlowCutoff) {
+        gl.uniform1f(
+          uniforms.uGlowCutoff,
+          Math.min(0.95, Math.max(0, p.glowCutoff)),
+        );
+      }
       if (uniforms.uXOffset) gl.uniform1f(uniforms.uXOffset, -p.xOffset / 25);
       if (uniforms.uSpeed) gl.uniform1f(uniforms.uSpeed, p.speed / 50);
       if (uniforms.uIntensity)
@@ -419,7 +443,7 @@ export default function Lightning({
       <canvas
         ref={canvasRef}
         style={{ width: "100%", height: "100%", position: "relative" }}
-        className="max-w-[70px] mx-auto px-2"
+        className={className}
       />
     </div>
   );
@@ -440,6 +464,7 @@ uniform float uHue;
 uniform vec3 uBackgroundHsv;  // x: hue (0-1), y: saturation (0-1), z: value (0-1)
 uniform float uBackgroundAlpha;
 uniform float uEdgeFade;
+uniform float uGlowCutoff;
 uniform float uXOffset;
 uniform float uSpeed;
 uniform float uIntensity;
@@ -515,9 +540,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     // Coverage of the bolt at this pixel, used both to blend colour and to
     // carry the bolt through when the background is transparent.
     float boltPeak = clamp(max(lightningEffect.r, max(lightningEffect.g, lightningEffect.b)), 0.0, 1.0);
-    // Drop the sub-2% haze that covers the whole quad — over an opaque bg it is
-    // invisible, but over a transparent one it reads as a dark rectangle.
-    float boltAlpha = clamp((boltPeak - 0.02) / 0.98, 0.0, 1.0);
+    // The shader lights the whole quad faintly. Over an opaque background that
+    // haze is invisible; over a transparent one it reads as a rectangle, so cut
+    // everything below the threshold and rescale what is left.
+    float cutoff = mix(uGlowCutoff, 0.0, clamp(uBackgroundAlpha, 0.0, 1.0));
+    float boltAlpha = clamp((boltPeak - cutoff) / max(1.0 - cutoff, 1e-4), 0.0, 1.0);
 
     // Unit-brightness bolt colour: keeps the hue in faint areas instead of
     // fading to black, which would smear over a transparent background.

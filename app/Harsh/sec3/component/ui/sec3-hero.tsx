@@ -58,12 +58,19 @@ const TRUSTED_LOGOS: TrustedLogo[] = [
  *  exactly -50%, so the second copy lands where the first started and the loop
  *  is seamless; the duplicate is hidden from assistive tech. `trusted-marquee`
  *  (globals.css) is a no-op under prefers-reduced-motion. */
-const LogoMarquee = ({ size }: { size: "sm" | "lg" }) => {
+const LogoMarquee = ({
+  size,
+  /** caps the travelling window; the white bar behind it stays full width */
+  className = "",
+}: {
+  size: "sm" | "lg";
+  className?: string;
+}) => {
   const sm = size === "sm";
   const cell = sm ? "h-[45px] w-[141.75px]" : "h-[70px] w-[220.5px]";
 
   return (
-    <div className="relative w-full shrink-0 overflow-hidden">
+    <div className={`relative w-full shrink-0 overflow-hidden ${className}`}>
       <div className="flex w-max animate-trusted-marquee items-center">
         {[...TRUSTED_LOGOS, ...TRUSTED_LOGOS].map((logo, i) => (
           <div
@@ -197,7 +204,9 @@ const ExploreButton = () => (
 const PreviewButton = () => (
   <button
     type="button"
-    className="relative flex shrink-0 cursor-pointer items-center justify-center rounded-[1px] bg-[rgba(255,255,255,0.05)] px-[20px] py-[8px] shadow-[2px_2px_0px_0px_#0b0b0c,3px_3px_0px_0px_#171718] transition-opacity duration-200 hover:opacity-80"
+    // opacity-80 dimmed this one against the dark hero, which is the opposite
+    // of the intent — raise the white fill instead so it lifts on hover
+    className="relative flex shrink-0 cursor-pointer items-center justify-center rounded-[1px] bg-[rgba(255,255,255,0.05)] px-[20px] py-[8px] shadow-[2px_2px_0px_0px_#0b0b0c,3px_3px_0px_0px_#171718] transition-colors duration-200 hover:bg-[rgba(255,255,255,0.14)]"
   >
     <p className="relative shrink-0 whitespace-nowrap font-geist text-[15px] font-semibold leading-[1.5] tracking-[-0.3px] text-white">
       Live Preview
@@ -387,13 +396,17 @@ const NAV_LINKS = [
   { label: "Contact", active: false },
 ];
 
+/* Fluid, unlike the phone and tablet frames: the nav, the skyline and the trust
+   bar stretch to the viewport, and only the fixed-width blocks inside them (the
+   1223 nav row, the 610 copy column) stop growing. Scaling the whole 1440 canvas
+   instead magnified the bars and artwork along with the copy. */
 const DesktopFrame = () => (
-  <div data-hero className="relative h-[955px] w-[1440px] overflow-clip bg-[#0b0b0c]">
+  <div data-hero className="relative h-[955px] w-full overflow-clip bg-[#0b0b0c]">
     {/* Nav */}
     <div
       data-hero-exclude
       style={delay(0)}
-      className={`${REVEAL} absolute left-0 top-0 h-[67px] w-[1440px] bg-white`}
+      className={`${REVEAL} absolute left-0 top-0 h-[67px] w-full bg-white`}
     >
       <div className="absolute left-[calc(50%+0.5px)] top-0 flex w-[1223px] -translate-x-1/2 flex-col items-start overflow-clip py-[10px]">
         <div className="relative flex w-full shrink-0 items-center justify-between pl-[10px] pr-[20px]">
@@ -426,7 +439,9 @@ const DesktopFrame = () => (
               </button>
               <button
                 type="button"
-                className="relative flex shrink-0 cursor-pointer items-center justify-center rounded-[1px] border border-solid border-[#0b0b0c] bg-white px-[32px] py-[12px] transition-opacity duration-200 hover:opacity-80"
+                // fading a white button on a white bar barely reads, so this
+                // darkens the fill instead
+                className="relative flex shrink-0 cursor-pointer items-center justify-center rounded-[1px] border border-solid border-[#0b0b0c] bg-white px-[32px] py-[12px] transition-colors duration-200 hover:bg-[#e4e4e6]"
               >
                 <p className="relative shrink-0 whitespace-nowrap font-geist text-[15px] font-medium leading-[1.5] tracking-[-0.3px] text-[#0b0b0c]">
                   Request Access
@@ -471,8 +486,8 @@ const DesktopFrame = () => (
 
     {/* particle skyline — 1611 wide, bottom-aligned to the trust bar */}
     <div
-      style={{ ...delay(400), width: 1611, height: 346, left: "calc(50% - 0.5px)" }}
-      className={`${REVEAL} absolute bottom-[140px] -translate-x-1/2`}
+      style={{ ...delay(400), height: 346 }}
+      className={`${REVEAL} absolute bottom-[140px] left-0 w-full`}
     >
       <ParticleBand />
     </div>
@@ -481,14 +496,16 @@ const DesktopFrame = () => (
     <div
       data-hero-exclude
       style={delay(480)}
-      className={`${REVEAL} absolute left-1/2 top-[792px] flex w-[1512px] -translate-x-1/2 flex-col items-center gap-[28px] bg-white pb-[50px] pt-[40px]`}
+      className={`${REVEAL} absolute left-0 top-[792px] flex w-full flex-col items-center gap-[28px] bg-white pb-[50px] pt-[40px]`}
     >
       <p className="relative w-full shrink-0 text-center font-geist text-[15px] font-medium leading-[1.4] text-[#646568]">
         TRUSTED BY 180+ PRODUCT COMPANY WORLD WIDE
       </p>
       {/* all seven now: the row scrolls, so it no longer has to be trimmed to
-          the six cells that happened to fit the 1323 strip exactly */}
-      <LogoMarquee size="lg" />
+          the six cells that happened to fit the 1323 strip exactly. Capped to
+          the same 1223 as the nav row above, so the logos travel between the
+          header's gutters instead of running edge to edge. */}
+      <LogoMarquee size="lg" className="mx-auto max-w-[1223px]" />
     </div>
   </div>
 );
@@ -504,8 +521,10 @@ export const Sec3Hero = () => (
     >
       <TabletFrame />
     </ScaleFrame>
-    <ScaleFrame frameWidth={1440} className="hidden w-full overflow-hidden desktop-sm:block">
+    {/* no ScaleFrame: DesktopFrame is fluid, so the bars and the skyline fill
+        the viewport at their design height while the copy keeps its own width */}
+    <div className="hidden w-full overflow-hidden desktop-sm:block">
       <DesktopFrame />
-    </ScaleFrame>
+    </div>
   </main>
 );

@@ -18,11 +18,18 @@ const delay = (ms: number) => ({ animationDelay: `${ms}ms` });
 
 /** The whole BG group (glows + masked scan lines) exported as one image. Figma
  *  clips the export to the parent frame, so each PNG is exactly frame-sized
- *  (402×836 / 744×994 / 1280×913) and simply fills it. */
-const Background = ({ src }: { src: string }) => (
+ *  (402×836 / 744×994 / 1280×913).
+ *
+ *  It is rendered outside the ScaleFrames, at the section level, so the frame
+ *  transform can never touch it: the backdrop always covers the viewport and
+ *  only the content scales when you zoom. Inside a scaled frame it would shrink
+ *  along with the design and leave the section's own colour showing at the
+ *  edges. `className` carries the breakpoint that picks the right export. */
+const Backdrop = ({ src, className }: { src: string; className: string }) => (
   <img
     alt=""
-    className="pointer-events-none absolute inset-0 size-full max-w-none object-cover"
+    aria-hidden
+    className={`pointer-events-none absolute left-0 top-0 h-full min-h-screen w-full max-w-none object-cover ${className}`}
     src={`${A}/${src}`}
   />
 );
@@ -109,8 +116,7 @@ const GlassCard = ({
 );
 
 const PhoneFrame = () => (
-  <div className="relative h-[836px] w-[402px] overflow-clip bg-[#101216]">
-    <Background src="bg.png" />
+  <div className="relative h-[836px] w-[402px] overflow-clip">
 
     {/* Top Nav */}
     <div
@@ -224,8 +230,7 @@ const PhoneFrame = () => (
 /* -------------------------------- tablet ------------------------------- */
 
 const TabletFrame = () => (
-  <div className="relative h-[994px] w-[744px] overflow-clip bg-[#101216]">
-    <Background src="bg-ipad.png" />
+  <div className="relative h-[994px] w-[744px] overflow-clip">
 
     {/* Top Nav */}
     <div
@@ -339,8 +344,7 @@ const TabletFrame = () => (
 /* ------------------------------- desktop ------------------------------- */
 
 const DesktopFrame = () => (
-  <div className="relative h-[913px] w-[1280px] overflow-clip bg-[#101216]">
-    <Background src="bg-desktop.png" />
+  <div className="relative h-[913px] w-[1280px] overflow-clip">
 
     {/* Top Nav */}
     <div
@@ -460,17 +464,28 @@ const DesktopFrame = () => (
 );
 
 export const Sec2Hero = () => (
-  <main className="w-full bg-[#101216]" style={{ fontFamily: HELVETICA }}>
-    <ScaleFrame frameWidth={402} className="w-full overflow-hidden min-[640px]:hidden">
+  <main
+    className="relative w-full overflow-hidden bg-[#101216]"
+    style={{ fontFamily: HELVETICA }}
+  >
+    <Backdrop src="bg.png" className="min-[640px]:hidden" />
+    <Backdrop src="bg-ipad.png" className="hidden min-[640px]:block desktop-sm:hidden" />
+    <Backdrop src="bg-desktop.png" className="hidden desktop-sm:block" />
+
+    {/* `relative` so the frames stack above the absolutely-positioned backdrop */}
+    <ScaleFrame frameWidth={402} className="relative w-full overflow-hidden min-[640px]:hidden">
       <PhoneFrame />
     </ScaleFrame>
     <ScaleFrame
       frameWidth={744}
-      className="hidden w-full overflow-hidden min-[640px]:block desktop-sm:hidden"
+      className="relative hidden w-full overflow-hidden min-[640px]:block desktop-sm:hidden"
     >
       <TabletFrame />
     </ScaleFrame>
-    <ScaleFrame frameWidth={1280} className="hidden w-full overflow-hidden desktop-sm:block">
+    <ScaleFrame
+      frameWidth={1280}
+      className="relative hidden w-full overflow-hidden desktop-sm:block"
+    >
       <DesktopFrame />
     </ScaleFrame>
   </main>

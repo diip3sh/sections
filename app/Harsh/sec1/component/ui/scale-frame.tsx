@@ -42,6 +42,8 @@ export const ScaleFrame = ({
 }) => {
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
+  /** devicePixelRatio as it was before the user zoomed anything */
+  const baseDprRef = useRef<number | null>(null);
   const id = useId();
   const [measured, setMeasured] = useState(false);
 
@@ -53,12 +55,35 @@ export const ScaleFrame = ({
     const measure = () => {
       const width = outer.clientWidth;
       if (!width) return;
-      const scale = width / frameWidth;
+
+      // Ctrl +/− works by shrinking the CSS viewport, which is the same signal
+      // this component scales from — so without compensation the frame scales
+      // down by exactly the amount you zoomed in and nothing appears to change.
+      // devicePixelRatio moves with zoom by the same factor, so measuring it
+      // against its value on mount recovers the zoom level and cancels the
+      // cancellation. Baseline is captured once: a page loaded at 150% starts
+      // fit-to-width as before, and zooming from there behaves normally.
+      if (baseDprRef.current === null) {
+        baseDprRef.current = window.devicePixelRatio || 1;
+      }
+      const zoom = (window.devicePixelRatio || 1) / baseDprRef.current;
+
+      const scale = (width / frameWidth) * zoom;
       inner.style.transform = `scale(${scale})`;
       // published so a child can opt out of the scaling (see the tablet header
       // in sec3, which counter-scales to keep its native height)
       inner.style.setProperty("--frame-scale", String(scale));
       outer.style.height = `${inner.offsetHeight * scale}px`;
+
+      // Zoomed in, the frame is now wider than its container — the sections clip
+      // overflow, so without this the extra would simply be cropped off with no
+      // way to reach it. Zoomed out it is narrower, so centre it rather than
+      // leaving the gap on one side. Both are no-ops at 100%.
+      const scaledWidth = frameWidth * scale;
+      outer.style.overflowX = scaledWidth > width + 1 ? "auto" : "";
+      inner.style.marginLeft =
+        scaledWidth < width - 1 ? `${(width - scaledWidth) / 2}px` : "";
+
       setMeasured(true);
     };
 
@@ -67,7 +92,18 @@ export const ScaleFrame = ({
     observer.observe(inner);
     measure();
 
-    return () => observer.disconnect();
+    // Zoom usually changes the viewport width too, so the observer covers it —
+    // but not when the frame's box is pinned by something else, so watch the
+    // pixel ratio directly as well.
+    const dprWatch = window.matchMedia(
+      `(resolution: ${window.devicePixelRatio || 1}dppx)`,
+    );
+    dprWatch.addEventListener("change", measure);
+
+    return () => {
+      observer.disconnect();
+      dprWatch.removeEventListener("change", measure);
+    };
   }, [frameWidth]);
 
   return (

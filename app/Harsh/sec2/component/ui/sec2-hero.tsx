@@ -343,31 +343,36 @@ const TabletFrame = () => (
 
 /* ------------------------------- desktop ------------------------------- */
 
-const DesktopFrame = () => (
-  <div className="relative h-[913px] w-[1280px] overflow-clip">
-
-    {/* Top Nav */}
-    <div
-      style={delay(0)}
-      className={`${REVEAL} absolute left-0 top-0 flex h-[74px] w-[1280px] items-center justify-center border border-solid border-[rgba(255,255,255,0.1)] px-[32px] py-[16px]`}
-    >
-      <div className="relative flex w-[1200px] shrink-0 items-center justify-between">
-        <p className="relative shrink-0 whitespace-nowrap text-[28px] leading-[1.15] tracking-[-0.84px] text-white">
-          Hirefy
-        </p>
-        <GetStartedButton className="px-[16px] py-[12px]" />
-        <div className="absolute left-1/2 top-[calc(50%-0.5px)] flex -translate-x-1/2 -translate-y-1/2 items-center gap-[24px] whitespace-nowrap text-[16px] leading-[1.15] text-white">
-          {NAV_LINKS.map((link) => (
-            <p
-              key={link}
-              className="relative shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-70"
-            >
-              {link}
-            </p>
-          ))}
-        </div>
+/** Rendered as a sibling of the desktop ScaleFrame rather than inside it, so
+ *  the bar and its bottom rule always span the viewport at their native size —
+ *  inside the frame they would be magnified along with the artwork, and capping
+ *  them would have cost a counter-scale. Only the row inside is capped. */
+const DesktopNav = () => (
+  <div
+    style={delay(0)}
+    className={`${REVEAL} absolute left-0 top-0 z-10 hidden h-[90px] w-full items-center justify-center border-b border-solid border-[rgba(255,255,255,0.18)] px-[32px] desktop-sm:flex`}
+  >
+    <div className="relative flex w-full max-w-300 items-center justify-between">
+      <p className="relative shrink-0 whitespace-nowrap text-[32px] leading-[1.15] tracking-[-0.96px] text-white">
+        Hirefy
+      </p>
+      <GetStartedButton className="px-[20px] py-[14px]" />
+      <div className="absolute left-1/2 top-[calc(50%-0.5px)] flex -translate-x-1/2 -translate-y-1/2 items-center gap-[28px] whitespace-nowrap text-[17px] leading-[1.15] text-white">
+        {NAV_LINKS.map((link) => (
+          <p
+            key={link}
+            className="relative shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-70"
+          >
+            {link}
+          </p>
+        ))}
       </div>
     </div>
+  </div>
+);
+
+const DesktopFrame = () => (
+  <div className="relative h-[913px] w-[1280px] overflow-clip">
 
     {/* copy */}
     <div className="absolute left-[417px] top-[144px] flex w-[446px] flex-col items-center gap-[32px]">
@@ -482,6 +487,7 @@ export const Sec2Hero = () => (
     >
       <TabletFrame />
     </ScaleFrame>
+    <DesktopNav />
     <ScaleFrame
       frameWidth={1280}
       className="relative hidden w-full overflow-hidden desktop-sm:block"

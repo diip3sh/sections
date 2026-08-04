@@ -25,9 +25,20 @@ export const ParticleBand = () => (
     // the rasteriser draws each dot at ceil(size / 4) device px, so a value of
     // 5 was a 2px block; 20 gives a 5px dot that actually reads as a circle
     particleSize={20}
-    // hover "roam" would idle the particles as a random cloud and only
-    // assemble the image on hover — the design shows it assembled at rest
-    hoverEnabled={false}
+    // at rest each dot drifts within roamRadius px of where it sits in the
+    // skyline, so the band reads as a loosened version of the artwork rather
+    // than a cloud; it snaps back into the image while the cursor is over the
+    // black part of the hero (the white nav / trust bar are excluded)
+    hoverEnabled
+    hoverTargetSelector="[data-hero]"
+    hoverExcludeSelector="[data-hero-exclude]"
+    hoverConfig={{
+      hoverType: "roam",
+      transition: { duration: 1.1, ease: "easeInOut" },
+      roamRadius: 18,
+      roamShape: "rectangle",
+      roamOpacity: 0.55,
+    }}
     repulsionEnabled
     repulsionConfig={{
       repulsionMode: "outside",

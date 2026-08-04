@@ -17,6 +17,7 @@ const inlineScale = (id: string, frameWidth: number) =>
   `(function(){var o=document.getElementById(${JSON.stringify(id)});if(!o)return;` +
   `var i=o.firstElementChild;if(!i)return;var w=o.clientWidth;if(!w)return;` +
   `var s=w/${frameWidth};i.style.transform='scale('+s+')';` +
+  `i.style.setProperty('--frame-scale',String(s));` +
   `o.style.height=(i.offsetHeight*s)+'px';})()`;
 
 const useIsomorphicLayoutEffect =
@@ -54,6 +55,9 @@ export const ScaleFrame = ({
       if (!width) return;
       const scale = width / frameWidth;
       inner.style.transform = `scale(${scale})`;
+      // published so a child can opt out of the scaling (see the tablet header
+      // in sec3, which counter-scales to keep its native height)
+      inner.style.setProperty("--frame-scale", String(scale));
       outer.style.height = `${inner.offsetHeight * scale}px`;
       setMeasured(true);
     };
@@ -74,10 +78,13 @@ export const ScaleFrame = ({
         <div
           ref={innerRef}
           suppressHydrationWarning
-          style={{
-            width: frameWidth,
-            transformOrigin: "top left",
-          }}
+          style={
+            {
+              width: frameWidth,
+              transformOrigin: "top left",
+              "--frame-scale": 1,
+            } as React.CSSProperties
+          }
         >
           {children}
         </div>

@@ -54,6 +54,54 @@ const TRUSTED_LOGOS: TrustedLogo[] = [
   { key: "logo-7", widthLg: "69px", heightLg: "25px", src: "l7.svg", width: "44.357px", height: "16.005px" },
 ];
 
+/** The logo strip, scrolling. The list is rendered twice and the track slides
+ *  exactly -50%, so the second copy lands where the first started and the loop
+ *  is seamless; the duplicate is hidden from assistive tech. `trusted-marquee`
+ *  (globals.css) is a no-op under prefers-reduced-motion. */
+const LogoMarquee = ({ size }: { size: "sm" | "lg" }) => {
+  const sm = size === "sm";
+  const cell = sm ? "h-[45px] w-[141.75px]" : "h-[70px] w-[220.5px]";
+
+  return (
+    <div className="relative w-full shrink-0 overflow-hidden">
+      <div className="flex w-max animate-trusted-marquee items-center">
+        {[...TRUSTED_LOGOS, ...TRUSTED_LOGOS].map((logo, i) => (
+          <div
+            key={`${logo.key}-${i}`}
+            aria-hidden={i >= TRUSTED_LOGOS.length}
+            className={`relative flex ${cell} shrink-0 flex-col items-center justify-center overflow-clip`}
+          >
+            <div
+              className="relative shrink-0 overflow-clip"
+              style={{
+                width: sm ? logo.width : logo.widthLg,
+                height: sm ? logo.height : logo.heightLg,
+              }}
+            >
+              {logo.src && (
+                <img
+                  alt=""
+                  className="absolute inset-0 block size-full max-w-none"
+                  src={`${A}/logos/${logo.src}`}
+                />
+              )}
+              {logo.parts?.map((part) => (
+                <div key={part.src} className={`absolute ${part.inset}`}>
+                  <img
+                    alt=""
+                    className="absolute inset-0 block size-full max-w-none"
+                    src={`${A}/logos/${part.src}`}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 /** The badge's ends are a 1px rule plus a 24%-opacity noise strip, mirrored. */
 const BadgeEdge = ({ side }: { side: "left" | "right" }) => (
   <div
@@ -157,10 +205,14 @@ const PreviewButton = () => (
   </button>
 );
 
+/* `data-hero` marks the hover target the particle band listens to; the white
+   nav and trust bar carry `data-hero-exclude`, so the dots only assemble into
+   the skyline while the cursor is over the black part of the frame. */
 const PhoneFrame = () => (
-  <div className="relative h-[874px] w-[402px] overflow-clip bg-[#0b0b0c]">
+  <div data-hero className="relative h-[874px] w-[402px] overflow-clip bg-[#0b0b0c]">
     {/* Nav */}
     <div
+      data-hero-exclude
       style={delay(0)}
       className={`${REVEAL} absolute left-0 top-0 flex h-[56px] w-[402px] items-center justify-between bg-white p-[16px]`}
     >
@@ -220,50 +272,22 @@ const PhoneFrame = () => (
     <div
       // nudged right of centre, so the visible slice sits left of the
       // artwork's middle
-      style={{ ...delay(400), width: 1440, height: 309.4, left: "calc(50% + 200px)" }}
+      style={{ ...delay(400), width: 1440, height: 309.4, left: "calc(50% + 130px)" }}
       className={`${REVEAL} absolute bottom-[92px] -translate-x-1/2`}
     >
       <ParticleBand />
     </div>
 
-    {/* trusted by — the strip is 972 wide, so only the middle logos show */}
+    {/* trusted by — the strip is 972 wide and the frame clips it either side */}
     <div
+      data-hero-exclude
       style={delay(480)}
       className={`${REVEAL} absolute left-1/2 top-[736px] flex w-[972px] -translate-x-1/2 flex-col items-center gap-[18px] bg-white pb-[32.143px] pt-[25.714px]`}
     >
       <p className="relative w-full shrink-0 text-center font-geist text-[9.643px] font-medium leading-[1.4] text-[#646568]">
         TRUSTED BY 180+ PRODUCT COMPANY WORLD WIDE
       </p>
-      <div className="relative flex w-[850.5px] shrink-0 items-center justify-center">
-        {TRUSTED_LOGOS.map((logo) => (
-          <div
-            key={logo.key}
-            className="relative flex h-[45px] w-[141.75px] shrink-0 flex-col items-center justify-center overflow-clip"
-          >
-            <div
-              className="relative shrink-0 overflow-clip"
-              style={{ width: logo.width, height: logo.height }}
-            >
-              {logo.src && (
-                <img
-                  alt=""
-                  className="absolute inset-0 block size-full max-w-none"
-                  src={`${A}/logos/${logo.src}`}
-                />
-              )}
-              {logo.parts?.map((part) => (
-                <div key={part.src} className={`absolute ${part.inset}`}>
-                  <img
-                    alt=""
-                    className="absolute inset-0 block size-full max-w-none"
-                    src={`${A}/logos/${part.src}`}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+      <LogoMarquee size="sm" />
     </div>
   </div>
 );
@@ -271,17 +295,32 @@ const PhoneFrame = () => (
 /* -------------------------------- tablet ------------------------------- */
 
 const TabletFrame = () => (
-  <div className="relative h-[1133px] w-[744px] overflow-clip bg-[#0b0b0c]">
-    {/* Nav */}
+  <div data-hero className="relative h-[1133px] w-[744px] overflow-clip bg-[#0b0b0c]">
+    {/* Nav — ScaleFrame blows the 744 design up to the viewport (1.38x at
+        1024), which makes the bar and its logo read oversized. This wrapper
+        undoes exactly that factor, so the header keeps its native 96px height
+        and icon sizes while still spanning the full width: the box is widened
+        by the same scale it is then shrunk by. The counter-scale lives on the
+        wrapper because `hero-reveal` is `both`-filled and would otherwise
+        overwrite the transform with its own translateY(0). */}
     <div
-      style={delay(0)}
-      className={`${REVEAL} absolute left-0 top-0 flex h-[96px] w-[744px] items-center justify-between bg-white px-[48px]`}
+      className="absolute left-0 top-0 origin-top-left"
+      style={{
+        width: "calc(744px * var(--frame-scale, 1))",
+        transform: "scale(calc(1 / var(--frame-scale, 1)))",
+      }}
     >
-      <div className="relative h-[18.535px] w-[90px] shrink-0">
-        <img alt="Aurra" className="absolute inset-0 block size-full max-w-none" src={`${A}/logo.svg`} />
-      </div>
-      <div className="relative size-[32px] shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-70">
-        <img alt="Menu" className="absolute inset-0 block size-full max-w-none" src={`${A}/menu.svg`} />
+      <div
+        data-hero-exclude
+        style={delay(0)}
+        className={`${REVEAL} flex h-[96px] w-full items-center justify-between bg-white px-[48px]`}
+      >
+        <div className="relative h-[18.535px] w-[90px] shrink-0">
+          <img alt="Aurra" className="absolute inset-0 block size-full max-w-none" src={`${A}/logo.svg`} />
+        </div>
+        <div className="relative size-[32px] shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-70">
+          <img alt="Menu" className="absolute inset-0 block size-full max-w-none" src={`${A}/menu.svg`} />
+        </div>
       </div>
     </div>
 
@@ -326,42 +365,14 @@ const TabletFrame = () => (
 
     {/* trusted by */}
     <div
+      data-hero-exclude
       style={delay(480)}
       className={`${REVEAL} absolute left-1/2 top-[908px] flex w-[1512px] -translate-x-1/2 flex-col items-center gap-[28px] bg-white pb-[50px] pt-[40px]`}
     >
       <p className="relative w-full shrink-0 text-center font-geist text-[15px] font-medium leading-[1.4] text-[#646568]">
         TRUSTED BY 180+ PRODUCT COMPANY WORLD WIDE
       </p>
-      <div className="relative flex w-[1323px] shrink-0 items-center justify-center">
-        {TRUSTED_LOGOS.map((logo) => (
-          <div
-            key={logo.key}
-            className="relative flex h-[70px] w-[220.5px] shrink-0 flex-col items-center justify-center overflow-clip"
-          >
-            <div
-              className="relative shrink-0 overflow-clip"
-              style={{ width: logo.widthLg, height: logo.heightLg }}
-            >
-              {logo.src && (
-                <img
-                  alt=""
-                  className="absolute inset-0 block size-full max-w-none"
-                  src={`${A}/logos/${logo.src}`}
-                />
-              )}
-              {logo.parts?.map((part) => (
-                <div key={part.src} className={`absolute ${part.inset}`}>
-                  <img
-                    alt=""
-                    className="absolute inset-0 block size-full max-w-none"
-                    src={`${A}/logos/${part.src}`}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+      <LogoMarquee size="lg" />
     </div>
   </div>
 );
@@ -377,9 +388,10 @@ const NAV_LINKS = [
 ];
 
 const DesktopFrame = () => (
-  <div className="relative h-[955px] w-[1440px] overflow-clip bg-[#0b0b0c]">
+  <div data-hero className="relative h-[955px] w-[1440px] overflow-clip bg-[#0b0b0c]">
     {/* Nav */}
     <div
+      data-hero-exclude
       style={delay(0)}
       className={`${REVEAL} absolute left-0 top-0 h-[67px] w-[1440px] bg-white`}
     >
@@ -467,44 +479,16 @@ const DesktopFrame = () => (
 
     {/* trusted by */}
     <div
+      data-hero-exclude
       style={delay(480)}
       className={`${REVEAL} absolute left-1/2 top-[792px] flex w-[1512px] -translate-x-1/2 flex-col items-center gap-[28px] bg-white pb-[50px] pt-[40px]`}
     >
       <p className="relative w-full shrink-0 text-center font-geist text-[15px] font-medium leading-[1.4] text-[#646568]">
         TRUSTED BY 180+ PRODUCT COMPANY WORLD WIDE
       </p>
-      {/* six logos, not seven: 6 x 220.5 fills the 1323 row exactly, so the
-          end cells are no longer clipped */}
-      <div className="relative flex w-[1323px] shrink-0 items-center justify-center">
-        {TRUSTED_LOGOS.slice(0, 6).map((logo) => (
-          <div
-            key={logo.key}
-            className="relative flex h-[70px] w-[220.5px] shrink-0 flex-col items-center justify-center overflow-clip"
-          >
-            <div
-              className="relative shrink-0 overflow-clip"
-              style={{ width: logo.widthLg, height: logo.heightLg }}
-            >
-              {logo.src && (
-                <img
-                  alt=""
-                  className="absolute inset-0 block size-full max-w-none"
-                  src={`${A}/logos/${logo.src}`}
-                />
-              )}
-              {logo.parts?.map((part) => (
-                <div key={part.src} className={`absolute ${part.inset}`}>
-                  <img
-                    alt=""
-                    className="absolute inset-0 block size-full max-w-none"
-                    src={`${A}/logos/${part.src}`}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* all seven now: the row scrolls, so it no longer has to be trimmed to
+          the six cells that happened to fit the 1323 strip exactly */}
+      <LogoMarquee size="lg" />
     </div>
   </div>
 );

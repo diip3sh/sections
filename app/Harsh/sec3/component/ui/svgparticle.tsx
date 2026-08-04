@@ -50,6 +50,13 @@ function shuffle(a) {
         ;[a[i], a[j]] = [a[j], a[i]]
     }
 }
+// Random point in a disc of radius `r` around (hx, hy) — used when roaming is
+// tethered to each particle's home so the cloud only loosens, never crosses.
+function randomNearHome(hx, hy, r) {
+    const a = Math.random() * Math.PI * 2
+    const d = Math.sqrt(Math.random()) * r
+    return [hx + Math.cos(a) * d, hy + Math.sin(a) * d]
+}
 // Returns a random [x, y] point inside the given roam shape.
 // bx/by = top-left of bounding box, bw/bh = dimensions.
 function randomInShape(shape, bx, by, bw, bh) {
@@ -156,6 +163,17 @@ function __OriginkitBase_ParticleImage(__props) {
         hoverConfig = {},
         repulsionEnabled = true,
         repulsionConfig = {},
+        // When set, assemble/scatter is driven by an ancestor element matching
+        // this selector instead of by the canvas itself — lets a small canvas
+        // band react to hovering the whole hero.
+        hoverTargetSelector = "",
+        // Regions inside the hover target that should NOT assemble (e.g. the
+        // white nav and trust bar sitting on top of the black hero).
+        hoverExcludeSelector = "",
+        // pulled out of ...props: React warns when it reaches the DOM as an
+        // unknown attribute, and the canvas is transparent so the container is
+        // what has to carry the colour
+        backgroundColor,
         width,
         height,
         style,
@@ -169,6 +187,9 @@ function __OriginkitBase_ParticleImage(__props) {
         roamHeight = 0,
         roamOpacity = 0.5,
         roamShape = "rectangle",
+        // > 0 tethers roaming to each particle's home position, within this
+        // radius in px. 0 keeps the old free-roam-across-the-whole-box.
+        roamRadius = 0,
         hideType = "scatter",
     } = (hoverConfig as any) || {}
     const repulsion = repulsionEnabled
@@ -208,6 +229,7 @@ function __OriginkitBase_ParticleImage(__props) {
         roamHeight,
         roamOpacity,
         roamShape,
+        roamRadius,
         hideType,
         repulsion,
         repulsionForce,
@@ -237,6 +259,7 @@ function __OriginkitBase_ParticleImage(__props) {
         roamWidth,
         roamHeight,
         roamShape,
+        roamRadius,
         hideType,
     }
     const animStateRef = useRef("active")
@@ -257,6 +280,7 @@ function __OriginkitBase_ParticleImage(__props) {
             roamHeight: rh,
             roamShape: rs,
             roamOpacity: rOp,
+            roamRadius: rr,
             transition: tr,
         } = physicsRef.current as any
         const { durMs: _dur } = getTransitionParams(tr)
@@ -269,7 +293,10 @@ function __OriginkitBase_ParticleImage(__props) {
             p.startX = p.x
             p.startY = p.y
             if (newState === "scattering" && ht === "roam") {
-                const [tx, ty] = randomInShape(rs, bx, by, bw, bh)
+                const [tx, ty] =
+                    rr > 0
+                        ? randomNearHome(p.homeX, p.homeY, rr)
+                        : randomInShape(rs, bx, by, bw, bh)
                 p.roamTargetX = tx
                 p.roamTargetY = ty
                 p.idleX = tx
@@ -321,6 +348,7 @@ function __OriginkitBase_ParticleImage(__props) {
             roamWidth: rw,
             roamHeight: rh,
             roamShape: rs,
+            roamRadius: rr,
             hideType: hT,
         } = samplingRef.current as any
         const { W, H } = dimsRef.current
@@ -417,14 +445,18 @@ function __OriginkitBase_ParticleImage(__props) {
                         bh = Math.max(80, rh || H)
                     const bx = (W - bw) / 2,
                         by = (H - bh) / 2
+                    const pick = (p) =>
+                        rr > 0
+                            ? randomNearHome(p.homeX, p.homeY, rr)
+                            : randomInShape(rs, bx, by, bw, bh)
                     particles = src.map((p) => {
-                        const [rx, ry] = randomInShape(rs, bx, by, bw, bh)
+                        const [rx, ry] = pick(p)
                         const pt = mkParticle(p, rx, ry, rx, ry)
-                        const [tx, ty] = randomInShape(rs, bx, by, bw, bh)
+                        const [tx, ty] = pick(p)
                         pt.roamTargetX = tx
                         pt.roamTargetY = ty
-                        pt.vx = (Math.random() - 0.5) * 1.2
-                        pt.vy = (Math.random() - 0.5) * 1.2
+                        pt.vx = (Math.random() - 0.5) * 0.4
+                        pt.vy = (Math.random() - 0.5) * 0.4
                         return pt
                     })
                     animStateRef.current = "idle"
@@ -473,8 +505,43 @@ function __OriginkitBase_ParticleImage(__props) {
         roamWidth,
         roamHeight,
         roamShape,
+        roamRadius,
         hideType,
     ])
+    // ── Hover driven by an ancestor (hero) rather than the canvas ──────────
+    useEffect(() => {
+        if (!hoverTargetSelector || !hover) return
+        const el = containerRef.current?.closest(hoverTargetSelector)
+        if (!el) return
+        const assemble = () => {
+            const s = animStateRef.current
+            if (s === "idle" || s === "scattering")
+                startAnimRef.current("assembling")
+        }
+        const scatter = () => {
+            const s = animStateRef.current
+            if (s === "assembling" || s === "active")
+                startAnimRef.current("scattering")
+        }
+        // `mouseover` (not `mouseenter`) so it re-fires as the cursor crosses
+        // into a child: hovering an excluded region scatters again even though
+        // the pointer never left the hero.
+        const over = (e) => {
+            const t = e.target as Element | null
+            if (
+                hoverExcludeSelector &&
+                t?.closest?.(hoverExcludeSelector)
+            )
+                scatter()
+            else assemble()
+        }
+        el.addEventListener("mouseover", over)
+        el.addEventListener("mouseleave", scatter)
+        return () => {
+            el.removeEventListener("mouseover", over)
+            el.removeEventListener("mouseleave", scatter)
+        }
+    }, [hoverTargetSelector, hoverExcludeSelector, hover])
     // ── Render loop ────────────────────────────────────────────────────────
     useEffect(() => {
         const canvas = canvasRef.current
@@ -506,6 +573,7 @@ function __OriginkitBase_ParticleImage(__props) {
                 roamHeight: rh,
                 roamOpacity: rOp,
                 roamShape: rs,
+                roamRadius: rRad,
                 repulsion: repOn,
                 repulsionForce: rF,
                 repulsionRadius: rR,
@@ -604,19 +672,25 @@ function __OriginkitBase_ParticleImage(__props) {
                     if (ht === "roam") {
                         const dtx = p.roamTargetX - p.x,
                             dty = p.roamTargetY - p.y
-                        if (Math.sqrt(dtx * dtx + dty * dty) < 3) {
-                            const [tx, ty] = randomInShape(rs, bx, by, bw, bh)
+                        if (Math.sqrt(dtx * dtx + dty * dty) < 1.5) {
+                            const [tx, ty] =
+                                rRad > 0
+                                    ? randomNearHome(p.homeX, p.homeY, rRad)
+                                    : randomInShape(rs, bx, by, bw, bh)
                             p.roamTargetX = tx
                             p.roamTargetY = ty
                         }
-                        p.vx =
-                            (p.vx || 0) * 0.98 + (p.roamTargetX - p.x) * 0.003
-                        p.vy =
-                            (p.vy || 0) * 0.98 + (p.roamTargetY - p.y) * 0.003
+                        // Tethered roaming covers short distances, so it needs
+                        // a stiffer pull and a lower speed cap than free roam —
+                        // otherwise the dots creep and overshoot their target.
+                        const pull = rRad > 0 ? 0.02 : 0.003
+                        const maxSp = rRad > 0 ? 0.5 : 1.5
+                        p.vx = (p.vx || 0) * 0.94 + (p.roamTargetX - p.x) * pull
+                        p.vy = (p.vy || 0) * 0.94 + (p.roamTargetY - p.y) * pull
                         const sp2 = Math.sqrt(p.vx ** 2 + p.vy ** 2)
-                        if (sp2 > 1.5) {
-                            p.vx = (p.vx / sp2) * 1.5
-                            p.vy = (p.vy / sp2) * 1.5
+                        if (sp2 > maxSp) {
+                            p.vx = (p.vx / sp2) * maxSp
+                            p.vy = (p.vy / sp2) * maxSp
                         }
                         p.x += p.vx
                         p.y += p.vy
@@ -678,10 +752,13 @@ function __OriginkitBase_ParticleImage(__props) {
                 } else {
                     p.inZone = false
                 }
-                // Outside zone or repulsion off: slowly return to original position
+                // Outside zone or repulsion off: return to the original
+                // position. At 0.97 the offset took ~1.3s to decay to a tenth,
+                // so dots the cursor had shoved aside visibly lagged behind the
+                // rest of the field; 0.88 does the same in ~0.3s.
                 if (!p.inZone) {
-                    p.repX *= 0.97
-                    p.repY *= 0.97
+                    p.repX *= 0.88
+                    p.repY *= 0.88
                 }
                 p.x = baseX + p.repX
                 p.y = baseY + p.repY
@@ -798,7 +875,9 @@ function __OriginkitBase_ParticleImage(__props) {
     }
     const onMouseLeave = () => {
         mouseRef.current = { x: -99999, y: -99999, active: false }
-        if (physicsRef.current.hover) {
+        // With an ancestor hover target the hero — not the canvas — owns the
+        // assemble/scatter state, so leaving the band must not scatter.
+        if (physicsRef.current.hover && !hoverTargetSelector) {
             const s = animStateRef.current
             if (s === "assembling" || s === "active")
                 startAnimRef.current("scattering")
@@ -812,6 +891,7 @@ function __OriginkitBase_ParticleImage(__props) {
                 position: "relative",
                 width,
                 height,
+                background: backgroundColor,
                 overflow: "hidden",
                 ...style,
             }}

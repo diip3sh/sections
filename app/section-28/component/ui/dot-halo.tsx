@@ -28,14 +28,19 @@ import PixelCard from "../originkit/pixel-card";
  * the visible field; measured against the tablet render the dots die out around
  * y1030 and never reach the headline. Both are canvas geometry, not CSS, so
  * they switch on a media query here rather than a Tailwind variant.
+ *
+ * Desktop (1:2252 / 1:2255) goes back to the phone's 4-on-12 grid but masks it
+ * with two rectangles instead of circles — see DESKTOP_MASK.
  */
 
 const TABLET_QUERY = "(min-width: 768px)";
+const DESKTOP_QUERY = "(min-width: 1280px)";
 
 /** Figma's texture pitch and square size, per breakpoint, in frame pixels. */
 const GRID = {
   phone: { pitch: 12, dot: 4 },
   tablet: { pitch: 15, dot: 5 },
+  desktop: { pitch: 12, dot: 4 },
 };
 
 /** Phone — three circles: r100 at (54,645), r100 22px inside the right edge at
@@ -55,19 +60,106 @@ const TABLET_MASK = [
   "radial-gradient(circle 310px at calc(100% - 94px) 880px, rgba(0,0,0,0.985) 0%, rgba(0,0,0,0.841) 22.6%, rgba(0,0,0,0.5) 41.9%, rgba(0,0,0,0.159) 61.3%, rgba(0,0,0,0.023) 80.6%, transparent 100%)",
 ].join(", ");
 
+/**
+ * Desktop — two patches rather than blobs. Figma masks a 291 x 305 rectangle
+ * under the same 56px blur, so the gradient is an ellipse sized to the rect's
+ * half-extents (145.5 / 152.5) with the usual sigma-56 falloff, which keeps the
+ * flat core a blurred rectangle has.
+ *
+ * The blur is not what bounds the field though — the 500 x 500 texture is.
+ * Figma parks one on each end of the copy plate, and a dot can only exist where
+ * that stencil reaches, so the field stops dead on the plate's left edge and
+ * again on its right, and cuts off at y817. Past those lines the blur still
+ * carries but there is no stencil to print it. Reproduced by giving
+ * each patch its own 500-box with `overflow-hidden` rather than masking one
+ * full-bleed layer, which had the field bleeding out both ends.
+ *
+ * Both boxes take the same local mask: the ellipse sits at the identical offset
+ * inside each. Unlike phone and tablet, desktop paints these over the copy
+ * plate rather than under it — that is Figma's own paint order.
+ */
+const desktopPatchMask = (cx: number) =>
+  `radial-gradient(ellipse 313.5px 320.5px at ${cx}px 347.5px, rgba(0,0,0,0.995) 0%, rgba(0,0,0,0.93) 20%, rgba(0,0,0,0.739) 35%, rgba(0,0,0,0.5) 46.4%, rgba(0,0,0,0.259) 58%, rgba(0,0,0,0.093) 70%, rgba(0,0,0,0.015) 85%, transparent 100%)`;
+
+/**
+ * The two boxes are mirror images, not a pair offset the same way. Figma flips
+ * the right one — the codegen carries `rotate-180` with `-scale-y-100`, which
+ * composes to a horizontal flip, and the mask offset goes 0 -> -209, exactly
+ * `-(500 - 291)`, i.e. the stencil re-anchored to the opposite edge.
+ *
+ * So the left box hangs off rule 3 with its hard edge on the left and fades
+ * right; the right box hangs off the same inset from the other side with its
+ * hard edge on the right and fades left. Both then tuck into the copy plate's
+ * two ends rather than one sitting far out towards the frame edge. The mask
+ * ellipse mirrors with the box: 145.5 in from the leading edge either way.
+ */
+const CELL = "(100% - 126px) / 13";
+const INSET = `calc(63px + 3 * ${CELL})`;
+const DESKTOP_BOXES = [
+  { key: "l", style: { left: INSET }, mask: desktopPatchMask(145.5) },
+  { key: "r", style: { right: INSET }, mask: desktopPatchMask(500 - 145.5) },
+];
+
 export const DotHalo = () => {
-  const [isTablet, setIsTablet] = useState(false);
+  const [size, setSize] = useState<"phone" | "tablet" | "desktop">("phone");
 
   useEffect(() => {
-    const query = window.matchMedia(TABLET_QUERY);
-    const sync = () => setIsTablet(query.matches);
+    const tablet = window.matchMedia(TABLET_QUERY);
+    const desktop = window.matchMedia(DESKTOP_QUERY);
+    const sync = () =>
+      setSize(
+        desktop.matches ? "desktop" : tablet.matches ? "tablet" : "phone",
+      );
     sync();
-    query.addEventListener("change", sync);
-    return () => query.removeEventListener("change", sync);
+    tablet.addEventListener("change", sync);
+    desktop.addEventListener("change", sync);
+    return () => {
+      tablet.removeEventListener("change", sync);
+      desktop.removeEventListener("change", sync);
+    };
   }, []);
 
-  const mask = isTablet ? TABLET_MASK : PHONE_MASK;
-  const { pitch, dot } = isTablet ? GRID.tablet : GRID.phone;
+  const { pitch, dot } = GRID[size];
+
+  const field = (
+    <PixelCard
+      key={pitch}
+      colors={["#d9d9d9"]}
+      gap={pitch}
+      pixelSize={dot}
+      speed={22}
+      appearFrom="bottom"
+      autoPlay
+      transition={{ type: "tween", duration: 1.4, ease: "easeOut" }}
+      backgroundColor="transparent"
+      borderWidth={0}
+      radius={0}
+      padding={0}
+    />
+  );
+
+  if (size === "desktop") {
+    return (
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-[4]">
+        {DESKTOP_BOXES.map(({ key, style, mask }) => (
+          <div
+            key={key}
+            className="absolute size-[500px] overflow-hidden"
+            style={{
+              ...style,
+              top: 317,
+              maskImage: mask,
+              WebkitMaskImage: mask,
+            }}
+          >
+            {field}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  const mask = size === "tablet" ? TABLET_MASK : PHONE_MASK;
 
   return (
     <div
@@ -75,20 +167,7 @@ export const DotHalo = () => {
       className="pointer-events-none absolute inset-0 z-[4]"
       style={{ maskImage: mask, WebkitMaskImage: mask }}
     >
-      <PixelCard
-        key={pitch}
-        colors={["#d9d9d9"]}
-        gap={pitch}
-        pixelSize={dot}
-        speed={22}
-        appearFrom="bottom"
-        autoPlay
-        transition={{ type: "tween", duration: 1.4, ease: "easeOut" }}
-        backgroundColor="transparent"
-        borderWidth={0}
-        radius={0}
-        padding={0}
-      />
+      {field}
     </div>
   );
 };

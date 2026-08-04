@@ -14,8 +14,9 @@ import StickerPeeling from "../originkit/sticker-peel";
  * and only then mounts the sticker — no layout shift either way.
  *
  * Phone fills its grid cell; tablet (1:983 / 1:982 / 1:984) sets a fixed
- * 92.92 x 92 that sits at about 73% of the wider cell, so the width is pinned
- * there and the placement within the cell comes from the caller.
+ * 92.92 x 92 that sits at about 73% of the wider cell, and desktop a fixed
+ * 101 x 100, so the width is pinned there and the placement comes from the
+ * caller. All three ratios are 0.990, so one aspect box covers them.
  *
  * The shadow offsets ship tuned for a 200px sticker, so they scale with the
  * measured width; otherwise a 73px tile would sit under a shadow cast from
@@ -33,10 +34,16 @@ const TILE_RATIO = 72 / 72.72;
 
 type StickerTileProps = {
   src: string;
+  /** Peel direction in degrees. 240 lifts the bottom-left corner. */
+  curlRotation?: number;
   className?: string;
 };
 
-export const StickerTile = ({ src, className = "" }: StickerTileProps) => {
+export const StickerTile = ({
+  src,
+  curlRotation = 240,
+  className = "",
+}: StickerTileProps) => {
   const hostRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
 
@@ -57,14 +64,14 @@ export const StickerTile = ({ src, className = "" }: StickerTileProps) => {
   return (
     <div
       ref={hostRef}
-      className={`aspect-[72.72/72] w-full ipad:w-[92.92px] ${className}`}
+      className={`aspect-[72.72/72] w-full ipad:w-[92.92px] desktop-sm:w-[101px] ${className}`}
     >
       {width > 0 && (
         <StickerPeeling
           image={src}
           imageWidth={width}
           imageHeight={Math.round(width * TILE_RATIO)}
-          curlRotation={240}
+          curlRotation={curlRotation}
           hoverPeel={45}
           pressPeel={64}
           backColor="#ffffff"

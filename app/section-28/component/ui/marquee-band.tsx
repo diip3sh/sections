@@ -18,11 +18,17 @@ import CurvedLoop from "../originkit/curved-marquee";
  * Both stay proportional as the frame widens, which is what keeps the crest
  * sitting on the headline at any phone width.
  *
- * `fade` with fadePercent 0 is a hard clip, not a fade: CurvedLoop's mask is a
- * rect over the svg viewport, so at 0 the inside stays fully opaque and
- * anything outside the box is dropped. On phone the box is the whole stage so
- * nothing changes; on tablet it is 53-687, which is what stops the ring
- * throwing whole words into the gutters where no disc reaches.
+ * The band box is the horizontal clip: on phone it is the whole stage, on
+ * tablet 53-687, on desktop 386-1078, which is what stops the ring throwing
+ * whole words past where the discs reach.
+ *
+ * The ends fade rather than being cut. `overflow-hidden` alone gave a hard
+ * edge, which slices whichever glyph happens to be crossing it and leaves half
+ * a letter sitting on the boundary — most obvious on tablet, where the band
+ * edge is nowhere near a disc. `fade` masks the svg with a linear gradient
+ * running to zero at both ends, so glyphs dissolve on approach instead. At 8
+ * percent that ramp is about 50px on tablet and 32px on phone, three or four
+ * glyphs either side. The overflow clip stays as the backstop.
  *
  * The crest lands 92.5 viewBox units below the svg top (400 + curveAmount/2),
  * so the band is parked at y229 to put it at y255.
@@ -35,6 +41,15 @@ import CurvedLoop from "../originkit/curved-marquee";
  * crest on the tablet headline. The band is set to the plate width, 53 to 687,
  * so its hard edge lands exactly on the outer column rules.
  *
+ * Desktop (1:2281) needs R 528 and 15.608px type, which is the same trick a
+ * third time: 692 wide gives R 525 (Figma 528) and 15.4px type (Figma 15.608).
+ * So curveAmount, fontSize and letterSpacing are shared by all three
+ * breakpoints and only the band box moves. Its hard edges at 386 and 1078 are
+ * also the horizontal clip Figma gets from the Marque frame bounds, pulled in
+ * from Figma's 378 and 1079.5. Both discs have already tapered by the time they
+ * reach Figma's edges, and a running ring slid glyphs through the gap either
+ * side around y405; these are the widths where the discs still cover.
+ *
  * letterSpacing is not decoration: Figma's repeat measures 135.9px across 24
  * glyphs, where Helvetica Neue Medium sets the same string in ~100px. The
  * missing 36px is 0.175em of tracking, which is ~4.5 units at fontSize 32.
@@ -45,7 +60,7 @@ export const MarqueeBand = () => (
     aria-hidden
     className="pointer-events-none absolute inset-0 z-[3] overflow-hidden"
   >
-    <div className="absolute top-[229px] left-0 aspect-[1440/800] w-full ipad:top-[362px] ipad:left-[53px] ipad:w-[634px]">
+    <div className="absolute top-[229px] left-0 aspect-[1440/800] w-full overflow-hidden ipad:top-[362px] ipad:left-[53px] ipad:w-[634px] desktop-sm:top-[255px] desktop-sm:left-[26.81%] desktop-sm:w-[48.06%]">
       <CurvedLoop
         text="2 Months Free - Annually"
         font={{
@@ -62,7 +77,7 @@ export const MarqueeBand = () => (
         gap={2}
         draggable={false}
         fade
-        fadePercent={0}
+        fadePercent={8}
         style={{ minHeight: 0, position: "relative" }}
       />
     </div>
@@ -77,9 +92,14 @@ export const MarqueeBand = () => (
         heights are fixed with the rest of the vertical rhythm.
 
         Tablet is 1:939 / 1:940, which are these scaled by the same 1.588 the
-        ring is: 248.6 x 224.7 and 221.1 x 224.7, positioned off the crest. */}
-    <span className="absolute top-[264.98px] left-[0.22%] h-[141.54px] w-[38.92%] rounded-[50%] bg-[#f5f5f5] ipad:top-[418.28px] ipad:left-[9.27%] ipad:h-[224.71px] ipad:w-[33.4%]" />
-    <span className="absolute top-[253.53px] right-0 h-[141.54px] w-[34.64%] rounded-[50%] bg-[#f5f5f5] ipad:top-[400.08px] ipad:right-[5.11%] ipad:h-[224.71px] ipad:w-[29.71%]" />
+        ring is: 248.6 x 224.7 and 221.1 x 224.7, positioned off the crest.
+
+        Desktop (1:2357 / 1:2358) moves them off the frame edges entirely and
+        parks them under the crest, at 379.5 and 836.5. There they cut the
+        ring's two descending tails instead of its ends, which is what leaves
+        just the crested run visible across the headline. */}
+    <span className="absolute top-[264.98px] left-[0.22%] h-[141.54px] w-[38.92%] rounded-[50%] bg-[#f5f5f5] ipad:top-[418.28px] ipad:left-[9.27%] ipad:h-[224.71px] ipad:w-[33.4%] desktop-sm:top-[317px] desktop-sm:left-[26.36%] desktop-sm:h-[247px] desktop-sm:w-[18.96%]" />
+    <span className="absolute top-[253.53px] right-0 h-[141.54px] w-[34.64%] rounded-[50%] bg-[#f5f5f5] ipad:top-[400.08px] ipad:right-[5.11%] ipad:h-[224.71px] ipad:w-[29.71%] desktop-sm:top-[297px] desktop-sm:right-[25.03%] desktop-sm:h-[247px] desktop-sm:w-[16.88%]" />
 
     {/* Gutter caps. An ellipse is thinnest exactly where the arc leaves the
         frame, so a running ring keeps sliding glyphs out through that taper —

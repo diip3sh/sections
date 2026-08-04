@@ -262,7 +262,7 @@ export const Section28Hero = () => (
             <h1 className="w-full font-instrument-serif text-[48px] leading-[1.1] tracking-[-1.44px] ipad:w-[446px] ipad:text-[65px] ipad:leading-[81.9px] ipad:tracking-[-1.95px] desktop-sm:w-[637px] desktop-sm:text-[74px] desktop-sm:leading-[81px] desktop-sm:tracking-[-2.22px]">
               Where Creative Talent Comes Together.
             </h1>
-            <p className="mt-2 w-full text-[16px] leading-[1.4] tracking-[-0.32px] opacity-60 ipad:mt-[20.32px] ipad:font-tight ipad:text-[18px] ipad:leading-[32.39px] ipad:tracking-[-0.36px] desktop-sm:mt-4 desktop-sm:w-[501px] desktop-sm:text-[17px] desktop-sm:leading-[25.5px] desktop-sm:tracking-[-0.34px]">
+            <p className="mt-2 w-full text-[16px] leading-[1.4] tracking-[-0.32px] opacity-60 ipad:mt-[20.32px] ipad:font-tight ipad:text-[18px] ipad:leading-[32.39px] ipad:tracking-[-0.36px] desktop-sm:mt-4 desktop-sm:w-[501px] desktop-sm:text-[17px] desktop-sm:leading-[25.5px] desktop-sm:tracking-[-0.34px] max-w-[375px] mx-auto">
               Find exceptional creators, explore inspiring work, and collaborate
               on ideas that shape the future.
             </p>
@@ -351,36 +351,6 @@ export const Section28Hero = () => (
             src="/section-28/corner-badge.svg"
             alt=""
             className="absolute top-[153.5px] right-[0.5px] block size-8 max-w-none ipad:top-[276px] ipad:right-[35px] ipad:size-[42px] desktop-sm:top-[215px] desktop-sm:right-[calc(63px_+_3_*_(100%_-_126px)_/_13_-_21px)]"
-          />
-
-          {/* The outer column rules re-drawn over the marquee's clip discs.
-            Same problem as rule 10 on desktop and the same reasoning: the discs
-            are solid #f5f5f5 and sit straight on these two rules, blanking the
-            phone's left rule from y294 to y377 and its right rule from y279 to
-            y369. They line up with the frame's own edges, so a break there
-            reads as the frame coming apart rather than as depth.
-
-            Phone needs both; tablet only the right one, since its left disc
-            starts at x69 and clears the rule at 52. Desktop's discs sit inland
-            and miss both outer rules entirely. Each span is pinned to the same
-            inset the column band uses, so it lands on the rule at any width. */}
-          <span className="absolute top-[264.98px] left-4 h-[141.54px] w-px bg-[#e0e0e0] shadow-[1px_0px_0px_0px_#ffffff] ipad:hidden" />
-          <span className="absolute top-[253.53px] right-4 h-[141.54px] w-px bg-[#e0e0e0] shadow-[1px_0px_0px_0px_#ffffff] ipad:top-[400.08px] ipad:right-[56px] ipad:h-[224.71px] desktop-sm:hidden" />
-
-          {/* Column rule 10 re-drawn over the marquee's right clip disc.
-            Figma's disc (1:2358) is a solid #f5f5f5 ellipse 836.5 -> 1079.5,
-            and its widest point sits straight on that rule, blanking it from
-            y381 to y459. The other rules the discs cross are all inside the
-            copy plate, which hides them anyway; this is the only one left
-            exposed, so it is the only one that reads as a broken line.
-
-            It cannot be fixed with z-index — the order needed is circular:
-            columns over discs, discs over the ring, the ring over the plate,
-            and the plate over the columns. Redrawing the one segment above the
-            discs is the way out. */}
-          <span
-            style={{ left: rule(10), top: 297, height: 247 }}
-            className="absolute hidden w-px bg-[#e0e0e0] shadow-[1px_0px_0px_0px_#ffffff] desktop-sm:block"
           />
 
           {DESKTOP_DIAMONDS.map(([col, top]) => (

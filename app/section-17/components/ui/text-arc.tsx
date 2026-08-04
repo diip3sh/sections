@@ -6,7 +6,7 @@ import CurvedLoop from "../originkit/curved-marquee";
 const VIEWBOX_WIDTH = 1440;
 
 /** Change this to tune the bow — viewBox height / top space scales with it */
-const CURVE_AMOUNT = -120;
+const CURVE_AMOUNT = -646;
 
 /**
  * Arc sits in normal flow above the headline.
@@ -43,8 +43,9 @@ export const TextArc = () => {
 
   // Approximate reserved height so layout doesn't jump before mount
   const fontSizePx = fontSize;
-  const upward = Math.max(0, -CURVE_AMOUNT);
-  const reserveH = Math.max(fontSizePx * 1.8, fontSizePx * 1.8 + upward);
+  // Quadratic bow reaches half the control offset — mirror curved-marquee.
+  const upward = Math.max(0, -CURVE_AMOUNT) / 2;
+  const reserveH = fontSizePx * 1.8 + upward;
 
   return (
     <div
@@ -57,7 +58,7 @@ export const TextArc = () => {
           text="2 Months Free - Annually"
           direction="left"
           baseVelocity={10}
-          curveAmount={-646}
+          curveAmount={CURVE_AMOUNT}
           gap={5}
           draggable={false}
           fade

@@ -26,12 +26,19 @@ export const GridBackground = () => {
           srcSet="/section-17/bg/ipad-bg.png"
         />
         {/* mobile default */}
+        {/*
+          Mobile + iPad render the pattern at its natural Figma frame width
+          (402 / 744) so grid rows land on the exact Figma y values. Scaling it
+          with object-cover stretched the rows out of sync with the content,
+          which is itself a fixed-width column. Desktop is fluid, so it keeps
+          object-cover.
+        */}
         <img
           src="/section-17/bg/mobile-bg.png"
           alt=""
           width={402}
           height={779}
-          className="size-full object-cover object-top"
+          className="absolute top-0 left-1/2 h-auto w-[402px] max-w-none -translate-x-1/2 ipad:w-[744px] desktop-sm:inset-0 desktop-sm:left-0 desktop-sm:size-full desktop-sm:translate-x-0 desktop-sm:object-cover desktop-sm:object-top"
           decoding="async"
         />
       </picture>

@@ -114,10 +114,16 @@ export default function CurvedLoop({
   const bottomPad = fontSizePx * 0.6;
   const upward = Math.max(0, -curveAmount);
   const downward = Math.max(0, curveAmount);
-  const baseline = topPad + upward;
+  /**
+   * A quadratic bezier only reaches HALF the control-point offset, so reserving
+   * the full |curveAmount| left ~50% of the SVG as dead space above the arc.
+   */
+  const bowUp = upward / 2;
+  const bowDown = downward / 2;
+  const baseline = topPad + bowUp;
   const viewBoxH = Math.max(
     topPad + bottomPad + 1,
-    topPad + upward + downward + bottomPad,
+    topPad + bowUp + bowDown + bottomPad,
   );
   const pathD = `M-80,${baseline} Q720,${baseline + curveAmount} 1520,${baseline}`;
 

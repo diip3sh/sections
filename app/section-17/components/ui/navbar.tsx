@@ -27,7 +27,7 @@ export const Navbar = ({ onViewStories }: NavbarProps) => {
   return (
     <nav aria-label="Primary" className="relative z-30 w-full">
       {/* Mobile / tablet — Figma Nav: 367×71, p-16, top ~25 */}
-      <div className="mx-auto mt-7 ipad:mt-12 ipad:max-w-[634px] ipad:h-[125px] ipad-landscape:mt-16 flex h-[68px] w-full max-w-[367px] ipad-landscape:hidden items-center justify-between bg-[#f5f5f5] p-4 desktop-sm:hidden">
+      <div className="mx-auto mt-[28px] ipad:mt-[43px] ipad:max-w-[634px] ipad:h-[125px] ipad:px-[30px] ipad-landscape:mt-16 flex h-[79px] w-full max-w-[367px] ipad-landscape:hidden items-center justify-between bg-[#f5f5f5] px-4 desktop-sm:hidden">
         <a
           href="#"
           aria-label="Creatora home"
@@ -53,7 +53,7 @@ export const Navbar = ({ onViewStories }: NavbarProps) => {
         >
           <span
             aria-hidden="true"
-            className="flex size-6 flex-col justify-center gap-[5px]"
+            className="flex size-6 flex-col justify-center gap-[5px] ipad:size-8 ipad:gap-[7px]"
           >
             <span className="block h-[1.5px] w-full rounded-full bg-[#121212]" />
             <span className="block h-[1.5px] w-full rounded-full bg-[#121212]" />

@@ -14,6 +14,7 @@ import {
   Monda,
   Outfit,
   Playfair_Display,
+  Rajdhani,
   Red_Hat_Display,
   Rethink_Sans,
   Space_Grotesk,
@@ -90,6 +91,12 @@ export const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
   weight: ["400"],
   style: ["normal", "italic"],
+});
+
+export const rajdhani = Rajdhani({
+  variable: "--font-rajdhani-family",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const manrope = Manrope({

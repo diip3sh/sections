@@ -84,20 +84,28 @@ const BAND_MASK = `linear-gradient(to bottom, ${[
 ].join(", ")})`;
 
 /**
- * Left / right pair.
+ * Left / right pair, each anchored to a viewport edge rather than to Figma's x.
  *
- * Desktop mirrors the left band rather than taking Figma's x435 for it. At 435
- * the fill's 55.335% midpoint lands on x740, which on a 1440 stage reads as the
- * middle of the screen, not as light reaching in from the edge — the same
- * authoring drift as the iPad duplicate. Flipped and pushed to -198 it peaks
- * 49px from the left edge, exactly where the right band peaks from the right.
+ * Figma's own x values do not survive contact with a real screen. On the 1440
+ * frame the left band's 55.335% midpoint lands on x740 — the middle of the
+ * screen, not light reaching in from the edge. On the phone the second band is
+ * pushed off-frame entirely, and iPad stacks both on the right 12px apart,
+ * which is a duplicate that never got moved. Three frames, three different
+ * accidents, and none of them is the composition: a band leaning in from either
+ * side of the hero.
  *
- * The stacked frames keep Figma's own offsets: the second band is off-screen on
- * the phone, and iPad pins both to the right, so there is no pair to balance.
+ * So the pair is anchored to the edges and the left one is mirrored, which puts
+ * both midpoints the same distance in. At 1440 that reproduces the desktop
+ * frame exactly — peaks at x49 and x1391 — and it keeps holding on a phone and
+ * on an ultrawide, where stage-relative offsets would have stranded both bands
+ * in the middle 1440px.
+ *
+ * The inset is the fill's own midpoint less 49px, so it changes with the band
+ * width: 209.5 - 49 on the phone's 469, 305.4 - 49 from iPad up on 552.
  */
 const BAND_X = [
-  "left-[24px] ipad:left-[423px] desktop-sm:left-[-198px] desktop-sm:-scale-x-100",
-  "left-[408px] ipad:left-[435px] desktop-sm:left-[1086px]",
+  "-left-[160px] -scale-x-100 ipad:-left-[198px]",
+  "-right-[160px] ipad:-right-[198px]",
 ] as const;
 
 /**
@@ -109,8 +117,18 @@ const BAND_Y = [
   "top-[148px] ipad:top-[176px] desktop-sm:top-[calc(50%-306.5px)]",
 ] as const;
 
+/**
+ * The bands are backdrop, so they bleed the viewport rather than stopping at
+ * the capped stage — otherwise past 1440 both of them end up marooned in the
+ * middle 1440px with bare page either side. Vertically it stays inside the
+ * middle band, which is what keeps the pair travelling with the orb when the
+ * viewport is taller than Figma's 885 frame.
+ */
 export const LightBands = () => (
-  <div aria-hidden className="pointer-events-none absolute inset-0 z-[1]">
+  <div
+    aria-hidden
+    className="pointer-events-none absolute inset-y-0 left-[calc(50%-50vw)] z-[1] w-screen"
+  >
     {BAND_X.map((x) => (
       <span key={x} className="contents">
         {BAND_Y.map((y) => (

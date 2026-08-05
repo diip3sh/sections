@@ -21,7 +21,7 @@
  *
  * The dashed hairlines run in from both frame edges and stop at the orb, always
  * 32px either side of its centre. They are drawn rather than exported: Figma's
- * SVG is two 0.49px lime strokes on a 3.92 dash.
+ * SVG is two sub-pixel lime strokes on a 3.92 dash.
  *
  * The soft light bands that cross this area are their own backdrop layer — see
  * `light-bands.tsx`.
@@ -34,8 +34,20 @@ const HALO_FILL =
   " rgb(84,109,36) 82.53%, rgb(48,66,23) 90.19%, rgb(30,45,17) 94.02%, rgb(12,23,11) 97.84%," +
   " rgb(12,23,11) 100%)";
 
+/**
+ * Figma's rule (2371:3968) is a #c7f828 stroke at 0.6 opacity, 0.489516 wide,
+ * on a `3.92 3.92` dash — 3.92 on, 3.92 off, a 7.84 period.
+ *
+ * The period is transcribed; the width is resolved rather than transcribed. A
+ * 0.49px-tall box lands wherever the pixel grid puts it, so two rules that
+ * should match come out at wildly different weights — measured peaks of 30 and
+ * 136 on lines that are meant to be identical. Figma's own renderer spreads
+ * that sub-pixel stroke across two rows at about 0.18 alpha each, so the rule
+ * is one pixel row at 0.18 here, which is what the frame actually measures: a
+ * lit pixel 40 levels over the page, and 18 averaged across the dash.
+ */
 const HAIRLINE =
-  "repeating-linear-gradient(to right, rgba(199,248,40,0.6) 0 1.96px, transparent 1.96px 3.92px)";
+  "repeating-linear-gradient(to right, rgba(199,248,40,0.18) 0 3.92px, transparent 3.92px 7.84px)";
 
 /** Both hairlines of a pair, 32px either side of the orb centre (140px in). */
 const RULE_Y = ["top-[108px]", "top-[172px]"] as const;
@@ -65,14 +77,26 @@ export const Orb = ({ className = "" }: { className?: string }) => (
       style={{ backgroundImage: HALO_FILL }}
     />
 
-    {/* Ring — #252525 disc with Figma's lime inner rim */}
-    <span className="absolute inset-[14.93%] rounded-full bg-[#252525] shadow-[inset_0px_0px_3.15px_0px_#a0c83e]" />
+    {/*
+      Ring and nebula. The nebula is the one real image here, and it is clipped
+      to the disc rather than left as the loose rectangle Figma positions it as.
+      Its PNG is opaque black outside the swirl, and `mix-blend-screen` does not
+      save it: the halo below carries both a filter and a blend of its own, so
+      the browser composites it as a separate layer and the screen finds no
+      backdrop to drop the black into — the image's bounding box paints as a
+      visible dark square over the glow. Clipping is also what the orb actually
+      is, so the rectangle never needed to exist.
 
-    {/* Nebula — the one real image; screened so its black drops out */}
-    <img
-      src="/section-32/orb-nebula.png"
-      alt=""
-      className="absolute top-[12.39%] left-[8.73%] h-[76.34%] w-[83.94%] max-w-none mix-blend-screen"
-    />
+      The lime rim goes on its own overlay above the nebula, since an inset
+      shadow on the ring itself would sit under the image.
+    */}
+    <span className="absolute inset-[14.93%] overflow-hidden rounded-full bg-[#252525]">
+      <img
+        src="/section-32/orb-nebula.png"
+        alt=""
+        className="absolute top-[-3.6%] left-[-8.8%] h-[108.4%] w-[119.2%] max-w-none mix-blend-screen"
+      />
+    </span>
+    <span className="absolute inset-[14.93%] rounded-full shadow-[inset_0px_0px_3.15px_0px_#a0c83e]" />
   </div>
 );

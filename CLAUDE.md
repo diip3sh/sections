@@ -29,7 +29,7 @@ structure.
 
 ## Project philosophy
 
-**Figma is the spec, not the source.** Every measurement is honoured; the *mechanism* is
+**Figma is the spec, not the source.** Every measurement is honoured; the _mechanism_ is
 re-derived. Figma flattens live effects into PNGs, expresses grids as 12,000 absolutely-
 positioned rects, and bakes gradients into `foreignObject` SVGs. The job is the smallest
 CSS/DOM structure that reproduces those pixels **and stays correct** when the viewport is
@@ -62,16 +62,16 @@ blocks, no `any`, no unused props.
 
 ## Tech stack
 
-| Concern | Choice |
-| --- | --- |
-| Framework | Next.js 16 (App Router), React 19, TypeScript strict |
-| Styling | Tailwind CSS v4 — config lives in `app/globals.css` via `@theme inline` |
-| Animation | `motion` v12 (`motion/react`) + CSS `@keyframes` in `globals.css` |
-| 3D / canvas | `three`, plus hand-rolled canvas in OriginKit components |
-| Data / misc | `d3-geo` (globe), `dialkit` |
-| Fonts | `lib/fonts/font.ts` — next/font, exposed as `font-*` utilities |
-| Icons | Per-section SVGs in `public/section-N/`. No icon library. |
-| Package manager | pnpm |
+| Concern         | Choice                                                                  |
+| --------------- | ----------------------------------------------------------------------- |
+| Framework       | Next.js 16 (App Router), React 19, TypeScript strict                    |
+| Styling         | Tailwind CSS v4 — config lives in `app/globals.css` via `@theme inline` |
+| Animation       | `motion` v12 (`motion/react`) + CSS `@keyframes` in `globals.css`       |
+| 3D / canvas     | `three`, plus hand-rolled canvas in OriginKit components                |
+| Data / misc     | `d3-geo` (globe), `dialkit`                                             |
+| Fonts           | `lib/fonts/font.ts` — next/font, exposed as `font-*` utilities          |
+| Icons           | Per-section SVGs in `public/section-N/`. No icon library.               |
+| Package manager | pnpm                                                                    |
 
 No `cn()` / `clsx` / `tailwind-merge`, no shared UI library, no design-token palette. Class
 names are composed with template literals. Keep it that way unless asked otherwise.
@@ -103,17 +103,17 @@ source art. Runtime assets always live in `public/section-N/`.
 
 ### Naming
 
-| Thing | Convention |
-| --- | --- |
-| Folder | `section-N` |
-| File | kebab-case; root is `section-N-<purpose>.tsx` (`-hero`, `-why`, `-footer`) |
-| Component | PascalCase, **named export** from `ui/`. Default export **only** in `originkit/`. |
-| Constant | `SCREAMING_SNAKE` at module scope, above the component, with its Figma node in a comment |
-| Mask string | `*_MASK` — `HAND_MASK`, `FLAG_MASK`, `EDGE_MASK`, `BOLT_MASK`, `CORE_MASK` |
-| Gradient fill | `*_FILL` / `*_SHEEN` — `PRIMARY_CTA_FILL`, `PILL_SHEEN`, `CARD_SHEEN` |
-| Easing | `EASE_OUT` (house standard) or `EASE` |
-| Link data | `NAV_LINKS`, `LINK_COLUMNS`, `SOCIAL_LINKS` |
-| Tier breakpoint | `IPAD_MIN = 768`, `DESKTOP_SM_MIN = 1280`, `FULL_HD_MIN = 1920` |
+| Thing           | Convention                                                                               |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| Folder          | `section-N`                                                                              |
+| File            | kebab-case; root is `section-N-<purpose>.tsx` (`-hero`, `-why`, `-footer`)               |
+| Component       | PascalCase, **named export** from `ui/`. Default export **only** in `originkit/`.        |
+| Constant        | `SCREAMING_SNAKE` at module scope, above the component, with its Figma node in a comment |
+| Mask string     | `*_MASK` — `HAND_MASK`, `FLAG_MASK`, `EDGE_MASK`, `BOLT_MASK`, `CORE_MASK`               |
+| Gradient fill   | `*_FILL` / `*_SHEEN` — `PRIMARY_CTA_FILL`, `PILL_SHEEN`, `CARD_SHEEN`                    |
+| Easing          | `EASE_OUT` (house standard) or `EASE`                                                    |
+| Link data       | `NAV_LINKS`, `LINK_COLUMNS`, `SOCIAL_LINKS`                                              |
+| Tier breakpoint | `IPAD_MIN = 768`, `DESKTOP_SM_MIN = 1280`, `FULL_HD_MIN = 1920`                          |
 
 ### Imports & exports
 
@@ -124,7 +124,10 @@ source art. Runtime assets always live in `public/section-N/`.
   import type { Metadata } from "next";
   import { SectionNHero } from "./components/ui/section-N-hero";
 
-  export const metadata: Metadata = { title: "<Brand> — <Headline>", description: "<sub>" };
+  export const metadata: Metadata = {
+    title: "<Brand> — <Headline>",
+    description: "<sub>",
+  };
 
   const SectionN = () => <SectionNHero />;
   export default SectionN;
@@ -203,10 +206,11 @@ Order of preference, strictly:
 4. **Absolute** — last resort.
 
 **Never trust Figma absolute positioning.** Figma reports absolute x/y for nodes that are
-plainly a flow. Before writing an absolutely-positioned *content* node, ask: must it overlap
+plainly a flow. Before writing an absolutely-positioned _content_ node, ask: must it overlap
 something, or sit outside its own measured box? If not, it is flow.
 
 Absolute **is** correct for:
+
 - Decoration Figma itself places absolutely — grids, washes, glows, dot bands, noise,
   rule-intersection markers.
 - Art that must overflow the box it is measured by (`section-29/ascii-art.tsx`).
@@ -221,7 +225,9 @@ so each Figma y is the original minus that").
 ### Section shell
 
 ```tsx
-<main className="relative w-full overflow-hidden bg-[#hex]">   {/* backdrop bleeds */}
+<main className="relative w-full overflow-hidden bg-[#hex]">
+  {" "}
+  {/* backdrop bleeds */}
   <div className="relative mx-auto w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-[1440px]">
     {/* background layers — absolute, aria-hidden, pointer-events-none */}
     {/* content — flex column, z-indexed above */}
@@ -230,20 +236,57 @@ so each Figma y is the original minus that").
 ```
 
 Cap the **stage**, let the **backdrop** bleed. Capping preserves Figma's line breaks;
-bleeding keeps gradients reaching the screen edges. Use `min-h-dvh`/`min-h-svh` for
-full-viewport heroes, explicit frame heights when Figma's height is load-bearing.
+bleeding keeps gradients reaching the screen edges.
+
+### Height — the frame height is a floor, not a height
+
+**Height is a separate decision from width, and it is not either/or.** Desktop frames in this
+project run 800–900px; real laptops are 900–1200. A hero pinned to its frame height therefore
+ends mid-screen and shows bare `--background` grey below it. This has shipped wrong more than
+once. Take Figma's height as the **minimum**:
+
+```tsx
+desktop-sm:h-[811px] desktop-sm:min-h-dvh
+```
+
+Then decide where the surplus goes — leaving this implicit is the actual bug, because the
+default (everything top-anchored) strands the lower band off the fold:
+
+| The frame's bottom edge is…                                               | Do                                                                                                                                       |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| dead space under the last content                                         | nothing else — `min-h-dvh` alone is right                                                                                                |
+| a band that reads as sitting on the fold (stats, logo strip, footer rule) | measure that band from the bottom: `desktop-sm:top-auto desktop-sm:bottom-[Npx]`                                                         |
+| …and then everything between the two pinned bands                         | wrap it and hang each block off **that band's** centre at its Figma offset: `desktop-sm:top-[calc(50%-Npx)] desktop-sm:-translate-y-1/2` |
+
+**Offsets, not absolute y.** `calc(50% - N)` reproduces Figma exactly at the frame height and
+lets every block in the band drift by the same amount as it grows — absolute y does neither.
+Derive `N` once: `N = bandCentre − figmaTop − blockHeight / 2`.
+
+Two things that bite:
+
+- Anything switched to a bottom offset must flip its centring transform as well —
+  `-translate-y-1/2` → `desktop-sm:translate-y-1/2` — or a rule tick lands a full height off.
+- A middle-band wrapper spanning the stage needs `pointer-events-none`, with
+  `pointer-events-auto` on the interactive block inside, or it swallows nav clicks.
+
+`section-31` is the worked example: nav band pinned top, stats + brand strip pinned bottom,
+copy and visual centred in what is left. Stacked frames (mobile/tablet) are normally taller
+than their viewport already and need none of this — apply it at `desktop-sm:` only.
+
+Use explicit frame heights with no floor **only** when Figma's height is genuinely load-bearing
+_and_ the section is not the first thing on the page.
 
 ### z-index scale
 
 Consistent across the repo — follow it rather than inventing values:
 
-| Layer | z |
-| --- | --- |
-| Backdrop, ambience, washes | `z-0` |
-| Pattern/decoration between backdrop and content | `z-[1]`–`z-[5]` |
-| Primary content | `z-10` |
-| Content that must sit over decoration (copy, cards) | `z-20` |
-| Nav, and art painted over everything | `z-30` |
+| Layer                                               | z               |
+| --------------------------------------------------- | --------------- |
+| Backdrop, ambience, washes                          | `z-0`           |
+| Pattern/decoration between backdrop and content     | `z-[1]`–`z-[5]` |
+| Primary content                                     | `z-10`          |
+| Content that must sit over decoration (copy, cards) | `z-20`          |
+| Nav, and art painted over everything                | `z-30`          |
 
 Add `isolate` to the section root when blend modes or stacking must not escape (18 files do).
 
@@ -266,15 +309,15 @@ Add `isolate` to the section root when blend modes or stacking must not escape (
 
 Pick by what is varying — this is a decision, not a preference:
 
-| What varies | Mechanism | Reference |
-| --- | --- | --- |
-| Anything CSS can express | Tailwind breakpoint variants | everywhere |
-| Several values sharing one recipe | CSS custom properties per breakpoint: `[--cell:32px] ipad:[--cell:52px]`, consumed by gradients/sizes | `section-24/grid-rail.tsx` |
-| Continuous scaling between two bounds | `clamp(min, Nvw, max)` | `section-15/concentric-rings.tsx` |
-| Figma coordinates inside a fixed frame | percentage of the frame: `${(x / FRAME_W) * 100}%` | `section-13/textured-background.tsx` |
-| **Numeric props on a canvas/OriginKit component** | **JS breakpoint-tier hook** (below) | `section-12`, `18`, `19`, `22`, `28` |
+| What varies                                       | Mechanism                                                                                             | Reference                            |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| Anything CSS can express                          | Tailwind breakpoint variants                                                                          | everywhere                           |
+| Several values sharing one recipe                 | CSS custom properties per breakpoint: `[--cell:32px] ipad:[--cell:52px]`, consumed by gradients/sizes | `section-24/grid-rail.tsx`           |
+| Continuous scaling between two bounds             | `clamp(min, Nvw, max)`                                                                                | `section-15/concentric-rings.tsx`    |
+| Figma coordinates inside a fixed frame            | percentage of the frame: `${(x / FRAME_W) * 100}%`                                                    | `section-13/textured-background.tsx` |
+| **Numeric props on a canvas/OriginKit component** | **JS breakpoint-tier hook** (below)                                                                   | `section-12`, `18`, `19`, `22`, `28` |
 
-**The rule:** if the value is CSS, use a Tailwind variant. If it is *canvas geometry* — a
+**The rule:** if the value is CSS, use a Tailwind variant. If it is _canvas geometry_ — a
 prop the component reads in JS — it must switch on a media query in JS. `section-28/
 dot-halo.tsx` states it outright: "Both are canvas geometry, not CSS, so they switch on a
 media query here rather than a Tailwind variant."
@@ -290,8 +333,8 @@ const DESKTOP_SM_MIN = 1280;
 type Tier = "mobile" | "ipad" | "desktop";
 
 const CONFIG = {
-  mobile:  { size: 5,  fade: 88  },
-  ipad:    { size: 6,  fade: 96  },
+  mobile: { size: 5, fade: 88 },
+  ipad: { size: 6, fade: 96 },
   desktop: { size: 10, fade: 100 },
 } as const satisfies Record<Tier, Config>;
 ```
@@ -302,11 +345,15 @@ crossings, where `resize` fires on every pixel:
 ```ts
 const tablet = window.matchMedia(`(min-width: ${IPAD_MIN}px)`);
 const desktop = window.matchMedia(`(min-width: ${DESKTOP_SM_MIN}px)`);
-const sync = () => setTier(desktop.matches ? "desktop" : tablet.matches ? "ipad" : "mobile");
+const sync = () =>
+  setTier(desktop.matches ? "desktop" : tablet.matches ? "ipad" : "mobile");
 sync();
 tablet.addEventListener("change", sync);
 desktop.addEventListener("change", sync);
-return () => { tablet.removeEventListener("change", sync); desktop.removeEventListener("change", sync); };
+return () => {
+  tablet.removeEventListener("change", sync);
+  desktop.removeEventListener("change", sync);
+};
 ```
 
 Extract to `use-<thing>.ts` when the hook is reused or the config table is long
@@ -395,22 +442,22 @@ Ship an image only when the effect cannot be expressed otherwise, and say why in
 (`section-26/backdrop.tsx` is the model: Figma renders its conic rig through a
 `foreignObject`, which browsers refuse to rasterise as a `background-image`).
 
-| Effect | Recipe | Reference |
-| --- | --- | --- |
-| Ruled grid | flex row/col of 1px `<span>`s; `justify-between` (fluid) or fixed `gap` (pitched) | `section-28`, `section-29` `grid-pattern.tsx` |
-| Engraved rule | `bg-[#e0e0e0] shadow-[0px_1px_0px_0px_#ffffff]` — the white offset is the bevel | `section-28/grid-pattern.tsx` |
-| Dot field | inline SVG data-URI tile + `background-size` per breakpoint | `section-29/edge-dot-bands.tsx` |
-| Dashed rail / hatch / ticks | `repeating-linear-gradient` stack driven by `[--cell]` vars | `section-24/grid-rail.tsx` |
-| Markers on rules | coord array → absolute spans at `calc()` rule positions | `section-28-hero.tsx` |
-| Blurred wash / glow | `rounded-[50%] bg-[#hex] blur-[26px]` on an absolute div | `section-29-why.tsx` |
-| Radial ambience | inline `backgroundImage: radial-gradient(ellipse …)` | `section-23-hero.tsx` |
-| Glass surface | `border-white/10` + `backdrop-blur-[25px]` + `bg-linear-to-b from-white/0 from-50% to-white/30` + `*_SHEEN` radial | `section-26/recommendation-card.tsx` |
-| Noise / grain | tiled PNG + `background-size` + `opacity` + `mix-blend-*` | `section-25-hero.tsx`, `section-27-hero.tsx` |
-| Baked light plate | PNG + `mix-blend-screen` (black drops out) | `section-26/backdrop.tsx` |
-| Inline SVG glow | `<filter><feGaussianBlur>` sized relative to what it wraps | `section-26/mask-group.tsx` |
-| Gradient border ring | `@property` angle + conic gradient + `mask-composite: exclude` | `globals.css` |
-| Inset hairline / bevel | `shadow-[inset_…]` on an `aria-hidden` overlay span | `section-30-hero.tsx` |
-| Per-breakpoint background art | `<picture>` + `<source media>` | `section-17/grid-background.tsx` |
+| Effect                        | Recipe                                                                                                             | Reference                                     |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------- |
+| Ruled grid                    | flex row/col of 1px `<span>`s; `justify-between` (fluid) or fixed `gap` (pitched)                                  | `section-28`, `section-29` `grid-pattern.tsx` |
+| Engraved rule                 | `bg-[#e0e0e0] shadow-[0px_1px_0px_0px_#ffffff]` — the white offset is the bevel                                    | `section-28/grid-pattern.tsx`                 |
+| Dot field                     | inline SVG data-URI tile + `background-size` per breakpoint                                                        | `section-29/edge-dot-bands.tsx`               |
+| Dashed rail / hatch / ticks   | `repeating-linear-gradient` stack driven by `[--cell]` vars                                                        | `section-24/grid-rail.tsx`                    |
+| Markers on rules              | coord array → absolute spans at `calc()` rule positions                                                            | `section-28-hero.tsx`                         |
+| Blurred wash / glow           | `rounded-[50%] bg-[#hex] blur-[26px]` on an absolute div                                                           | `section-29-why.tsx`                          |
+| Radial ambience               | inline `backgroundImage: radial-gradient(ellipse …)`                                                               | `section-23-hero.tsx`                         |
+| Glass surface                 | `border-white/10` + `backdrop-blur-[25px]` + `bg-linear-to-b from-white/0 from-50% to-white/30` + `*_SHEEN` radial | `section-26/recommendation-card.tsx`          |
+| Noise / grain                 | tiled PNG + `background-size` + `opacity` + `mix-blend-*`                                                          | `section-25-hero.tsx`, `section-27-hero.tsx`  |
+| Baked light plate             | PNG + `mix-blend-screen` (black drops out)                                                                         | `section-26/backdrop.tsx`                     |
+| Inline SVG glow               | `<filter><feGaussianBlur>` sized relative to what it wraps                                                         | `section-26/mask-group.tsx`                   |
+| Gradient border ring          | `@property` angle + conic gradient + `mask-composite: exclude`                                                     | `globals.css`                                 |
+| Inset hairline / bevel        | `shadow-[inset_…]` on an `aria-hidden` overlay span                                                                | `section-30-hero.tsx`                         |
+| Per-breakpoint background art | `<picture>` + `<source media>`                                                                                     | `section-17/grid-background.tsx`              |
 
 Every decorative layer: `aria-hidden`, `pointer-events-none`, explicit `z-*`.
 (180 `pointer-events-none` and 275 `aria-hidden` occurrences — this is universal.)
@@ -453,8 +500,8 @@ style={{ maskImage: MASK, WebkitMaskImage: MASK }}
 ### Easing — the house values
 
 ```ts
-const EASE_OUT = [0.215, 0.61, 0.355, 1] as const;  // ease-out-cubic — 20 files, the standard
-const EASE     = [0.22, 1, 0.36, 1] as const;        // ease-out-quint — Reveal only (24, 25)
+const EASE_OUT = [0.215, 0.61, 0.355, 1] as const; // ease-out-cubic — 20 files, the standard
+const EASE = [0.22, 1, 0.36, 1] as const; // ease-out-quint — Reveal only (24, 25)
 ```
 
 Use `EASE_OUT` unless you are copying the `Reveal` component wholesale.
@@ -496,11 +543,19 @@ Pick by complexity:
    returning `{initial, animate, transition}`, short-circuited when reduced motion is on.
    Sections 13, 16.
    ```ts
-   const reveal = (delay: number) => reduceMotion
-     ? { initial: { opacity: 1 }, animate: { opacity: 1 } }
-     : { initial: { opacity: 0, y: 14, filter: "blur(4px)" },
-         animate:  { opacity: 1, y: 0,  filter: "blur(0px)" },
-         transition: { type: "tween" as const, duration: 0.45, ease: EASE_OUT, delay } };
+   const reveal = (delay: number) =>
+     reduceMotion
+       ? { initial: { opacity: 1 }, animate: { opacity: 1 } }
+       : {
+           initial: { opacity: 0, y: 14, filter: "blur(4px)" },
+           animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+           transition: {
+             type: "tween" as const,
+             duration: 0.45,
+             ease: EASE_OUT,
+             delay,
+           },
+         };
    ```
 2. **`Reveal` / `RevealGroup`** — variant-based stagger for a whole column. Copy
    `section-25/component/ui/reveal.tsx` verbatim. `EASE`, 0.9s, stagger 0.14,
@@ -562,11 +617,11 @@ The most distinctive convention here. Match it.
 
 - **Every section root and non-trivial part opens with a block comment** naming its Figma
   frames/node IDs and describing the layout strategy in prose.
-- **Every deviation from Figma's numbers is justified inline** — not "changed to X" but *why*
+- **Every deviation from Figma's numbers is justified inline** — not "changed to X" but _why_
   Figma's value fails at other widths.
 - **Comment the load-bearing pixel.** If a `1px` inset or a `Math.round` is doing real work,
   say so and say what breaks without it.
-- Prose, present tense, describing what the *design* does — not what the code does.
+- Prose, present tense, describing what the _design_ does — not what the code does.
 
 Read `app/section-29/component/ui/grid-pattern.tsx`,
 `app/section-28/component/ui/marquee-band.tsx` and
@@ -578,6 +633,8 @@ Read `app/section-29/component/ui/grid-pattern.tsx`,
 
 - All three Figma frames match at their reference widths **and** in between.
 - No horizontal overflow from 320 to 2560.
+- The section fills a viewport taller than its desktop frame — checked at 1440x811 **and**
+  1440x1200 — with no bare page below it and no hole above the fold.
 - Reduced-motion path verified.
 - Keyboard tab order and focus rings verified.
 - `npx tsc --noEmit` clean; `npx prettier --write` on touched files.

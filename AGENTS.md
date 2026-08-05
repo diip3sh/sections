@@ -230,8 +230,45 @@ so each Figma y is the original minus that").
 ```
 
 Cap the **stage**, let the **backdrop** bleed. Capping preserves Figma's line breaks;
-bleeding keeps gradients reaching the screen edges. Use `min-h-dvh`/`min-h-svh` for
-full-viewport heroes, explicit frame heights when Figma's height is load-bearing.
+bleeding keeps gradients reaching the screen edges.
+
+### Height — the frame height is a floor, not a height
+
+**Height is a separate decision from width, and it is not either/or.** Desktop frames in this
+project run 800–900px; real laptops are 900–1200. A hero pinned to its frame height therefore
+ends mid-screen and shows bare `--background` grey below it. This has shipped wrong more than
+once. Take Figma's height as the **minimum**:
+
+```tsx
+desktop-sm:h-[811px] desktop-sm:min-h-dvh
+```
+
+Then decide where the surplus goes — leaving this implicit is the actual bug, because the
+default (everything top-anchored) strands the lower band off the fold:
+
+| The frame's bottom edge is… | Do |
+| --- | --- |
+| dead space under the last content | nothing else — `min-h-dvh` alone is right |
+| a band that reads as sitting on the fold (stats, logo strip, footer rule) | measure that band from the bottom: `desktop-sm:top-auto desktop-sm:bottom-[Npx]` |
+| …and then everything between the two pinned bands | wrap it and hang each block off **that band's** centre at its Figma offset: `desktop-sm:top-[calc(50%-Npx)] desktop-sm:-translate-y-1/2` |
+
+**Offsets, not absolute y.** `calc(50% - N)` reproduces Figma exactly at the frame height and
+lets every block in the band drift by the same amount as it grows — absolute y does neither.
+Derive `N` once: `N = bandCentre − figmaTop − blockHeight / 2`.
+
+Two things that bite:
+
+- Anything switched to a bottom offset must flip its centring transform as well —
+  `-translate-y-1/2` → `desktop-sm:translate-y-1/2` — or a rule tick lands a full height off.
+- A middle-band wrapper spanning the stage needs `pointer-events-none`, with
+  `pointer-events-auto` on the interactive block inside, or it swallows nav clicks.
+
+`section-31` is the worked example: nav band pinned top, stats + brand strip pinned bottom,
+copy and visual centred in what is left. Stacked frames (mobile/tablet) are normally taller
+than their viewport already and need none of this — apply it at `desktop-sm:` only.
+
+Use explicit frame heights with no floor **only** when Figma's height is genuinely load-bearing
+*and* the section is not the first thing on the page.
 
 ### z-index scale
 

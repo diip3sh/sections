@@ -262,7 +262,7 @@ export const Section28Hero = () => (
             <h1 className="w-full font-instrument-serif text-[48px] leading-[1.1] tracking-[-1.44px] ipad:w-[446px] ipad:text-[65px] ipad:leading-[81.9px] ipad:tracking-[-1.95px] desktop-sm:w-[637px] desktop-sm:text-[74px] desktop-sm:leading-[81px] desktop-sm:tracking-[-2.22px]">
               Where Creative Talent Comes Together.
             </h1>
-            <p className="mt-2 w-full text-[16px] leading-[1.4] tracking-[-0.32px] opacity-60 ipad:mt-[20.32px] ipad:font-tight ipad:text-[18px] ipad:leading-[32.39px] ipad:tracking-[-0.36px] desktop-sm:mt-4 desktop-sm:w-[501px] desktop-sm:text-[17px] desktop-sm:leading-[25.5px] desktop-sm:tracking-[-0.34px] max-w-[375px] mx-auto">
+            <p className="mt-2 w-full text-[16px] leading-[1.4] tracking-[-0.32px] opacity-60 ipad:mt-[20.32px] ipad:font-tight ipad:text-[18px] ipad:leading-[32.39px] ipad:tracking-[-0.36px] desktop-sm:mt-4 desktop-sm:w-[501px] desktop-sm:text-[17px] desktop-sm:leading-[25.5px] desktop-sm:tracking-[-0.34px] max-w-[300x] mx-auto">
               Find exceptional creators, explore inspiring work, and collaborate
               on ideas that shape the future.
             </p>

@@ -1,5 +1,6 @@
 import { AsciiField } from "./ascii-field";
 import { HeroContent } from "./hero-content";
+import { LightBands } from "./light-bands";
 import { Navbar } from "./navbar";
 import { Orb } from "./orb";
 import { StarDust } from "./star-dust";
@@ -61,6 +62,7 @@ export const Section32Hero = () => (
             className="absolute top-[484px] left-1/2 z-[1] h-[1010px] w-[1332px] -translate-x-1/2 -translate-y-1/2 ipad:top-[533px] ipad:h-[1769px] ipad:w-[1769px] desktop-sm:top-[calc(50%+34px)]"
             style={{ backgroundImage: WASH_FILL }}
           />
+          <LightBands />
           <StarDust className="top-[201px] z-[2] ipad:top-[234px] desktop-sm:top-[calc(50%-220.5px)]" />
           <Orb className="top-[61px] z-[2] ipad:top-[94px] desktop-sm:top-[calc(50%-220.5px)] desktop-sm:-translate-y-1/2" />
           <HeroContent className="top-[344px] ipad:top-[495px] desktop-sm:top-[calc(50%+127px)] desktop-sm:-translate-y-1/2" />

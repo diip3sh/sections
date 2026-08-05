@@ -36,6 +36,12 @@ type Rule = {
   end: TickVariant;
   /** Tick where the rule meets the desktop-only middle rail. */
   centre?: TickVariant;
+  /**
+   * Desktop measures the last two rules off the bottom of the stage instead of
+   * the top, so the stats-and-brands band stays on the fold when the viewport
+   * is taller than Figma's 811. The tick has to flip its offset to match.
+   */
+  anchor?: "bottom";
 };
 
 const RULES: Rule[] = [
@@ -52,14 +58,16 @@ const RULES: Rule[] = [
   { y: "top-[485px] ipad:top-[551px] desktop-sm:hidden", end: "arm" },
   { y: "top-[537px] ipad:top-[622px] desktop-sm:hidden", end: "arm" },
   {
-    y: "top-[857px] ipad:top-[1024px] desktop-sm:top-[643px]",
+    y: "top-[857px] ipad:top-[1024px] desktop-sm:top-auto desktop-sm:bottom-[167px]",
     end: "arm",
     centre: "cross",
+    anchor: "bottom",
   },
   {
-    y: "top-[1097px] ipad:top-[1148px] desktop-sm:top-[773px]",
+    y: "top-[1097px] ipad:top-[1148px] desktop-sm:top-auto desktop-sm:bottom-[37px]",
     end: "arm",
     centre: "cross",
+    anchor: "bottom",
   },
   { y: "top-[1187px] ipad:top-[1281px] desktop-sm:hidden", end: "arm" },
 ];
@@ -84,6 +92,7 @@ type TickProps = {
   variant: TickVariant;
   /** Mirrors an arm/cross onto the right-hand rail. */
   flip?: boolean;
+  anchor?: "bottom";
   className: string;
 };
 
@@ -93,7 +102,14 @@ type TickProps = {
  * tee where the middle rail begins. All three are two 1px bars, so they are
  * drawn rather than exported. 16px arms on mobile, 20px from iPad up.
  */
-const Tick = ({ variant, flip = false, className }: TickProps) => {
+const Tick = ({ variant, flip = false, anchor, className }: TickProps) => {
+  // A top offset centres the tick by pulling up half its height; a bottom one
+  // has to push down by the same amount instead.
+  const centreOnRule =
+    anchor === "bottom"
+      ? "-translate-y-1/2 desktop-sm:translate-y-1/2"
+      : "-translate-y-1/2";
+
   if (variant === "tee") {
     return (
       <span className={`absolute h-2.5 w-5 -translate-x-1/2 ${className}`}>
@@ -108,7 +124,7 @@ const Tick = ({ variant, flip = false, className }: TickProps) => {
   if (variant === "cross") {
     return (
       <span
-        className={`absolute size-4 -translate-y-1/2 ipad:size-5 ${
+        className={`absolute size-4 ipad:size-5 ${centreOnRule} ${
           flip ? "translate-x-1/2" : "-translate-x-1/2"
         } ${className}`}
       >
@@ -125,7 +141,7 @@ const Tick = ({ variant, flip = false, className }: TickProps) => {
   // Half-plus: the bar sits on the rail, the arm reaches into the page.
   return (
     <span
-      className={`absolute h-4 w-2 -translate-y-1/2 ipad:h-5 ipad:w-2.5 ${className}`}
+      className={`absolute h-4 w-2 ipad:h-5 ipad:w-2.5 ${centreOnRule} ${className}`}
     >
       <span
         className={`${TICK} absolute top-1/2 left-0 h-px w-full -translate-y-1/2`}
@@ -168,11 +184,21 @@ export const GridFrame = () => (
 
       {RULES.map((rule) => (
         <div key={rule.y} className="contents">
-          <Tick variant={rule.end} className={`${rule.y} ${RAIL_L}`} />
-          <Tick variant={rule.end} flip className={`${rule.y} ${RAIL_R}`} />
+          <Tick
+            variant={rule.end}
+            anchor={rule.anchor}
+            className={`${rule.y} ${RAIL_L}`}
+          />
+          <Tick
+            variant={rule.end}
+            flip
+            anchor={rule.anchor}
+            className={`${rule.y} ${RAIL_R}`}
+          />
           {rule.centre ? (
             <Tick
               variant={rule.centre}
+              anchor={rule.anchor}
               className={`left-1/2 hidden desktop-sm:block ${rule.y}`}
             />
           ) : null}

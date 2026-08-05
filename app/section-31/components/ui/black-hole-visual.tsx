@@ -34,6 +34,11 @@ import BlackHole from "../originkit/black-hole";
  * it hangs on the page change. Because of that the hand lands at the same
  * percentages of the box at all three sizes, so it needs no per-breakpoint
  * geometry at all.
+ *
+ * Desktop hangs the box off the middle band's centre rather than the stage top.
+ * Figma puts it at y76 in a 173-643 band, i.e. 76px above that centre, and
+ * holding the offset means the disc and the copy drift down by the same amount
+ * when the band opens up on a viewport taller than Figma's 811.
  */
 
 /** Width of the Figma render the parameters above were measured from. */
@@ -91,7 +96,7 @@ export const BlackHoleVisual = () => {
   return (
     <div
       ref={hostRef}
-      className="absolute top-[489px] left-[-2.74%] z-10 aspect-[733.681/512.049] w-[102.84%] ipad:top-[567px] ipad:left-[14.11%] ipad:w-[71.75%] desktop-sm:top-[76px] desktop-sm:left-[45.21%] desktop-sm:w-[50.95%]"
+      className="absolute top-[489px] left-[-2.74%] z-10 aspect-[733.681/512.049] w-[102.84%] ipad:top-[567px] ipad:left-[14.11%] ipad:w-[71.75%] desktop-sm:top-[calc(50%-76px)] desktop-sm:left-[45.21%] desktop-sm:w-[50.95%] desktop-sm:-translate-y-1/2"
     >
       {width > 0 && (
         <BlackHole

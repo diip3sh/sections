@@ -22,16 +22,29 @@ import { StatsRow } from "./stats-row";
  * width as a share of the stage, so the disc keeps its place relative to the
  * rails through the fluid stretch between 1280 and 1440 instead of hanging off
  * a number only true at 1440.
+ *
+ * Desktop also takes a floor of the viewport height, because 811 is shorter
+ * than most laptops and the page would otherwise end mid-screen. The extra
+ * height is not spread evenly: the nav band stays pinned to the top and the
+ * stats-and-brands band to the bottom, both at their Figma heights, and only
+ * the middle band between the two rules grows. Copy and visual sit inside that
+ * band offset from its centre, so they hold Figma's exact positions at 811 and
+ * drift down together as it opens up — rather than leaving a hole above the
+ * fold. The band is transparent to the pointer so it cannot swallow nav clicks.
  */
 export const Section31Hero = () => (
   <main className="relative isolate w-full overflow-hidden bg-[#0a0a0a]">
-    <div className="relative h-[1233px] w-full ipad:h-[1330px] desktop-sm:h-[811px]">
+    <div className="relative h-[1233px] w-full ipad:h-[1330px] desktop-sm:h-[811px] desktop-sm:min-h-dvh">
       <GridFrame />
 
       <div className="relative z-10 mx-auto h-full w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-[1440px]">
         <Navbar />
-        <HeroContent />
-        <BlackHoleVisual />
+
+        <div className="pointer-events-none absolute inset-0 desktop-sm:top-[173px] desktop-sm:bottom-[168px]">
+          <HeroContent />
+          <BlackHoleVisual />
+        </div>
+
         <StatsRow />
         <LogoMarquee />
       </div>

@@ -7,6 +7,10 @@
  * wrapper that `contents` dissolves from iPad up, so all three end in one flex
  * row rather than being rebuilt per breakpoint.
  *
+ * Desktop measures the row off the bottom of the stage (Figma's y667 is 52px
+ * clear of the 811 frame foot) so it stays with the rule above it when the
+ * viewport is taller than that frame.
+ *
  * Figma types the mobile "Internts Processed" label at 16px while its two
  * siblings are 14px; all three are 14px here, since the frame renders them the
  * same size and the odd one out is an authoring slip.
@@ -39,7 +43,7 @@ const Column = ({ label, value }: Stat) => (
 );
 
 export const StatsRow = () => (
-  <div className="absolute top-[875px] left-[48px] z-20 flex w-[301px] max-w-[calc(100%-96px)] flex-col gap-[32px] motion-safe:animate-section-rise ipad:top-[1040px] ipad:left-[104px] ipad:w-[536px] ipad:flex-row ipad:items-center ipad:gap-[35px] desktop-sm:top-[667px] desktop-sm:left-[132px]">
+  <div className="absolute top-[875px] left-[48px] z-20 flex w-[301px] max-w-[calc(100%-96px)] flex-col gap-[32px] motion-safe:animate-section-rise ipad:top-[1040px] ipad:left-[104px] ipad:w-[536px] ipad:flex-row ipad:items-center ipad:gap-[35px] desktop-sm:top-auto desktop-sm:bottom-[52px] desktop-sm:left-[132px]">
     <div className="flex w-full items-center gap-[35px] ipad:contents">
       <Column {...STATS[0]} />
       <Divider />

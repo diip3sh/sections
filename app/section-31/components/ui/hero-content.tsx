@@ -17,6 +17,11 @@ import { Button } from "./button";
  *
  * The CTA pair measures exactly 332 — the full width of Figma's mobile block —
  * so it wraps rather than clips on anything narrower than the 402 frame.
+ *
+ * Desktop hangs off the middle band's centre rather than the stage top: Figma
+ * puts the block at y226 in a 173-643 band, which is 31px above that band's
+ * centre, and holding the offset rather than the absolute y is what lets the
+ * band grow on a tall viewport without stranding the copy at the top.
  */
 
 const EASE_OUT = [0.215, 0.61, 0.355, 1] as const;
@@ -45,7 +50,7 @@ export const HeroContent = () => {
         };
 
   return (
-    <div className="absolute top-[125px] left-1/2 z-20 flex w-[332px] max-w-full -translate-x-1/2 flex-col items-center gap-[40px] ipad:top-[193px] ipad:w-[448px] desktop-sm:top-[226px] desktop-sm:left-[132px] desktop-sm:w-[519px] desktop-sm:translate-x-0 desktop-sm:items-start">
+    <div className="pointer-events-auto absolute top-[125px] left-1/2 z-20 flex w-[332px] max-w-full -translate-x-1/2 flex-col items-center gap-[40px] ipad:top-[193px] ipad:w-[448px] desktop-sm:top-[calc(50%-31px)] desktop-sm:left-[132px] desktop-sm:w-[519px] desktop-sm:translate-x-0 desktop-sm:-translate-y-1/2 desktop-sm:items-start">
       <div className="flex w-full flex-col items-center gap-[21px] text-center text-white desktop-sm:items-start desktop-sm:text-left">
         <motion.h1
           {...reveal(0)}

@@ -127,7 +127,7 @@ const BAND_Y = [
 export const LightBands = () => (
   <div
     aria-hidden
-    className="pointer-events-none absolute inset-y-0 left-[calc(50%-50vw)] z-[1] w-screen"
+    className="pointer-events-none absolute inset-y-0 left-[calc(50%-50vw)] w-screen"
   >
     {BAND_X.map((x) => (
       <span key={x} className="contents">

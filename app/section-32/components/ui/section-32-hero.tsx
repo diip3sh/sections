@@ -54,17 +54,26 @@ export const Section32Hero = () => (
       <div className="relative mx-auto h-full w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-[1440px]">
         <Navbar />
 
+        {/*
+          Nothing in this band carries a z-index, and that is deliberate. The
+          orb's halo is blended `exclusion`, which only reaches as far down as
+          the nearest stacking context — give the orb a `z-*` and the halo stops
+          seeing the character field and the page behind it, and the glow comes
+          out about a tenth short from r100 to r160. Paint order alone puts each
+          layer where Figma has it, and leaves the blend able to reach `main`,
+          which is where `isolate` deliberately stops it.
+        */}
         <div className="pointer-events-none absolute inset-0 desktop-sm:top-[80px] desktop-sm:bottom-0">
           {/* Wash — centred on the copy, not on the orb, which is what pulls
               the glyphs out from behind the headline rather than the orb. It
               lives in the band so it travels with the copy it is there for. */}
           <div
-            className="absolute top-[484px] left-1/2 z-[1] h-[1010px] w-[1332px] -translate-x-1/2 -translate-y-1/2 ipad:top-[533px] ipad:h-[1769px] ipad:w-[1769px] desktop-sm:top-[calc(50%+34px)]"
+            className="absolute top-[484px] left-1/2 h-[1010px] w-[1332px] -translate-x-1/2 -translate-y-1/2 ipad:top-[533px] ipad:h-[1769px] ipad:w-[1769px] desktop-sm:top-[calc(50%+34px)]"
             style={{ backgroundImage: WASH_FILL }}
           />
+          <Orb className="top-[61px] ipad:top-[94px] desktop-sm:top-[calc(50%-220.5px)] desktop-sm:-translate-y-1/2" />
+          <StarDust className="top-[201px] ipad:top-[234px] desktop-sm:top-[calc(50%-220.5px)]" />
           <LightBands />
-          <StarDust className="top-[201px] z-[2] ipad:top-[234px] desktop-sm:top-[calc(50%-220.5px)]" />
-          <Orb className="top-[61px] z-[2] ipad:top-[94px] desktop-sm:top-[calc(50%-220.5px)] desktop-sm:-translate-y-1/2" />
           <HeroContent className="top-[344px] ipad:top-[495px] desktop-sm:top-[calc(50%+127px)] desktop-sm:-translate-y-1/2" />
         </div>
       </div>

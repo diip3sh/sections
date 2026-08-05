@@ -308,24 +308,19 @@ export default function PixelCard(props: PixelCardProps) {
 
     const el = canvasRef.current;
     const container = containerRef.current;
-    const width = Math.floor(
-      el.clientWidth ||
-        el.getBoundingClientRect().width ||
-        container.clientWidth ||
-        0,
-    );
-    const height = Math.floor(
-      el.clientHeight ||
-        el.getBoundingClientRect().height ||
-        container.clientHeight ||
-        0,
-    );
+    // Measure the CSS-driven box, never a size we wrote ourselves — the canvas
+    // stretches to the container, so pinning it in px would latch it at its
+    // first measured size and it could never grow with the container.
+    const rect = el.getBoundingClientRect();
+    const width = Math.floor(rect.width || container.clientWidth || 0);
+    const height = Math.floor(rect.height || container.clientHeight || 0);
     const ctx = canvasRef.current.getContext("2d");
 
+    if (width <= 0 || height <= 0) return;
+
+    // Only the backing store is sized here; CSS keeps the element at 100%.
     canvasRef.current.width = width;
     canvasRef.current.height = height;
-    canvasRef.current.style.width = `${width}px`;
-    canvasRef.current.style.height = `${height}px`;
 
     const colorsArray = finalColors;
     const step = Math.max(1, Math.round(Number(finalGap)) || 1);

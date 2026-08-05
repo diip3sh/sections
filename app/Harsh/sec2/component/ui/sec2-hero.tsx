@@ -54,30 +54,52 @@ const GetStartedButton = ({ className }: { className: string }) => (
   </button>
 );
 
-/** The two hands are one photo, each revealed through its own alpha mask. */
+/** The two hands are one photo, each revealed through its own alpha mask.
+ *
+ *  `from` is the frame edge the hand sits against: it drives both the entrance
+ *  (left hand slides left→right, right hand right→left) and a second mask layer
+ *  — a linear-gradient that dissolves the wrist where it meets that edge, so the
+ *  cutout never reads as a hard crop while it slides in. The two mask layers are
+ *  intersected, so the shape mask still does all the actual cutting out. */
+const EDGE_FADE = {
+  left: "linear-gradient(to right, transparent 0%, #000 18%, #000 100%)",
+  right: "linear-gradient(to left, transparent 0%, #000 18%, #000 100%)",
+} as const;
+
+/** Spelled out in full — Tailwind only sees class names it can read literally. */
+const HAND_SLIDE = {
+  left: "animate-hand-slide-in-left",
+  right: "animate-hand-slide-in-right",
+} as const;
+
 const HandCutout = ({
   box,
   mask,
   maskSize,
   image,
+  from,
+  step,
 }: {
   box: string;
   mask: string;
   maskSize: string;
   image: string;
+  from: "left" | "right";
+  step: number;
 }) => (
   <div
-    className={`absolute ${box}`}
+    className={`absolute ${HAND_SLIDE[from]} ${box}`}
     style={{
-      maskImage: `url("${A}/${mask}")`,
-      WebkitMaskImage: `url("${A}/${mask}")`,
+      ...delay(step),
+      maskImage: `url("${A}/${mask}"), ${EDGE_FADE[from]}`,
+      WebkitMaskImage: `url("${A}/${mask}"), ${EDGE_FADE[from]}`,
       maskMode: "alpha",
       maskComposite: "intersect",
       WebkitMaskComposite: "source-in",
       maskRepeat: "no-repeat",
       WebkitMaskRepeat: "no-repeat",
-      maskSize,
-      WebkitMaskSize: maskSize,
+      maskSize: `${maskSize}, 100% 100%`,
+      WebkitMaskSize: `${maskSize}, 100% 100%`,
     }}
   >
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -176,6 +198,8 @@ const PhoneFrame = () => (
       mask="hand-mask-top.svg"
       maskSize="230px 177.309px"
       image="left-[-97.68%] top-[-17.2%] h-[170.95%] w-[197.68%]"
+      from="right"
+      step={360}
     />
 
     <HandCutout
@@ -183,6 +207,8 @@ const PhoneFrame = () => (
       mask="hand-mask-bottom.svg"
       maskSize="224px 212.801px"
       image="left-[-15.3%] top-[-63.32%] h-[163.32%] w-[232.73%]"
+      from="left"
+      step={440}
     />
 
     {/* stat card */}
@@ -290,6 +316,8 @@ const TabletFrame = () => (
       mask="ipad-mask-top.svg"
       maskSize="343px 264.423px"
       image="left-[-97.68%] top-[-17.2%] h-[170.95%] w-[197.68%]"
+      from="right"
+      step={360}
     />
 
     <HandCutout
@@ -297,6 +325,8 @@ const TabletFrame = () => (
       mask="ipad-mask-bottom.svg"
       maskSize="282px 267.9px"
       image="left-[-15.3%] top-[-63.32%] h-[163.32%] w-[232.73%]"
+      from="left"
+      step={440}
     />
 
     {/* stat card */}
@@ -417,6 +447,8 @@ const DesktopFrame = () => (
       mask="desk-mask-top.svg"
       maskSize="486px 374.664px"
       image="left-[-97.68%] top-[-17.2%] h-[170.95%] w-[197.68%]"
+      from="right"
+      step={360}
     />
 
     <HandCutout
@@ -424,6 +456,8 @@ const DesktopFrame = () => (
       mask="desk-mask-bottom.svg"
       maskSize="443px 420.85px"
       image="left-[-15.3%] top-[-63.32%] h-[163.32%] w-[232.73%]"
+      from="left"
+      step={440}
     />
 
     {/* stat card */}

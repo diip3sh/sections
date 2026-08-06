@@ -6,16 +6,13 @@
  * shared `logo-marquee` keyframe, with two identical halves in one w-max track;
  * one half already runs ~1300px, comfortably past the widest window.
  *
- * On desktop the window is pinned to the middle rail and the right rail — the
- * cell the strip belongs to — instead of Figma's 687-1370, which overhangs the
- * middle rail by 33.5px and the right one by 10px. A still can afford that: the
- * mask alpha out there is only about 0.09, and Figma's frozen track happens to
- * have gaps in both tails. Scrolling, it does not — every glyph eventually
- * passes through those 33.5px and reads as the strip crossing a rule. Ending
- * the window on the rails makes that impossible, and since the ellipse is sized
- * as a share of the window the fade is down to ~0.02 by the time it gets there,
- * so nothing is cut off either. Mobile and iPad keep Figma's overhang, where
- * the strip is meant to run off the frame.
+ * Figma's still overhangs the rails on every frame — mobile by 26px / 52px,
+ * iPad by 11px / 50px — which a frozen export can afford because the mask alpha
+ * out there is near zero and the track happens to have gaps in both tails.
+ * Scrolling, it cannot: every glyph eventually crosses those pixels and reads
+ * as the strip bleeding past a rule. The window is pinned to the vertical rails
+ * at every width instead (32 / 62 / middle-to-right on desktop), and the
+ * ellipse fade is sized as a share of that window so alpha is ~0 at the rails.
  *
  * Desktop also measures off the bottom of the stage, so the strip stays with
  * the rule above it when the viewport is taller than Figma's 811 frame.
@@ -125,9 +122,13 @@ const Half = ({ hidden = false }: { hidden?: boolean }) => (
   </ul>
 );
 
+/** Marquee window inset — matches `RAIL_L` / `RAIL_R` in `grid-frame.tsx`. */
+const RAIL_WINDOW =
+  "left-[32px] right-[32px] ipad:left-[62px] ipad:right-[62px] desktop-sm:left-1/2 desktop-sm:right-[80px]";
+
 export const LogoMarquee = () => (
   <div
-    className={`${SCALE} absolute top-[1115px] -left-[26px] -right-[52px] z-20 h-[52px] overflow-hidden [--fade-cx:46.9%] [--fade-r:41.7%] ipad:top-[1183px] ipad:right-[50px] ipad:left-[11px] ipad:h-[74px] ipad:[--fade-cx:50.6%] ipad:[--fade-r:54.8%] desktop-sm:top-auto desktop-sm:bottom-[66px] desktop-sm:right-[80px] desktop-sm:left-1/2`}
+    className={`${SCALE} ${RAIL_WINDOW} absolute top-[1115px] z-20 h-[52px] overflow-hidden [--fade-cx:50.6%] [--fade-r:54.8%] ipad:top-[1183px] ipad:h-[74px] desktop-sm:top-auto desktop-sm:bottom-[66px]`}
     style={{ maskImage: FADE_MASK, WebkitMaskImage: FADE_MASK }}
   >
     <div className="flex h-full w-max items-center will-change-transform motion-safe:animate-logo-marquee">

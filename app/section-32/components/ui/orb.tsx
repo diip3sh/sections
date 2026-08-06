@@ -1,3 +1,5 @@
+import { CosmicOrb } from "./cosmic-orb";
+
 /**
  * The orb and everything pinned to it — Figma `Group 2147241501` inside
  * `Group 2147241512` (mobile 2371:1691, iPad 2371:2452, desktop 2371:3271).
@@ -17,8 +19,9 @@
  *  - the ring: a #252525 disc with a lime inner rim. Figma draws that rim as an
  *    SVG inner shadow (sigma 1.577, rgb 160/200/62); CSS says the same thing in
  *    one `inset` shadow, so no export.
- *  - the nebula: the one genuine image here — a photographic swirl, screened so
- *    its black drops out.
+ *  - the nebula: OriginKit's Cosmic Orb, running live inside that disc. Figma
+ *    has it as a photographic PNG, which is a still of what the component does
+ *    anyway; see `cosmic-orb.tsx`.
  *
  * The dashed hairlines run in from both frame edges and stop at the orb, always
  * 32px either side of its centre. They are drawn rather than exported: Figma's
@@ -94,30 +97,16 @@ export const Orb = ({ className = "" }: { className?: string }) => (
     />
 
     {/*
-      Ring and nebula. The nebula is the one real image here, and it is clipped
-      to the disc rather than left as the loose rectangle Figma positions it as.
-      Its PNG is opaque black outside the swirl, and `mix-blend-screen` does not
-      save it: the halo below carries both a filter and a blend of its own, so
-      the browser composites it as a separate layer and the screen finds no
-      backdrop to drop the black into — the image's bounding box paints as a
-      visible dark square over the glow. Clipping is also what the orb actually
-      is, so the rectangle never needed to exist.
+      Ring and nebula. `#252525` is Figma's ring fill, and it is not just a
+      backing colour — the sphere covers only the middle 86.4% of this disc, so
+      the rest of it reads as the dark band around the nebula. `cosmic-orb.tsx`
+      owns that ratio and centres itself here.
 
       The lime rim goes on its own overlay above the nebula, since an inset
-      shadow on the ring itself would sit under the image.
-
-      The image is sized off Figma's inner crop, not off the frame it sits in.
-      Figma gives `image 3083588` a 235.042 x 213.746 box and then oversizes the
-      picture inside it to 105.37% x 99.82% — 247.66 x 213.36, which is the
-      PNG's own 1.161 aspect. Fitting it to the box instead squashes it 6%
-      horizontally, which slides every swirl inward off its mark.
+      shadow on the ring itself would sit under it.
     */}
     <span className="absolute inset-[14.93%] overflow-hidden rounded-full bg-[#252525]">
-      <img
-        src="/section-32/orb-nebula.png"
-        alt=""
-        className="absolute top-[-3.6%] left-[-9.6%] h-[108.2%] w-[125.6%] max-w-none mix-blend-screen"
-      />
+      <CosmicOrb />
     </span>
     <span className="absolute inset-[14.93%] rounded-full shadow-[inset_0px_0px_3.15px_0px_#a0c83e]" />
   </div>

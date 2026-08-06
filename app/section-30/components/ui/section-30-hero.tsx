@@ -99,7 +99,7 @@ const MobileLogoHalf = () => (
  * - Vertical rails + logo band stay on the 1440 stage.
  */
 export const Section30Hero = () => (
-  <main className="relative isolate flex min-h-dvh w-full flex-col overflow-x-hidden bg-[#17281e]">
+  <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-x-hidden bg-[#17281e]">
     {/*
       Live wavy field — full viewport, past the 1440 content cap, so 4K does not
       flash black gutters beside the stage.
@@ -228,7 +228,7 @@ export const Section30Hero = () => (
                 className={`relative inline-flex shrink-0 items-center justify-center rounded-lg px-4 py-3 font-tight text-[16px] leading-[normal] font-medium whitespace-nowrap text-[#0d1611] shadow-[0px_3px_3px_0px_rgba(0,0,0,0.1),0px_11px_5.5px_0px_rgba(0,0,0,0.09),0px_26px_7.5px_0px_rgba(0,0,0,0.05)] ${CONTROL} [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90`}
                 style={{ backgroundImage: PRIMARY_CTA_FILL }}
               >
-                Boo a Call
+                Book a Call
                 <span
                   aria-hidden
                   className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_1px_2px_0px_rgba(255,255,255,0.5),inset_0px_-1px_0px_0px_rgba(0,0,0,0.12)]"

@@ -20,8 +20,8 @@ type Stat = { label: string; value: string };
 
 const STATS: Stat[] = [
   { label: "Connected Chains", value: "42" },
-  { label: "Internts Processed", value: "2,1M_" },
-  { label: "Total Value Locked", value: "$1.72B_" },
+  { label: "Internts Processed", value: "2.1M" },
+  { label: "Total Value Locked", value: "$1.72B" },
 ];
 
 const Divider = ({ className = "" }: { className?: string }) => (

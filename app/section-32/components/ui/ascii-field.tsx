@@ -48,13 +48,13 @@ import AsciiFire from "../originkit/ascii-fire";
 
 /** Sampled from the Figma still at seven luminance quantiles, dark to bright. */
 const GREEN_SHADES = [
-  "#161b03",
-  "#283009",
+  "#162200",
+  "#2c4108",
   "#3f4c0b",
   "#5c692d",
-  "#89a432",
-  "#a0bd3b",
-  "#cbe36d",
+  "#B0F353",
+  "#96D240",
+  "#BBFB50",
 ];
 
 /** Matches `--breakpoint-ipad` / `--breakpoint-desktop-sm` in globals.css */

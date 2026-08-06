@@ -48,7 +48,7 @@ export const StarDust = ({ className = "" }: { className?: string }) => {
       <Sparkles
         background="rgba(0,0,0,0)"
         particleColor="#ffffff"
-        particleDensity={8.3}
+        particleDensity={3}
         minSize={MIN_SIZE}
         maxSize={MAX_SIZE}
         angle={180}

@@ -33,7 +33,7 @@ import { StatsRow } from "./stats-row";
  * fold. The band is transparent to the pointer so it cannot swallow nav clicks.
  */
 export const Section31Hero = () => (
-  <main className="relative isolate w-full overflow-hidden bg-[#0a0a0a]">
+  <main className="animate-hero-reveal relative isolate w-full overflow-hidden bg-[#0a0a0a]">
     <div className="relative h-[1233px] w-full ipad:h-[1330px] desktop-sm:h-[811px] desktop-sm:min-h-dvh">
       <GridFrame />
 

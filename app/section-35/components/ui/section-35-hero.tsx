@@ -45,7 +45,7 @@ const RULE = "border-solid border-white/16";
 
 export const Section35Hero = () => (
   <main
-    className={`relative flex min-h-[max(100dvh,874px)] w-full flex-col ${PAGE} ipad:min-h-[max(100dvh,1068px)] desktop-sm:min-h-[max(100dvh,831px)]`}
+    className={`animate-hero-reveal relative flex min-h-[max(100dvh,874px)] w-full flex-col ${PAGE} ipad:min-h-[max(100dvh,1068px)] desktop-sm:min-h-[max(100dvh,831px)]`}
   >
     <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col">
       <div

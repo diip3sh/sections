@@ -30,7 +30,7 @@ const STAGE_LAYER =
   "absolute inset-y-0 left-1/2 w-full max-w-[1440px] -translate-x-1/2";
 
 export const Section36Hero = () => (
-  <main className="relative isolate flex min-h-[max(100dvh,874px)] w-full flex-col overflow-hidden bg-[#edeff3] ipad:min-h-[max(100dvh,1133px)] desktop-sm:min-h-[max(100dvh,832px)]">
+  <main className="animate-hero-reveal relative isolate flex min-h-[max(100dvh,874px)] w-full flex-col overflow-hidden bg-[#edeff3] ipad:min-h-[max(100dvh,1133px)] desktop-sm:min-h-[max(100dvh,832px)]">
     {/* The backdrop caps with the content rather than with the viewport. The
         rails, the grid and the globe are all measured off the same 1440 stage,
         so past the cap they stop together and the page colour is what fills the

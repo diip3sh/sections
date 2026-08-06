@@ -47,7 +47,7 @@ const WASH_FILL = `radial-gradient(closest-side, ${[
 ].join(", ")})`;
 
 export const Section32Hero = () => (
-  <main className="relative isolate w-full overflow-hidden bg-[#031602]">
+  <main className="animate-hero-reveal relative isolate w-full overflow-hidden bg-[#031602]">
     <div className="relative h-[874px] w-full ipad:h-[1068px] desktop-sm:h-[885px] desktop-sm:min-h-dvh">
       <AsciiField />
 

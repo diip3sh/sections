@@ -40,7 +40,7 @@ const STATS = [
 ];
 
 export const Section33Hero = () => (
-  <main className="relative isolate flex min-h-[max(100dvh,848px)] w-full flex-col overflow-hidden bg-black ipad:min-h-[max(100dvh,1063px)] desktop-sm:min-h-[max(100dvh,832px)]">
+  <main className="animate-hero-reveal relative isolate flex min-h-[max(100dvh,848px)] w-full flex-col overflow-hidden bg-black ipad:min-h-[max(100dvh,1063px)] desktop-sm:min-h-[max(100dvh,832px)]">
     <div className="absolute inset-y-0 left-1/2 w-full max-w-[1440px] -translate-x-1/2">
       <Backdrop />
       {/*

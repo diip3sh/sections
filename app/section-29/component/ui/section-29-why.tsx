@@ -115,7 +115,7 @@ const FEATURES = {
 };
 
 export const Section29Why = () => (
-  <section className="relative flex w-full grow flex-col overflow-hidden bg-[#f5f5f2] desktop-sm:bg-[#f8f8f8]">
+  <section className="animate-hero-reveal relative flex w-full grow flex-col overflow-hidden bg-[#f5f5f2] desktop-sm:bg-[#f8f8f8]">
     {/* Past wide-lg the whole thing stops growing and centres as a 1440 stage,
         so the head room, the grid and the dot bars all keep the desktop frame's
         proportions instead of stretching. Everything positions against this

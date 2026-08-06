@@ -47,7 +47,7 @@ const FADE_FILL =
   "linear-gradient(to top, #002fff 0, #002fff var(--fade-solid), transparent 100%)";
 
 export const Section34Hero = () => (
-  <main className="relative isolate flex min-h-[max(100dvh,874px)] w-full flex-col overflow-hidden bg-[#002fff] ipad:min-h-[max(100dvh,1133px)] desktop-sm:min-h-[max(100dvh,832px)]">
+  <main className="animate-hero-reveal relative isolate flex min-h-[max(100dvh,874px)] w-full flex-col overflow-hidden bg-[#002fff] ipad:min-h-[max(100dvh,1133px)] desktop-sm:min-h-[max(100dvh,832px)]">
     <WaveField />
 
     <div

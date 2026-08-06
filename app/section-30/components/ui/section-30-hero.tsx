@@ -99,7 +99,7 @@ const MobileLogoHalf = () => (
  * - Vertical rails + logo band stay on the 1440 stage.
  */
 export const Section30Hero = () => (
-  <main className="relative isolate flex min-h-dvh w-full flex-col overflow-x-hidden bg-[#17281e]">
+  <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-x-hidden bg-[#17281e]">
     {/*
       Live wavy field — full viewport, past the 1440 content cap, so 4K does not
       flash black gutters beside the stage.

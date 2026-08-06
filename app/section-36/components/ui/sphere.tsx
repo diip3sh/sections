@@ -97,10 +97,17 @@ export const Sphere = () => (
 
       Only the globe is clipped. The glow underneath has to keep bleeding into
       the margins past the rails, which is where Figma throws its two lobes.
+
+      The globe takes pointer events so drag and the cursor repulsion still
+      work, but only inside its own box. The component builds a canvas 2.5x its
+      container and lets it overflow — and since this layer paints above the
+      copy, an unclipped hit area reaches right up over the header buttons.
+      `overflow-hidden` on the box confines it; the sphere is drawn to fill that
+      box anyway, so only the cursor-scattered particles lose their overspill.
     */}
     <div className="absolute inset-y-0 right-[16px] left-[16px] overflow-hidden ipad:right-[48px] ipad:left-[48px]">
       <div
-        className={`pointer-events-auto absolute bottom-[-184px] left-1/2 -translate-x-1/2 ipad:bottom-[-181px] desktop-sm:bottom-[-380px] ${BOX}`}
+        className={`pointer-events-auto absolute bottom-[-184px] left-1/2 -translate-x-1/2 overflow-hidden ipad:bottom-[-181px] desktop-sm:bottom-[-380px] ${BOX}`}
       >
         <ParticleSphere
           particlesCount={10000}

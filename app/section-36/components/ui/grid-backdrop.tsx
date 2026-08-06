@@ -54,6 +54,19 @@ const FILLED_CELLS = [
 const GRAIN =
   "absolute inset-y-0 w-[16px] bg-[url('/section-36/grain.png')] bg-[length:500px_518px] bg-left-top opacity-50 ipad:w-[47px]";
 
+/**
+ * The outer edge of each grain channel.
+ *
+ * Figma leaves these open — sampling the frame at x0-4 and x1275-1279 gives flat
+ * page colour at every row, so the margin runs off the page rather than being
+ * bracketed. Added on request. Same hairline-and-bevel as the rails so the
+ * channel reads as one piece, with the bevel mirrored on the right so it faces
+ * inward on both sides rather than falling off the edge.
+ *
+ * They sit outside the `opacity-50` grain, or the strip would fade them with it.
+ */
+const EDGE = "absolute inset-y-0 w-px bg-black/12";
+
 /** Rail to rail — the box every part of the pattern is measured from. */
 const BAND =
   "absolute inset-y-0 right-[16px] left-[16px] ipad:right-[48px] ipad:left-[48px]";
@@ -87,6 +100,9 @@ export const GridBackdrop = () => (
 
     <div className={`${GRAIN} left-0`} />
     <div className={`${GRAIN} right-0`} />
+
+    <span className={`${EDGE} left-0 shadow-[1px_0px_0px_0px_#ffffff]`} />
+    <span className={`${EDGE} right-0 shadow-[-1px_0px_0px_0px_#ffffff]`} />
   </div>
 );
 

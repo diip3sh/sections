@@ -67,7 +67,7 @@ export const Section36Hero = () => (
           */}
           <button
             type="button"
-            className="relative inline-flex shrink-0 cursor-pointer touch-manipulation items-center justify-center rounded-[12px] p-[12px] font-sans text-[16px] leading-[normal] font-medium tracking-[-0.02em] whitespace-nowrap text-white drop-shadow-[0px_53px_7.5px_rgba(0,0,0,0),0px_34px_7px_rgba(0,0,0,0.01),0px_19px_6px_rgba(0,0,0,0.05),0px_9px_4.5px_rgba(0,0,0,0.09),0px_2px_2.5px_rgba(0,0,0,0.1)] transition-[opacity,transform] duration-200 ease-out [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:scale-[0.97] motion-reduce:active:scale-100 ipad:px-[24px] ipad:py-[16px] [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90"
+            className="relative inline-flex shrink-0 cursor-pointer touch-manipulation items-center justify-center rounded-[12px] p-[12px] font-sans text-[16px] leading-[normal] font-medium tracking-[-0.02em] whitespace-nowrap text-white drop-shadow-[0px_53px_7.5px_rgba(0,0,0,0),0px_34px_7px_rgba(0,0,0,0.01),0px_19px_6px_rgba(0,0,0,0.05),0px_9px_4.5px_rgba(0,0,0,0.09),0px_2px_2.5px_rgba(0,0,0,0.1)] transition-[opacity,transform] duration-200 ease-out [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:scale-[0.97] motion-reduce:active:scale-100 ipad:px-[24px] ipad:py-[16px] hover:opacity-90"
             style={{
               backgroundImage:
                 "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(38,38,38,0) 100%), linear-gradient(90deg, rgb(38,38,38) 0%, rgb(38,38,38) 100%)",
@@ -85,11 +85,11 @@ export const Section36Hero = () => (
       </div>
     </div>
 
-    <div className={`${STAGE_LAYER} z-20`}>
+    <div className={`${STAGE_LAYER} pointer-events-none z-20`}>
       <Rails />
     </div>
 
-    <div className={`${STAGE_LAYER} z-30`}>
+    <div className={`${STAGE_LAYER} pointer-events-none z-30`}>
       <Sphere />
     </div>
   </main>

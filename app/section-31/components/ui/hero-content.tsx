@@ -50,7 +50,7 @@ export const HeroContent = () => {
         };
 
   return (
-    <div className="pointer-events-auto absolute top-[125px] left-1/2 z-20 flex w-[332px] max-w-full -translate-x-1/2 flex-col items-center gap-[40px] ipad:top-[193px] ipad:w-[448px] desktop-sm:top-[calc(50%-31px)] desktop-sm:left-[132px] desktop-sm:w-[519px] desktop-sm:translate-x-0 desktop-sm:-translate-y-1/2 desktop-sm:items-start">
+    <div className="pointer-events-auto absolute top-[125px] left-[calc(50%+3px)] z-20 flex w-[332px] max-w-full -translate-x-1/2 flex-col items-center gap-[40px] ipad:top-[193px] ipad:w-[448px] desktop-sm:top-[calc(50%-31px)] desktop-sm:left-[135px] desktop-sm:w-[519px] desktop-sm:translate-x-0 desktop-sm:-translate-y-1/2 desktop-sm:items-start">
       <div className="flex w-full flex-col items-center gap-[21px] text-center text-white desktop-sm:items-start desktop-sm:text-left">
         <motion.h1
           {...reveal(0)}
@@ -71,7 +71,7 @@ export const HeroContent = () => {
 
       <motion.div
         {...reveal(0.18)}
-        className="flex flex-wrap items-start justify-center gap-[20px]"
+        className="flex flex-wrap items-start justify-center android-sm:gap-0 iphone:gap-[20px]"
       >
         <Button>Launch Platform</Button>
         <Button variant="ghost">Explore Missions</Button>

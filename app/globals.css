@@ -193,6 +193,7 @@
   --font-aeonik: var(--font-aeonik-family);
   --font-canela-deck: var(--font-canela-deck-trail-family);
   --font-canela: var(--font-canela-deck-family);
+  --font-gemunu: var(--font-gemunu-libre-family);
 
   --animate-hero-reveal: hero-reveal 300ms cubic-bezier(0.215, 0.61, 0.355, 1)
     both;

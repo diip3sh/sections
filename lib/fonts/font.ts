@@ -5,6 +5,7 @@ import {
   DM_Mono,
   Geist,
   Geist_Mono,
+  Gemunu_Libre,
   Instrument_Sans,
   Instrument_Serif,
   Inter,
@@ -31,6 +32,12 @@ export const switzer = localFont({
 export const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+export const gemunuLibre = Gemunu_Libre({
+  variable: "--font-gemunu-libre-family",
+  subsets: ["latin"],
+  weight: ["500", "600"],
 });
 
 export const interTight = Inter_Tight({

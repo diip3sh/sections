@@ -189,14 +189,19 @@ export const Section30Hero = () => (
       {/*
         Edge rails — inset from the *stage* edge (Figma 2356:1309 / 1405),
         so they track the 1440 cap on ultrawide rather than the viewport.
+
+        They paint above the logo strip rather than under it. `RAIL_BAND` puts
+        the strip flush on the rails — both start at x48 — and the strip carries
+        an opaque fill at `z-10`, so at `z-[1]` the rail vanished for the strip's
+        height and the hairline broke just above the logos.
       */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-4 z-[1] w-px bg-white/10 ipad:left-12"
+        className="pointer-events-none absolute inset-y-0 left-4 z-20 w-px bg-white/10 ipad:left-12"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-4 z-[1] w-px bg-white/10 ipad:right-12"
+        className="pointer-events-none absolute inset-y-0 right-4 z-20 w-px bg-white/10 ipad:right-12"
       />
 
       <div className={`relative z-10 flex flex-1 flex-col ${GUTTER}`}>

@@ -69,7 +69,7 @@ export const Section33Hero = () => (
               <p className="text-[12px] leading-[1.1] tracking-[-0.02em] text-[#f40] ipad:text-[16px]">
                 Connect Slack, Notion, GitHub, and more.
               </p>
-              <h1 className="text-[32px] leading-[1.2] tracking-[-0.06em] text-white ipad:text-[40px] desktop-sm:text-[44px]">
+              <h1 className="text-[32px] leading-[1.2] tracking-[-0.06em] text-white ipad:text-[40px] desktop-sm:text-[44px] lg:max-w-[659px]">
                 The Intelligence Layer Powering Every AI Decision
               </h1>
             </div>

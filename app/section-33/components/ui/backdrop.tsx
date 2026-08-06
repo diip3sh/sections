@@ -98,11 +98,23 @@ const ELLIPSES = [
  */
 const BEAM_MASK = "linear-gradient(to bottom, #000 -13.5%, transparent 102.4%)";
 
-/** 45-degree hatch, ~5px pitch — measured off the margin in the frame. */
+/**
+ * 45-degree hatch — a 5px pitch along the gradient axis, which lands the stripes
+ * 7px apart across the channel, the spacing the frame measures.
+ */
 const HATCH =
   "repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0 1px, transparent 1px 5px)";
 
-const CHANNEL = "pointer-events-none absolute inset-y-0 w-[16px] ipad:w-[48px]";
+/**
+ * The hatch and the rails begin *under* the nav, not at the top of the section.
+ * Figma starts its side bars at y57 on the stacked frames and y62 on the desktop
+ * one — the nav's own bottom edge — and running them full height instead puts
+ * stripes and a rail either side of the wordmark, where the frame has flat
+ * black. The plume is the one backdrop layer that does pass behind the bar.
+ */
+const BELOW_NAV = "top-[57px] desktop-sm:top-[62px]";
+
+const CHANNEL = `pointer-events-none absolute bottom-0 ${BELOW_NAV} w-[16px] ipad:w-[48px]`;
 
 export const Backdrop = () => (
   <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
@@ -157,9 +169,13 @@ export const Backdrop = () => (
     <div className={`${CHANNEL} left-0`} style={{ backgroundImage: HATCH }} />
     <div className={`${CHANNEL} right-0`} style={{ backgroundImage: HATCH }} />
 
-    {/* Rails. Figma runs them past the frame at both ends, so they are simply
-        full height here. */}
-    <span className="absolute inset-y-0 left-[16px] w-px bg-white/12 ipad:left-[48px]" />
-    <span className="absolute inset-y-0 right-[16px] w-px bg-white/12 ipad:right-[48px]" />
+    {/* Rails — the inner edge of each channel, so they start where it does and
+        run past the bottom of the frame the way Figma draws them. */}
+    <span
+      className={`absolute bottom-0 ${BELOW_NAV} left-[16px] w-px bg-white/12 ipad:left-[48px]`}
+    />
+    <span
+      className={`absolute bottom-0 ${BELOW_NAV} right-[16px] w-px bg-white/12 ipad:right-[48px]`}
+    />
   </div>
 );

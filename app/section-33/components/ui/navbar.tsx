@@ -43,8 +43,13 @@ export const Navbar = () => (
             <li key={label}>
               <a
                 href="#"
-                className={`flex min-h-11 items-center font-geist-mono text-[16px] leading-[1.1] tracking-[-0.02em] whitespace-nowrap text-white opacity-60 ${CONTROL}`}
+                className={`relative flex items-center font-geist-mono text-[16px] leading-[1.1] tracking-[-0.02em] whitespace-nowrap text-white opacity-60 ${CONTROL}`}
               >
+                {/* The touch target grows off an absolute inset rather than
+                    `min-h-11`. In flow that makes the row 44px and the bar 69
+                    against Figma's 57 — which pushes the bar past where the side
+                    bars begin and strands a strip of hatch beside the buttons. */}
+                <span aria-hidden className="absolute inset-x-0 -inset-y-3" />
                 {label}
               </a>
             </li>

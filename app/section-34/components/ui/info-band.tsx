@@ -1,4 +1,5 @@
 import { EmailCapture } from "./email-capture";
+import { STAGE } from "./stage";
 
 /**
  * The ruled band under the headline — Figma 2391:4837 (mobile),
@@ -18,6 +19,12 @@ import { EmailCapture } from "./email-capture";
  *
  * Heights are Figma's, and Figma frames are border-box, so they go on the band
  * on desktop (borders inside the 320) and on the cells when stacked.
+ *
+ * The band splits the way the nav does: the outer element carries the two rules
+ * and runs the full width of the screen, while the cells, the centre divider and
+ * the marks sit on the capped stage. Past 1440 the rules keep reaching the edge
+ * and the columns stop growing, so the marks stay on the rails instead of the
+ * band turning into two very wide, very empty halves.
  */
 
 /**
@@ -51,43 +58,45 @@ const LABEL = "font-tight text-[18px] leading-[1.2] font-medium text-white";
 export const InfoBand = () => (
   <section
     aria-label="About Voice AI"
-    className="relative z-10 w-full shrink-0 border-b border-white/40 ipad:border-t desktop-sm:flex desktop-sm:h-[320px]"
+    className="relative z-10 w-full shrink-0 border-b border-white/40 ipad:border-t desktop-sm:h-[320px]"
   >
-    {/* Cell one. On the phone this is just the paragraph in the page gutter —
+    <div className={`${STAGE} h-full desktop-sm:flex`}>
+      {/* Cell one. On the phone this is just the paragraph in the page gutter —
         no label, no rules, and a 32px foot holding it off the rule below. */}
-    <div className="px-[20px] pb-[32px] ipad:flex ipad:h-[290px] ipad:flex-col ipad:justify-between ipad:border-b ipad:border-white/40 ipad:px-[56px] ipad:py-[32px] desktop-sm:h-full desktop-sm:min-w-0 desktop-sm:flex-1 desktop-sm:border-b-0 desktop-sm:border-r desktop-sm:py-[40px]">
-      <p className={`hidden ipad:block ${LABEL}`}>Who We Are:</p>
-      {/* Figma breaks this into 3 / 3 / 4 lines purely on width, and the same
+      <div className="px-[20px] pb-[32px] ipad:flex ipad:h-[290px] ipad:flex-col ipad:justify-between ipad:border-b ipad:border-white/40 ipad:px-[56px] ipad:py-[32px] desktop-sm:h-full desktop-sm:min-w-0 desktop-sm:flex-1 desktop-sm:border-b-0 desktop-sm:border-r desktop-sm:py-[40px]">
+        <p className={`hidden ipad:block ${LABEL}`}>Who We Are:</p>
+        {/* Figma breaks this into 3 / 3 / 4 lines purely on width, and the same
           break lands at every frame, so the widths hold it. `text-pretty` is
           left off deliberately — it is free to move the last break. */}
-      <p className="max-w-[343px] font-helvetica-neue text-[16px] leading-[1.14] text-white ipad:max-w-none ipad:text-[28px] ipad:tracking-[-0.03em] desktop-sm:max-w-[476px]">
-        Custom AI voice agents that answer every call, schedule appointments,
-        and support patients around the clock, without increasing headcount.
-      </p>
-    </div>
+        <p className="max-w-[343px] font-helvetica-neue text-[16px] leading-[1.14] text-white ipad:max-w-none ipad:text-[28px] ipad:tracking-[-0.03em] desktop-sm:max-w-[476px]">
+          Custom AI voice agents that answer every call, schedule appointments,
+          and support patients around the clock, without increasing headcount.
+        </p>
+      </div>
 
-    {/* Cell two. Its own top rule is the phone's single upper rule and the
+      {/* Cell two. Its own top rule is the phone's single upper rule and the
         tablet's mid rule; on desktop the band's top rule already covers it. */}
-    <div className="relative flex h-[220px] flex-col justify-between border-t border-white/40 p-[20px] ipad:h-[290px] ipad:px-[56px] ipad:py-[32px] desktop-sm:h-full desktop-sm:min-w-0 desktop-sm:flex-1 desktop-sm:border-t-0 desktop-sm:py-[40px]">
-      <p className={LABEL}>Healthcare AI Receptionists</p>
-      <EmailCapture />
+      <div className="relative flex h-[220px] flex-col justify-between border-t border-white/40 p-[20px] ipad:h-[290px] ipad:px-[56px] ipad:py-[32px] desktop-sm:h-full desktop-sm:min-w-0 desktop-sm:flex-1 desktop-sm:border-t-0 desktop-sm:py-[40px]">
+        <p className={LABEL}>Healthcare AI Receptionists</p>
+        <EmailCapture />
 
-      <Mark
-        className={`top-0 -translate-y-1/2 desktop-sm:hidden ${RAIL_LEFT}`}
-      />
-      <Mark
-        className={`top-0 -translate-y-1/2 desktop-sm:hidden ${RAIL_RIGHT}`}
-      />
-    </div>
+        <Mark
+          className={`top-0 -translate-y-1/2 desktop-sm:hidden ${RAIL_LEFT}`}
+        />
+        <Mark
+          className={`top-0 -translate-y-1/2 desktop-sm:hidden ${RAIL_RIGHT}`}
+        />
+      </div>
 
-    {/* The band's own top rule starts at `ipad:`, so its marks never need the
+      {/* The band's own top rule starts at `ipad:`, so its marks never need the
         phone's 16px rail offset. */}
-    <Mark className="top-0 left-[48px] hidden -translate-x-1/2 -translate-y-1/2 ipad:block" />
-    <Mark className="top-0 right-[48px] hidden translate-x-1/2 -translate-y-1/2 ipad:block" />
-    <Mark className={`top-0 -translate-y-1/2 ${RAIL_CENTRE}`} />
+      <Mark className="top-0 left-[48px] hidden -translate-x-1/2 -translate-y-1/2 ipad:block" />
+      <Mark className="top-0 right-[48px] hidden translate-x-1/2 -translate-y-1/2 ipad:block" />
+      <Mark className={`top-0 -translate-y-1/2 ${RAIL_CENTRE}`} />
 
-    <Mark className={`bottom-0 translate-y-1/2 ${RAIL_LEFT}`} />
-    <Mark className={`bottom-0 translate-y-1/2 ${RAIL_RIGHT}`} />
-    <Mark className={`bottom-0 translate-y-1/2 ${RAIL_CENTRE}`} />
+      <Mark className={`bottom-0 translate-y-1/2 ${RAIL_LEFT}`} />
+      <Mark className={`bottom-0 translate-y-1/2 ${RAIL_RIGHT}`} />
+      <Mark className={`bottom-0 translate-y-1/2 ${RAIL_CENTRE}`} />
+    </div>
   </section>
 );

@@ -1,5 +1,6 @@
 import { InfoBand } from "./info-band";
 import { Navbar } from "./navbar";
+import { STAGE } from "./stage";
 import { WaveField } from "./wave-field";
 
 /**
@@ -8,12 +9,13 @@ import { WaveField } from "./wave-field";
  * - iPad    2391:4857 — 744 x 1133  (`ipad:`)
  * - Desktop 2391:4898 — 1280 x 832  (`desktop-sm:`)
  *
- * A full-viewport hero over a live dot field. Nothing here is capped: the nav
- * bar, the wave, the band rules and the cyan CTA all run edge to edge, and the
- * only inset in the design is a page gutter — rails at 16px on the phone and
- * 48px above it, with content sitting 4px inside them at 20px / 56px. So this
- * section has no stage `max-w`; the blocks that must not stretch carry their own
- * Figma width instead, which is the same rule applied one level down.
+ * A full-viewport hero over a live dot field, split the way `section-30` splits:
+ * the wave, the fade, the white nav bar and the band's three rules are full-bleed
+ * and run to the screen edge; everything else sits on a capped stage. See
+ * `stage.ts`. The design's only inset is a page gutter — rails at 16px on the
+ * phone and 48px above it, with content 4px inside them at 20px / 56px — and
+ * those are measured from the stage, so they hold their distance from the copy
+ * instead of walking out to the corners of a wide screen.
  *
  * All three frames are viewport-height rather than scroll-height (874 is an
  * iPhone 17, 1133 an iPad mini), so unlike most sections here the height floor
@@ -54,22 +56,25 @@ export const Section34Hero = () => (
       className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[567px] [--fade-solid:266px] ipad:h-[629px] ipad:[--fade-solid:264px] desktop-sm:h-[416px] desktop-sm:[--fade-solid:116px]"
     />
 
-    {/* The rails run the full height and are simply covered at the top by the
-        opaque nav, exactly as Figma stacks them. */}
-    <span
+    {/* Rails — inset from the *stage* edge, not the viewport, so past 1440 they
+        stay 48px off the copy rather than tracking the screen and leaving the
+        content floating unrailed in the middle. They run the full height and are
+        simply covered at the top by the opaque nav, exactly as Figma stacks them. */}
+    <div
       aria-hidden
-      className="pointer-events-none absolute inset-y-0 left-[16px] z-[2] w-px bg-white/40 ipad:left-[48px]"
-    />
-    <span
-      aria-hidden
-      className="pointer-events-none absolute inset-y-0 right-[16px] z-[2] w-px bg-white/40 ipad:right-[48px]"
-    />
+      className="pointer-events-none absolute inset-y-0 left-1/2 z-[2] w-full max-w-[1440px] -translate-x-1/2"
+    >
+      <span className="absolute inset-y-0 left-[16px] w-px bg-white/40 ipad:left-[48px]" />
+      <span className="absolute inset-y-0 right-[16px] w-px bg-white/40 ipad:right-[48px]" />
+    </div>
 
     <Navbar />
 
     {/* The one flexible band. Bottom-aligned, so a viewport taller than the frame
         grows the wave field above the headline rather than the gap below it. */}
-    <div className="relative z-10 flex flex-1 flex-col justify-end px-[20px] ipad:px-[56px]">
+    <div
+      className={`${STAGE} z-10 flex flex-1 flex-col justify-end px-[20px] ipad:px-[56px]`}
+    >
       {/*
         The break is unconditional — all three frames read "Your Front Desk," /
         "Powered by AI" — so it is a `<br />` rather than a width that happens to

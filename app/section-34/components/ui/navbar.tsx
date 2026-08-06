@@ -1,9 +1,15 @@
+import { STAGE } from "./stage";
+
 /**
  * Top Nav — Figma 2391:4828 (mobile) / 2391:4862 (tablet) / 2391:4904 (desktop).
  *
  * A 59px white bar across the top of an otherwise full-bleed hero. It is the one
  * opaque thing in the section, and it is what hides the top of the two vertical
  * rails, so it paints last (z-30) rather than being clipped.
+ *
+ * The bar and its bottom edge are full width; the row inside it is capped, so on
+ * an ultrawide screen the wordmark and the CTA stay with the rest of the content
+ * rather than drifting to the corners of the screen.
  *
  * The two layouts are genuinely different structures — a hamburger below 1280, a
  * link row plus a flush-right CTA block above it — so this is one of the cases
@@ -24,7 +30,9 @@ export const Navbar = () => (
     aria-label="Primary"
     className="relative z-30 h-[59px] w-full shrink-0 bg-white"
   >
-    <div className="flex h-full items-center justify-between px-[16px] desktop-sm:hidden">
+    <div
+      className={`${STAGE} flex h-full items-center justify-between px-[16px] desktop-sm:hidden`}
+    >
       <a
         href="#"
         aria-label="Voice AI home"
@@ -48,7 +56,9 @@ export const Navbar = () => (
       </button>
     </div>
 
-    <div className="hidden h-full items-center justify-between desktop-sm:flex">
+    <div
+      className={`${STAGE} hidden h-full items-center justify-between desktop-sm:flex`}
+    >
       <a
         href="#"
         aria-label="Voice AI home"

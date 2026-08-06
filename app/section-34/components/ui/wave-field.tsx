@@ -91,11 +91,11 @@ export const WaveField = () => {
           play={!reduceMotion && onScreen && tabVisible}
           bgColor="#00bcff"
           colors={["#002fff"]}
-          cellSize={cellSize}
-          frequency={2}
-          gamma={4}
-          paletteBias={5}
-          speed={3}
+          cellSize={1}
+          frequency={1}
+          gamma={6}
+          paletteBias={10}
+          speed={4}
         />
       )}
     </div>

@@ -110,14 +110,30 @@ export const Section36Hero = () => (
     </div>
 
     {/*
-      The globe is measured off the frame, not the screen. Grid and rails are
-      pattern and run `inset-y-0` to the bottom of the viewport, but the globe
-      rises out of the *design's* bottom edge and is cut by it — give it the
-      viewport's bottom instead and a tall screen walks it down with the fold,
-      uncropped and clear of the stats it is supposed to sit behind. So this
-      layer stops at the frame height and the globe hangs off that.
+      The globe layer keeps the section's height and is *slid* up to the fold,
+      rather than being cut down to it.
+
+      Both fix the same thing — on a screen shorter than the 832 content floor
+      the section runs past the bottom of the window, and with it the dome's
+      horizon and the half of the surface you can actually reach. But capping the
+      layer with `max-h-dvh` shrinks it, and the diameter is derived from this box
+      (`(100% - 452px) * 2`), so the globe itself shrank: 760 across at 832,
+      only 496 at a 700-tall window.
+
+      The translate leaves the box at the section's height, so the diameter is
+      still the section's, and moves it bodily up by however much the section
+      overhangs the window. The upper bound is 0 — a no-op the moment the window
+      is the taller of the two, which is every normal case.
+
+      The lower bound is 77px and it is not arbitrary: Figma's stats band closes
+      at y375 and the crest sits at y452, so 77 is the whole gap between them.
+      Unbounded, the lift is the overhang, and a short enough window drives the
+      crest straight up through the stats and eventually off the top of the
+      section, which reads as the dome being cut rather than moved. Clamped, it
+      recovers as much of the dome as the composition has room for and leaves the
+      rest to the scroll, which is what the overhang is anyway.
     */}
-    <div className={`${STAGE_LAYER} pointer-events-none z-30`}>
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-30 mx-auto h-full w-full translate-y-[clamp(-77px,calc(100dvh_-_100%),0px)] ultrawide:max-w-[1440px]">
       <Sphere />
     </div>
   </main>

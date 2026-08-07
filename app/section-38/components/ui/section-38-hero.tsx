@@ -29,6 +29,21 @@ import { StickerNote } from "./sticker-note";
  * because it has no room — opens into the four-corner arrangement the phone and
  * tablet frames already use.
  *
+ * That only holds while the board is the design's own size, which is why it is
+ * a band with Figma's height rather than the viewport's. Pinned to the screen it
+ * stretched: on a tall monitor the notes end hundreds of pixels from a plate
+ * they are supposed to be crowding, and on a 4K screen at 100% — 2160 tall — the
+ * section reads as four stickers marooned around a tiny island. The height is
+ * the composition here, not a container to fill, so it is stated and left alone:
+ * 874 / 1133 / 617.
+ *
+ * The rules stay on `<main>` rather than the band, so the lattice still runs to
+ * all four edges of whatever screen it is on. That is the whole trick — the
+ * page is the pinboard and the board is only the arrangement on it, so the
+ * surplus on a tall screen comes out as more pinboard rather than as a stretched
+ * composition. Both are centred, so the rules stay in phase with the plate at
+ * any size.
+ *
  * No `z-*` on the notes, and that is load-bearing. StickerDrag lifts the note
  * being dragged by writing an incrementing z-index onto its own container; a
  * z-index on the wrapper would make it a stacking context and trap that value
@@ -76,10 +91,16 @@ const NOTES = [
 ];
 
 export const Section38Hero = () => (
-  <main className="animate-hero-reveal relative isolate flex min-h-[max(100dvh,874px)] w-full items-center justify-center overflow-hidden bg-[#f1f1e9] ipad:min-h-[max(100dvh,1133px)] desktop-sm:min-h-[max(100dvh,617px)]">
+  <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full items-center justify-center overflow-hidden bg-[#f1f1e9]">
     <BoardRules />
 
-    {/* The plate carries the board colour so the rules stop at its edge — the
+    {/* The board the notes are pinned to — Figma's frame, at Figma's size, in
+        the middle of whatever screen it lands on. Width still runs to the
+        viewport up to 1600 because the notes hang off the left and right edges
+        and the design has them near the margins; height does not, because the
+        design has nothing holding the top and bottom edges apart. */}
+    <div className="relative flex h-[874px] w-full max-w-[1600px] items-center justify-center ipad:h-[1133px] desktop-sm:h-[617px]">
+      {/* The plate carries the board colour so the rules stop at its edge — the
         clear band behind the headline is Figma's own opaque fill, not a fade.
         Its height is a floor rather than Figma's fixed 402/420, so a narrow
         phone that wraps the sub onto a fourth line grows the plate instead of
@@ -94,45 +115,46 @@ export const Section38Hero = () => (
         occupy exactly the pixels the lattice would have. Only two sides: a full
         `border` would double up on the right and bottom, where the rule is
         already there. */}
-    <div className="relative z-0 flex w-full max-w-[402px] min-h-[402px] flex-col items-center justify-center gap-[24px] border-t border-l border-solid border-[#eaeadf] bg-[#f1f1e9] p-[16px] ipad:w-[588px] ipad:max-w-none ipad:min-h-[420px] ipad:gap-[40px]">
-      <div className="flex w-full flex-col items-center gap-[8px] ipad:gap-[16px]">
-        <p className="rounded-[4px] border border-solid border-[#ddd] px-[8px] py-[6px] font-geist text-[12px] leading-[1.4] whitespace-nowrap text-[#2a2722] ipad:px-[12px] ipad:py-[8px] ipad:text-[14px]">
-          2,500+ early adopters
-        </p>
+      <div className="relative z-0 flex w-full max-w-[402px] min-h-[402px] flex-col items-center justify-center gap-[24px] border-t border-l border-solid border-[#eaeadf] bg-[#f1f1e9] p-[16px] ipad:w-[588px] ipad:max-w-none ipad:min-h-[420px] ipad:gap-[40px]">
+        <div className="flex w-full flex-col items-center gap-[8px] ipad:gap-[16px]">
+          <p className="rounded-[4px] border border-solid border-[#ddd] px-[8px] py-[6px] font-geist text-[12px] leading-[1.4] whitespace-nowrap text-[#2a2722] ipad:px-[12px] ipad:py-[8px] ipad:text-[14px]">
+            2,500+ early adopters
+          </p>
 
-        {/*
+          {/*
           Tracking is Figma's -1.28px at 32 and -1.92px at 48, which is -0.04em
           at both — one ratio rather than two numbers that agree by accident.
         */}
-        {/*
+          {/*
           No `text-balance`: Figma breaks after "Before" at both frames, which
           is where the plate's own width puts the break. Balancing moves it up
           to after "Access" and gives the headline a different silhouette.
         */}
-        <h1 className="text-center font-hedvig-serif text-[32px] leading-[1.1] tracking-[-0.04em] text-[#2a2722] ipad:text-[48px]">
-          Get Early Access Before Everyone Else
-        </h1>
+          <h1 className="text-center font-hedvig-serif text-[32px] leading-[1.1] tracking-[-0.04em] text-[#2a2722] ipad:text-[48px]">
+            Get Early Access Before Everyone Else
+          </h1>
 
-        <p className="max-w-[340px] text-center font-geist text-[14px] leading-[1.4] text-pretty text-black opacity-60 ipad:max-w-none ipad:text-[16px]">
-          Join the waitlist to be among the first to experience the platform.
-          Get exclusive early access, product updates, and launch-only perks.
-        </p>
+          <p className="max-w-[340px] text-center font-geist text-[14px] leading-[1.4] text-pretty text-black opacity-60 ipad:max-w-none ipad:text-[16px]">
+            Join the waitlist to be among the first to experience the platform.
+            Get exclusive early access, product updates, and launch-only perks.
+          </p>
+        </div>
+
+        <EmailCapture />
       </div>
 
-      <EmailCapture />
+      {/* After the plate, so the sparkles on its corners keep their full ring —
+          Figma draws them unbroken across it. */}
+      <BoardMarks />
+
+      {NOTES.map(({ id, label, className }) => (
+        <StickerNote
+          key={id}
+          src={`/section-38/${id}.svg`}
+          label={label}
+          className={className}
+        />
+      ))}
     </div>
-
-    {/* After the plate, so the sparkles on its corners keep their full ring —
-        Figma draws them unbroken across it. */}
-    <BoardMarks />
-
-    {NOTES.map(({ id, label, className }) => (
-      <StickerNote
-        key={id}
-        src={`/section-38/${id}.svg`}
-        label={label}
-        className={className}
-      />
-    ))}
   </main>
 );

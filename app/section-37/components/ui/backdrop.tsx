@@ -139,6 +139,217 @@ const BLOBS = [
 ];
 
 /**
+ * The phone and tablet rake — Figma's own `Elements Wrapper` for those frames
+ * (2410:6614), which is a different rig from the desktop one above rather than
+ * the same rig scaled.
+ *
+ * Desktop hangs two rakes off the top corners at 45 degrees, each ray 177 x 1253.
+ * These frames have one rake, near the middle, tilted about 27 degrees, and its
+ * rays are 51 x 448 — a seventh of the area. Every number below is Figma's, read
+ * off that wrapper: the ray opacities are 0.09 / 0.24 / 0.09 against desktop's
+ * 0.15 / 0.40 / 0.15, the blur is 8.1 / 14.2 / 8.3 against 15.3 / 27 / 15.8, and
+ * the blob is 237 x 318 at 0.30 against 816 x 888 at 0.50. Carrying the desktop
+ * set down was the bug: every piece of it is anchored 400 to 1030px off centre,
+ * so on a 402 frame the whole rig sits outside the viewport and the top of the
+ * section was left with nothing but the tint band.
+ *
+ * Positions are centres, in Figma's 744 frame, scaled through `--u`. The frames
+ * state one composition and the phone is a little over half its width, so the
+ * rake scales with the viewport rather than holding pixels that would slide it
+ * off the side. Sizes, offsets and blur radii all take the same factor, which is
+ * what keeps it the same picture at 402 as at 744.
+ */
+const RAKE_BLOBS = [
+  {
+    id: "pb-r",
+    x: 434.34,
+    y: -24.55,
+    width: 237.14,
+    height: 317.534,
+    rotate: 27.27,
+    blur: 69.83,
+    flip: false,
+  },
+  {
+    id: "pb-l",
+    x: -34.48,
+    y: -29.41,
+    width: 266.297,
+    height: 320.586,
+    rotate: 152.73,
+    blur: 78.42,
+    flip: true,
+  },
+];
+
+const RAKE_RAYS = [
+  // Right rake (2410:6614).
+  {
+    id: "pr1",
+    x: 285.02,
+    y: 200.61,
+    width: 51.41,
+    height: 448.431,
+    rotate: 25.5,
+    skew: -0.78,
+    blur: 8.065,
+    edge: 0.698,
+    opacity: 0.09,
+    stop: 80,
+    lit: true,
+    flip: false,
+  },
+  {
+    id: "pr2",
+    x: 314.4,
+    y: 215.75,
+    width: 51.404,
+    height: 448.462,
+    rotate: 28.42,
+    skew: 0.51,
+    blur: 14.245,
+    edge: 0.698,
+    opacity: 0.24,
+    stop: 88,
+    lit: true,
+    flip: false,
+  },
+  {
+    id: "pr3",
+    x: 346.71,
+    y: 229.32,
+    width: 51.462,
+    height: 448.18,
+    rotate: 31.52,
+    skew: 1.87,
+    blur: 8.345,
+    edge: 0.698,
+    opacity: 0.09,
+    stop: 0,
+    lit: false,
+    flip: false,
+  },
+  // Left rake (2410:6623) — mirrored on Y, so its angles read as 180 less.
+  {
+    id: "pl1",
+    x: 119.25,
+    y: 196.39,
+    width: 57.725,
+    height: 452.759,
+    rotate: 154.32,
+    skew: 0.49,
+    blur: 9.057,
+    edge: 0.784,
+    opacity: 0.09,
+    stop: 80,
+    lit: true,
+    flip: true,
+  },
+  {
+    id: "pl2",
+    x: 86.27,
+    y: 213.39,
+    width: 57.722,
+    height: 452.78,
+    rotate: 151.7,
+    skew: -0.32,
+    blur: 15.997,
+    edge: 0.784,
+    opacity: 0.24,
+    stop: 88,
+    lit: true,
+    flip: true,
+  },
+  {
+    id: "pl3",
+    x: 50.1,
+    y: 228.91,
+    width: 57.758,
+    height: 452.581,
+    rotate: 148.91,
+    skew: -1.18,
+    blur: 9.371,
+    edge: 0.784,
+    opacity: 0.09,
+    stop: 0,
+    lit: false,
+    flip: true,
+  },
+];
+
+const RAKE_FLARES = [
+  {
+    id: "pf1",
+    x: 365.18,
+    y: 167.39,
+    width: 2.793,
+    length: 302.086,
+    rotate: 27.27,
+    blur: 6.799,
+    flip: false,
+  },
+  {
+    id: "pf2",
+    x: 295.04,
+    y: 148.12,
+    width: 2.793,
+    length: 302.086,
+    rotate: 27.27,
+    blur: 6.799,
+    flip: false,
+  },
+  {
+    id: "pf3",
+    x: 321.59,
+    y: 175.29,
+    width: 0.698,
+    length: 226.154,
+    rotate: 27.27,
+    blur: 6.799,
+    flip: false,
+  },
+  {
+    id: "pf4",
+    x: 32.69,
+    y: 165.76,
+    width: 3.137,
+    length: 304.99,
+    rotate: 152.73,
+    blur: 7.635,
+    flip: true,
+  },
+  {
+    id: "pf5",
+    x: 110.67,
+    y: 142.61,
+    width: 3.137,
+    length: 304.99,
+    rotate: 152.73,
+    blur: 7.635,
+    flip: true,
+  },
+  {
+    id: "pf6",
+    x: 80.22,
+    y: 171.92,
+    width: 0.784,
+    length: 228.328,
+    rotate: 152.73,
+    blur: 7.635,
+    flip: true,
+  },
+];
+
+/** Figma's 402 frame as the unit, so one factor carries the whole rake. */
+const u = (n: number) => `calc(${n} * var(--u))`;
+
+/** Mirrors come after the rotation, matching the order CSS applies them. */
+const rake = (rotate: number, flip: boolean, skew = 0) =>
+  `translate(-50%, -50%) rotate(${rotate}deg)${flip ? " scaleY(-1)" : ""}${
+    skew ? ` skewX(${skew}deg)` : ""
+  }`;
+
+/**
  * The dot field and the light inside it — Figma's `texture` mask group
  * (2410:6771 desktop, 2410:6638 phone and tablet).
  *
@@ -173,6 +384,44 @@ const DOTS = `url("data:image/svg+xml,${encodeURIComponent(
 )}")`;
 
 /**
+ * The same lattice as an alpha mask rather than as ink — an opaque dot on a
+ * transparent tile. Phone and tablet need it this way round because there the
+ * light inside the field is shaped, so the dots have to take their colour from
+ * a layer underneath instead of carrying it themselves.
+ */
+const LATTICE = `url("data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="52" height="52"><circle cx="6" cy="6" r="6" fill="#000"/></svg>',
+)}")`;
+
+/**
+ * The light inside the phone and tablet field — Figma's three shapes under the
+ * `texture` mask (2410:6642, 6640, 6641), which the desktop node does not have.
+ *
+ * Desktop masks one 1907x910 plate, so much wider than the frame that it is flat
+ * across it, and a flat tile says the same thing. Phone and tablet do not work
+ * that way: their plate is a 927x1098 ellipse inside a 753x856 texture, so it
+ * falls off inside the frame rather than outside it, and two small `#D9D9D9`
+ * ellipses sit on top of it on `overlay`. Those two are the soft shafts the
+ * frames read as — they were the missing piece, because a flat tile has nowhere
+ * to put them.
+ *
+ * Stated in percentages of the field rather than in Figma's 753x856 pixels. The
+ * frames put the composition at one size and the phone is half that; holding the
+ * pixels would slide the whole arrangement off to the right on a 402 frame,
+ * where the field is 402 wide and the plate's centre alone sits at 337.
+ *
+ * The blur is what sets each stop. Sigma 14.1 against the plate's 464px radius
+ * is 3% — near enough a hard edge, so it holds full strength to 94%. Against the
+ * highlights' 87px it is 16%, which is most of the shape, so those run as a
+ * smooth falloff from the middle out.
+ */
+const FIELD_GLOW = [
+  `radial-gradient(ellipse 11.61% 11.61% at 69.19% 53.22%, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0.18) 45%, rgba(255,255,255,0) 100%)`,
+  `radial-gradient(ellipse 11.61% 11.61% at 48.39% 70.4%, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0.18) 45%, rgba(255,255,255,0) 100%)`,
+  `radial-gradient(ellipse 61.57% 64.16% at 44.72% 34.02%, rgba(231,183,115,0.72) 0%, rgba(231,183,115,0.72) 94%, rgba(231,183,115,0) 100%)`,
+].join(", ");
+
+/**
  * Figma holds the field at full strength for its whole height and then cuts it
  * off square at the bottom of the mask box, where its flattened fan hides the
  * seam. Ours is a live canvas whose crest moves with the viewport, so a hard
@@ -189,51 +438,110 @@ const DOT_MASK =
 
 export const Backdrop = () => (
   <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
-    {BLOBS.map(({ id, x, y }) => (
-      <span
-        key={id}
-        className="absolute h-[887.58px] w-[816.45px] rounded-[50%] bg-[#d78715] opacity-50 blur-[132.5px]"
-        style={{
-          left: `calc(50% + ${x}px)`,
-          top: y,
-          transform: "translate(-50%, -50%) rotate(-45deg)",
-        }}
-      />
-    ))}
+    {/*
+      One rake per breakpoint. Neither wrapper carries a `z-index`, so both stay
+      in the same painting group as the tint band below them and the
+      `plus-lighter` pieces keep blending against the page rather than against a
+      stacking context of their own.
+    */}
+    <div className="absolute inset-0 [--u:calc(min(100vw,744px)/402)] desktop-sm:hidden">
+      {RAKE_BLOBS.map(({ id, x, y, width, height, rotate, blur, flip }) => (
+        <span
+          key={id}
+          className="absolute rounded-[50%] bg-[#d78715] opacity-30"
+          style={{
+            left: u(x),
+            top: u(y),
+            width: u(width),
+            height: u(height),
+            filter: `blur(${u(blur)})`,
+            transform: rake(rotate, flip),
+          }}
+        />
+      ))}
 
-    {FLARES.map(({ id, x, y, width, length }) => (
-      <span
-        key={id}
-        className="absolute mix-blend-plus-lighter"
-        style={{
-          left: `calc(50% + ${x}px)`,
-          top: y,
-          width,
-          height: length,
-          transform: "translate(-50%, -50%) rotate(-45deg)",
-          backgroundImage: FLARE_FILL,
-          filter: "blur(12.9px)",
-          opacity: 0.4,
-        }}
-      />
-    ))}
+      {RAKE_FLARES.map(({ id, x, y, width, length, rotate, blur, flip }) => (
+        <span
+          key={id}
+          className="absolute opacity-30 mix-blend-plus-lighter"
+          style={{
+            left: u(x),
+            top: u(y),
+            width: u(width),
+            height: u(length),
+            backgroundImage: FLARE_FILL,
+            filter: `blur(${u(blur)})`,
+            transform: rake(rotate, flip),
+          }}
+        />
+      ))}
 
-    {RAYS.map(({ id, x, y, rotate, blur, opacity, stop, lit }) => (
-      <span
-        key={id}
-        className={`absolute h-[1253px] w-[177px] border-solid border-[#d78715] ${lit ? "mix-blend-plus-lighter" : ""}`}
-        style={{
-          left: `calc(50% + ${x}px)`,
-          top: y,
-          borderWidth: "1.325px",
-          transform: `translate(-50%, -50%) rotate(${rotate}deg)`,
-          filter: `blur(${blur}px)`,
-          opacity: opacity / 100,
-          /* The outer bar of each rake is border-only in Figma. */
-          backgroundImage: stop ? fill(stop) : undefined,
-        }}
-      />
-    ))}
+      {RAKE_RAYS.map((ray) => (
+        <span
+          key={ray.id}
+          className={`absolute border-solid border-[#d78715] ${ray.lit ? "mix-blend-plus-lighter" : ""}`}
+          style={{
+            left: u(ray.x),
+            top: u(ray.y),
+            width: u(ray.width),
+            height: u(ray.height),
+            borderWidth: u(ray.edge),
+            opacity: ray.opacity,
+            filter: `blur(${u(ray.blur)})`,
+            transform: rake(ray.rotate, ray.flip, ray.skew),
+            backgroundImage: ray.stop ? fill(ray.stop) : undefined,
+          }}
+        />
+      ))}
+    </div>
+
+    <div className="absolute inset-0 hidden desktop-sm:block">
+      {BLOBS.map(({ id, x, y }) => (
+        <span
+          key={id}
+          className="absolute h-[887.58px] w-[816.45px] rounded-[50%] bg-[#d78715] opacity-50 blur-[132.5px]"
+          style={{
+            left: `calc(50% + ${x}px)`,
+            top: y,
+            transform: "translate(-50%, -50%) rotate(-45deg)",
+          }}
+        />
+      ))}
+
+      {FLARES.map(({ id, x, y, width, length }) => (
+        <span
+          key={id}
+          className="absolute mix-blend-plus-lighter"
+          style={{
+            left: `calc(50% + ${x}px)`,
+            top: y,
+            width,
+            height: length,
+            transform: "translate(-50%, -50%) rotate(-45deg)",
+            backgroundImage: FLARE_FILL,
+            filter: "blur(12.9px)",
+            opacity: 0.4,
+          }}
+        />
+      ))}
+
+      {RAYS.map(({ id, x, y, rotate, blur, opacity, stop, lit }) => (
+        <span
+          key={id}
+          className={`absolute h-[1253px] w-[177px] border-solid border-[#d78715] ${lit ? "mix-blend-plus-lighter" : ""}`}
+          style={{
+            left: `calc(50% + ${x}px)`,
+            top: y,
+            borderWidth: "1.325px",
+            transform: `translate(-50%, -50%) rotate(${rotate}deg)`,
+            filter: `blur(${blur}px)`,
+            opacity: opacity / 100,
+            /* The outer bar of each rake is border-only in Figma. */
+            backgroundImage: stop ? fill(stop) : undefined,
+          }}
+        />
+      ))}
+    </div>
 
     {/*
       The tint band — Figma `Union` (2410:6764), and not what its name suggests.
@@ -284,15 +592,50 @@ export const Backdrop = () => (
  * disappear beneath every lit line. That is also Figma's own reading: its plate
  * is opaque art and its texture stops at 628, just above where the fan gets
  * bright, so the two barely meet there either.
+ *
+ * Two elements, because the two node trees genuinely differ rather than
+ * re-pitching. Desktop's light is one plate wider than its frame, so the tile
+ * can carry the colour itself and the lattice is ink. Phone and tablet shape the
+ * light inside the field, so there the lattice is the mask and `FIELD_GLOW`
+ * underneath supplies the colour — same dots, opposite way round.
  */
+const FIELD =
+  "pointer-events-none absolute inset-x-0 top-0 opacity-54 [background-size:5.68px_5.68px]";
+
 export const DotField = () => (
-  <div
-    aria-hidden
-    className="pointer-events-none absolute inset-x-0 top-0 h-[97.9%] [background-size:5.68px_5.68px] ipad:h-[80.1%] desktop-sm:h-[72.4%] desktop-sm:[background-size:11.13px_11.13px] opacity-54"
-    style={{
-      backgroundImage: DOTS,
-      maskImage: DOT_MASK,
-      WebkitMaskImage: DOT_MASK,
-    }}
-  />
+  <>
+    <div
+      aria-hidden
+      className={`${FIELD} h-[97.9%] [--u:calc(min(100vw,744px)/402)] ipad:h-[80.1%] desktop-sm:hidden`}
+      style={{
+        backgroundImage: FIELD_GLOW,
+        /*
+         * The glow is drawn in the texture's own 753 x 856 box pinned to the
+         * top-left, not stretched to the section. Figma hangs that box off the
+         * frame origin and lets it run off a 402 frame, so its right-hand
+         * highlight is cropped — stretching it instead would pull both
+         * highlights inward and move the plate's centre off the frame.
+         */
+        backgroundSize: `${u(753)} ${u(856)}`,
+        backgroundPosition: "left top",
+        backgroundRepeat: "no-repeat",
+        maskImage: `${LATTICE}, ${DOT_MASK}`,
+        maskSize: "5.68px 5.68px, 100% 100%",
+        maskComposite: "intersect",
+        WebkitMaskImage: `${LATTICE}, ${DOT_MASK}`,
+        WebkitMaskSize: "5.68px 5.68px, 100% 100%",
+        WebkitMaskComposite: "source-in",
+      }}
+    />
+
+    <div
+      aria-hidden
+      className={`${FIELD} hidden h-[72.4%] desktop-sm:block desktop-sm:[background-size:11.13px_11.13px]`}
+      style={{
+        backgroundImage: DOTS,
+        maskImage: DOT_MASK,
+        WebkitMaskImage: DOT_MASK,
+      }}
+    />
+  </>
 );

@@ -38,13 +38,18 @@ import {
  * to those rails or to the gutter, both of which are relative, so the frames
  * still reproduce at their own widths.
  *
- * Height is decided, not inherited. The phone and tablet frames are device
- * height already and stack in flow. Desktop is 802px, which would end mid-laptop
- * and leave bare page under it, so 802 is the floor and the surplus is split the
- * way the frame already reads: the nav holds the top, the fire band holds the
- * bottom, and the hero row centres in what is left — which is literally what
- * Figma specifies for it (`top: calc(50% + 0.5px)`), so the desktop frame
- * reproduces exactly at 802 and simply opens up above it.
+ * Height is decided, not inherited. Every frame height is a floor — the stage
+ * takes `max(frame, 100dvh)` so the rails, the star field and the fire band
+ * reach the bottom of any screen and never leave bare page under the section.
+ *
+ * What must not follow the screen is the composition. The nav holds the top and
+ * the fire band holds the bottom, both by their own anchors; the hero row is
+ * measured from the bottom too — 401px up, which is where Figma's own
+ * `top: calc(50% + 0.5px)` puts it on an 802 frame. Centred in the stage instead
+ * it stretched with it: on a 1600 screen the row sat 400px lower, pulled clear
+ * of the fire it is composed over and leaving a dead band under the nav. Hung
+ * off the bottom it reproduces the frame exactly at 802 and simply opens sky
+ * above, which is where the star field already is.
  *
  * Paint order follows Figma with one deliberate exception. Figma stacks the fire
  * band *above* the hero copy; at 802 that is harmless because the field's upper
@@ -68,7 +73,7 @@ export const Section39Hero = () => (
     {/* The stage caps at 1920 and centres. Past that the rails would keep
           walking outward and the hero row's two blocks drift apart with them;
           1920 is where the design stops reading as one composition. */}
-    <div className="relative mx-auto min-h-[874px] w-full ipad:min-h-[1133px] desktop-sm:min-h-[802px] desktop-sm:min-h-dvh desktop-sm:max-w-[1920px]">
+    <div className="relative mx-auto min-h-[max(874px,100dvh)] w-full ipad:min-h-[max(1133px,100dvh)] desktop-sm:min-h-[max(802px,100dvh)] desktop-sm:max-w-[1920px]">
       <CornerGlow />
       <div aria-hidden className={NAV_BAND_FILL} />
       <StarField />
@@ -81,9 +86,15 @@ export const Section39Hero = () => (
         Hero. One tree for all three frames: the phone and tablet stack it as a
         centred column with the shuttle below the CTAs, desktop turns the same
         column into a row and sends the shuttle to the right.
+
+        Desktop takes it out of flow and hangs it 401px off the bottom edge — the
+        frame's own centre, measured from the end the composition is anchored to
+        rather than from the middle it only happens to sit at. The centring
+        translate flips with the offset: `translate-y-1/2` against a `bottom`,
+        or the row lands a full height off.
       */}
       <div
-        className={`relative z-20 mt-[61px] flex w-full flex-col items-center gap-[58px] ${HERO_GUTTER} ipad:mt-[44px] ipad:gap-[66px] desktop-sm:absolute desktop-sm:inset-x-0 desktop-sm:top-1/2 desktop-sm:mt-0 desktop-sm:-translate-y-1/2 desktop-sm:flex-row desktop-sm:items-center desktop-sm:justify-between desktop-sm:gap-0`}
+        className={`relative z-20 mt-[61px] flex w-full flex-col items-center gap-[58px] ${HERO_GUTTER} ipad:mt-[44px] ipad:gap-[66px] desktop-sm:absolute desktop-sm:inset-x-0 desktop-sm:bottom-[401px] desktop-sm:mt-0 desktop-sm:translate-y-1/2 desktop-sm:flex-row desktop-sm:items-center desktop-sm:justify-between desktop-sm:gap-0`}
       >
         <div className="flex w-full flex-col items-center gap-[32px] desktop-sm:w-[586px] desktop-sm:items-start">
           <div className="flex flex-col items-center gap-[12px] desktop-sm:items-start">

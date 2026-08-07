@@ -13,24 +13,35 @@ import { Stats } from "./stats";
  * backdrop: the engraved grid rail to rail, grain down both margins, and the
  * glow under the globe.
  *
- * The globe is the reason the height model is upside down from most sections
- * here. It is anchored to the bottom, not laid out in flow, so a viewport taller
- * than the frame opens space *between* the stats and the horizon rather than
- * pushing the horizon down. The copy stays where Figma puts it, measured from
- * the top, and the frame heights are floors — `min-h-[max(100dvh, <frame>)]`,
- * one property so the two cannot fight.
+ * The globe is anchored to the bottom of the section rather than laid out in
+ * flow, so it sits on the horizon Figma draws it on at every frame.
+ *
+ * Height. `<main>` takes `min-h-dvh` and everything answers to that: the grid,
+ * the rails and the grain reach the bottom of any screen, and the globe grows
+ * with them. The content keeps the frame height as a floor and does not stretch,
+ * so the copy and the stats stay where the design puts them and only the visual
+ * takes up the surplus — see `sphere.tsx`, which pins the dome's crest at
+ * Figma's y452 and derives the diameter from whatever is left below it. That is
+ * what closes the gap a fixed-size globe opened between the stats and the
+ * horizon on a tall screen.
+ *
+ * Width. The sheet is the screen up to an ultrawide, then it caps at 1440 — the
+ * rails sit 48 in from whatever edge applies. `<main>` is the one thing that
+ * never caps, and it is white rather than the sheet colour: past the cap it is
+ * all that shows, and the page's own `#181818` behind it read as a black band
+ * either side of the design. So the sheet colour rides on the stage layer, which
+ * caps with everything else, and `<main>` is the margin.
  *
  * Desktop is the only frame that sets the headline against the button; below
  * 1280 they stack, which is a `flex-col` that turns into a row rather than two
- * trees. Everything spans the rails, so the stage caps at 1440 and the rails cap
- * with it — the same split `section-30` uses.
+ * trees.
  */
-/** The capped, centred stage every backdrop layer is measured from. */
+/** The full-bleed stage every backdrop layer is measured from. */
 const STAGE_LAYER =
-  "absolute inset-y-0 left-1/2 w-full max-w-[1440px] -translate-x-1/2";
+  "absolute inset-0 ipad:translate-y-[-10%] desktop-sm:translate-y-[0%]";
 
 export const Section36Hero = () => (
-  <main className="animate-hero-reveal relative isolate flex min-h-[max(100dvh,874px)] w-full flex-col overflow-hidden bg-[#edeff3] ipad:min-h-[max(100dvh,1133px)] desktop-sm:min-h-[max(100dvh,832px)]">
+  <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-white">
     {/* The backdrop caps with the content rather than with the viewport. The
         rails, the grid and the globe are all measured off the same 1440 stage,
         so past the cap they stop together and the page colour is what fills the
@@ -42,11 +53,11 @@ export const Section36Hero = () => (
         rails. `-translate-x-1/2` makes every wrapper a stacking context, so a
         `z-*` on something inside one of them can never reach past the copy —
         the ordering has to happen out here. */}
-    <div className={STAGE_LAYER}>
+    <div className={`${STAGE_LAYER} bg-[#edeff3]`}>
       <GridBackdrop />
     </div>
 
-    <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 flex-col">
+    <div className="relative z-10 mx-auto flex w-full flex-col min-h-[874px] ultrawide:max-w-[1440px] ipad:min-h-[1133px] desktop-sm:min-h-[832px]">
       {/* Rail to rail. The copy sits four pixels inside on the phone and eight
           above it, which is Figma's 20/56 against rails at 16/48. */}
       <div className="mx-[16px] flex flex-1 flex-col ipad:mx-[48px]">
@@ -89,6 +100,14 @@ export const Section36Hero = () => (
       <Rails />
     </div>
 
+    {/*
+      The globe is measured off the frame, not the screen. Grid and rails are
+      pattern and run `inset-y-0` to the bottom of the viewport, but the globe
+      rises out of the *design's* bottom edge and is cut by it — give it the
+      viewport's bottom instead and a tall screen walks it down with the fold,
+      uncropped and clear of the stats it is supposed to sit behind. So this
+      layer stops at the frame height and the globe hangs off that.
+    */}
     <div className={`${STAGE_LAYER} pointer-events-none z-30`}>
       <Sphere />
     </div>

@@ -6,6 +6,7 @@ import {
   Geist,
   Geist_Mono,
   Gemunu_Libre,
+  Hedvig_Letters_Serif,
   Instrument_Sans,
   Instrument_Serif,
   Inter,
@@ -91,6 +92,12 @@ export const instrumentSans = Instrument_Sans({
   variable: "--font-instrument-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+});
+
+export const hedvigLettersSerif = Hedvig_Letters_Serif({
+  variable: "--font-hedvig-letters-serif-family",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export const instrumentSerif = Instrument_Serif({
@@ -183,5 +190,11 @@ export const Aeonik = localFont({
 export const CanelaDeck = localFont({
   src: "./canela-deck-trial.otf",
   variable: "--font-canela-deck-trail-family",
+  display: "swap",
+});
+
+export const Helvetica = localFont({
+  src: "./helvetica.ttf",
+  variable: "--font-helvetica",
   display: "swap",
 });

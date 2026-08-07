@@ -23,7 +23,7 @@ const CONTROL =
   "cursor-pointer touch-manipulation [-webkit-tap-highlight-color:transparent] transition-[opacity,transform] duration-200 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b1432] active:scale-[0.97] motion-reduce:active:scale-100 [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-70";
 
 const WORDMARK =
-  "font-helvetica-neue text-[22px] leading-[1.14] tracking-[-0.03em] text-[#090f2c]";
+  "font-helvetica text-[22px] leading-[1.14] tracking-[-0.03em] text-[#090f2c]";
 
 export const Navbar = () => (
   <nav

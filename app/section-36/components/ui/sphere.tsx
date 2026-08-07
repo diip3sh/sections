@@ -49,8 +49,30 @@ const WASH_CORE = `linear-gradient(to bottom, ${CLEAR} 0%, #1d73c9 63.6%)`;
  * narrower than 402 would push it out through both rails — 41px each side at
  * 320. Above 402 the clamp is inert.
  */
+/**
+ * Diameter, per frame — Figma `image 3083635`.
+ *
+ * Phone and tablet are tangent to the rails, and are sized from width: 370
+ * across on a 402 frame whose rails are 16 in, 650 on a 744 frame whose rails
+ * are 48 in. Both are the rail-to-rail width exactly, so `100%` and the cap say
+ * the same thing there, and both frames are about as tall as the phone they are
+ * drawn for — there is no surplus height for the globe to answer to.
+ *
+ * Desktop is sized from *height* instead, and from one number: 452, the y Figma
+ * puts the top of the dome at. What the design fixes is not a width but a
+ * relationship — exactly half the globe shows, and its crest sits just under the
+ * stats — so the horizon is pinned there and the diameter is whatever reaches
+ * the bottom edge from it: twice the distance from 452 to the foot of the
+ * section. `aspect-square` hands back the width.
+ *
+ * Both simpler readings fail on a tall screen. A fixed 760 leaves the dome where
+ * it was and opens an empty band under the stats, which is what made the globe
+ * read small on a wide monitor; a fixed *share* of the height shrinks that band
+ * without closing it. Pinning the crest closes it at every height, and at 832 it
+ * resolves to Figma's 760 exactly.
+ */
 const BOX =
-  "aspect-square w-[min(370px,100%)] ipad:w-[min(650px,100%)] desktop-sm:w-[min(760px,100%)]";
+  "aspect-square w-[min(370px,100%)] ipad:w-[min(650px,100%)] desktop-sm:h-[calc((100%-452px)*2)] desktop-sm:w-auto";
 
 /*
  * Painted above the rails, which is the order Figma uses — its rails group
@@ -68,7 +90,12 @@ export const Sphere = () => (
       below the frame edge. The blurs bleed well past those bounds, which is why
       nothing here is clipped.
     */}
-    <div className="absolute bottom-[-133px] left-1/2 h-[281px] w-[526px] -translate-x-1/2 ipad:bottom-[-51px] ipad:h-[474px] ipad:w-[886px] desktop-sm:bottom-[-342px] desktop-sm:h-[684px] desktop-sm:w-[1278px]">
+    {/* The glow is seated on the globe, so it is driven off the same distance.
+        Figma's wash is 684 tall where the visible dome is 380 — 1.8 times it —
+        at a 1278/684 aspect, centred on the bottom edge. Left as fixed pixels it
+        stayed the size of the 832 frame while the globe grew past it, and the
+        dome came up out of a wash too small to seat it. */}
+    <div className="absolute bottom-[-133px] left-1/2 h-[281px] w-[526px] -translate-x-1/2 ipad:bottom-[-51px] ipad:h-[474px] ipad:w-[886px] desktop-sm:bottom-0 desktop-sm:aspect-[1278/684] desktop-sm:h-[calc((100%-452px)*1.8)] desktop-sm:w-auto desktop-sm:translate-y-1/2">
       <span
         className="absolute inset-0 rounded-[50%] opacity-70 blur-[100px]"
         style={{ backgroundImage: WASH_WIDE }}
@@ -105,9 +132,17 @@ export const Sphere = () => (
       `overflow-hidden` on the box confines it; the sphere is drawn to fill that
       box anyway, so only the cursor-scattered particles lose their overspill.
     */}
+    {/*
+      Desktop hangs exactly half the globe below the frame edge. That half is a
+      self-relative translate rather than a pixel offset, because the diameter is
+      now the rail-to-rail width and that is fluid between the 1280 frame and the
+      1440 cap — a fixed -380 showed a shallower and shallower slice the wider
+      the stage got. Phone and tablet keep Figma's own offsets, which are not
+      halves: the tablet shows about seven tenths of its globe.
+    */}
     <div className="absolute inset-y-0 right-[16px] left-[16px] overflow-hidden ipad:right-[48px] ipad:left-[48px]">
       <div
-        className={`pointer-events-auto absolute bottom-[-184px] left-1/2 -translate-x-1/2 overflow-hidden ipad:bottom-[-181px] desktop-sm:bottom-[-380px] ${BOX}`}
+        className={`pointer-events-auto absolute bottom-[-184px] left-1/2 -translate-x-1/2 overflow-hidden ipad:bottom-[-181px] desktop-sm:bottom-0 desktop-sm:translate-y-1/2 ${BOX}`}
       >
         <ParticleSphere
           particlesCount={10000}

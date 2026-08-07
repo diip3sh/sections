@@ -180,6 +180,7 @@
   --font-tillana: var(--font-tillana-family);
   --font-instrument: var(--font-instrument-sans);
   --font-instrument-serif: var(--font-instrument-serif-family);
+  --font-hedvig-serif: var(--font-hedvig-letters-serif-family);
   --font-urbanist: var(--font-urbanist-family);
   --font-manrope: var(--font-manrope-family);
   --font-baskervville: var(--font-baskervville-family);
@@ -194,7 +195,7 @@
   --font-canela-deck: var(--font-canela-deck-trail-family);
   --font-canela: var(--font-canela-deck-family);
   --font-gemunu: var(--font-gemunu-libre-family);
-
+  --font-helvetica: var(--font-helvetica);
   --animate-hero-reveal: hero-reveal 300ms cubic-bezier(0.215, 0.61, 0.355, 1)
     both;
   --animate-section-rise: section-rise 500ms cubic-bezier(0.23, 1, 0.32, 1) both;

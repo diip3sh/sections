@@ -17,6 +17,12 @@ import { StarDust } from "./star-dust";
  * rather than a flow. Both are centred horizontally at all three frames, so
  * only their y changes.
  *
+ * Height is two decisions. `<main>` takes `min-h-dvh` and carries the ASCII
+ * field, so the glyphs reach the bottom of any screen. The stage inside it
+ * keeps each frame's own height and does not grow with the viewport — the
+ * two groups are placed against that height, so stretching it walked the orb
+ * and the copy apart from the spacing the design gives them.
+ *
  * Desktop takes a floor of the viewport height: 885 is shorter than most
  * laptops and the page would otherwise end mid-screen. The nav stays pinned to
  * the top and the ASCII field is bottom-anchored — it is a flame, it has to
@@ -47,10 +53,10 @@ const WASH_FILL = `radial-gradient(closest-side, ${[
 ].join(", ")})`;
 
 export const Section32Hero = () => (
-  <main className="animate-hero-reveal relative isolate w-full overflow-hidden bg-[#031602]">
-    <div className="relative h-[874px] w-full ipad:h-[1068px] desktop-sm:h-[885px] desktop-sm:min-h-dvh">
-      <AsciiField />
+  <main className="animate-hero-reveal relative isolate min-h-dvh w-full overflow-hidden bg-[#031602]">
+    <AsciiField />
 
+    <div className="relative h-[874px] w-full ipad:h-[1068px] desktop-sm:h-[885px]">
       <div className="relative mx-auto h-full w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-[1440px]">
         <Navbar />
 

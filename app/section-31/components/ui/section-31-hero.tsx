@@ -1,5 +1,5 @@
 import { BlackHoleVisual } from "./black-hole-visual";
-import { GridFrame } from "./grid-frame";
+import { GridFrame, GridRails } from "./grid-frame";
 import { HeroContent } from "./hero-content";
 import { LogoMarquee } from "./logo-marquee";
 import { Navbar } from "./navbar";
@@ -23,18 +23,36 @@ import { StatsRow } from "./stats-row";
  * rails through the fluid stretch between 1280 and 1440 instead of hanging off
  * a number only true at 1440.
  *
- * Desktop also takes a floor of the viewport height, because 811 is shorter
- * than most laptops and the page would otherwise end mid-screen. The extra
- * height is not spread evenly: the nav band stays pinned to the top and the
- * stats-and-brands band to the bottom, both at their Figma heights, and only
- * the middle band between the two rules grows. Copy and visual sit inside that
- * band offset from its centre, so they hold Figma's exact positions at 811 and
- * drift down together as it opens up — rather than leaving a hole above the
- * fold. The band is transparent to the pointer so it cannot swallow nav clicks.
+ * Height is two decisions, not one. `<main>` takes `min-h-dvh` so the page runs
+ * to the bottom of any screen. The stage inside it keeps each frame's own height
+ * and does not grow with the viewport: 811 is
+ * shorter than most laptops, but the answer is background below the design, not
+ * a design stretched to fill the gap — stretching pulled the nav, stats and
+ * brand bands off the spacing Figma draws between them. The middle band is
+ * transparent to the pointer so it cannot swallow nav clicks.
  */
 export const Section31Hero = () => (
-  <main className="animate-hero-reveal relative isolate w-full overflow-hidden bg-[#0a0a0a]">
-    <div className="relative h-[1233px] w-full ipad:h-[1330px] desktop-sm:h-[811px] desktop-sm:min-h-dvh">
+  <main className="animate-hero-reveal relative isolate min-h-dvh w-full overflow-hidden bg-[#0a0a0a]">
+    {/*
+      Rails first, grid second — the order is load-bearing. Every crossing marker
+      lives in `GridFrame` and draws its own bright vertical bar over the rail it
+      sits on; that bar is what makes a marker read as a plus rather than a dash.
+      With the rails painting last they covered it, and the half-plusses at the
+      rails lost their stem entirely.
+    */}
+    <GridRails />
+
+    <div className="relative h-[1233px] w-full ipad:h-[1330px] desktop-sm:h-[811px]">
+      {/*
+        The horizontal grid belongs to the stage, not to the screen. Every rule
+        in it is placed against a frame y and two of them are measured from the
+        bottom — they are the rules the stats row and the brand marquee sit on.
+        Running the grid the full height of `<main>` pushed that closing pair
+        down to the bottom of the viewport, away from the bands they rule.
+
+        The vertical rails are the opposite case and hang off `<main>` instead;
+        see `GridRails`.
+      */}
       <GridFrame />
 
       <div className="relative z-10 mx-auto h-full w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-[1440px]">

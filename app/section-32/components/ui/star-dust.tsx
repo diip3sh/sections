@@ -36,6 +36,12 @@ const DUST_MASK =
 const MIN_SIZE = 0.45;
 const MAX_SIZE = 0.9;
 
+/**
+ * The dust rises. `angleToDrift` reads `angle` as `angle - 90` and takes its
+ * sine as the y velocity, so 180 gives vy +1 and rains the field downward,
+ * while 0 gives vy -1 — up and out of the orb, which is the direction Figma's
+ * streaks describe.
+ */
 export const StarDust = ({ className = "" }: { className?: string }) => {
   const reduceMotion = useReducedMotion();
 
@@ -51,7 +57,7 @@ export const StarDust = ({ className = "" }: { className?: string }) => {
         particleDensity={3}
         minSize={MIN_SIZE}
         maxSize={MAX_SIZE}
-        angle={180}
+        angle={0}
         movement={reduceMotion ? 0 : 2}
         particleSpeed={reduceMotion ? 0 : 1}
         speed={reduceMotion ? 1 : 3}

@@ -36,9 +36,18 @@ import { Stats } from "./stats";
  * 1280 they stack, which is a `flex-col` that turns into a row rather than two
  * trees.
  */
-/** The full-bleed stage every backdrop layer is measured from. */
+/**
+ * The stage every backdrop layer is measured from — full-bleed, until 2560.
+ *
+ * This design reads as a ruled sheet with no line breaks holding it to a width,
+ * so the sheet is the screen; past an ultrawide the rails end up far enough
+ * apart that the stats stop reading as a row, so it caps at 1440 and `<main>`
+ * carries the margins. The sheet colour rides here rather than on `<main>` for
+ * exactly that reason: past the cap `<main>` is all that shows, and it has to be
+ * white — left on the page's own `#181818` it read as a black band either side.
+ */
 const STAGE_LAYER =
-  "absolute inset-0 ipad:translate-y-[-10%] desktop-sm:translate-y-[0%]";
+  "absolute inset-y-0 left-1/2 w-full -translate-x-1/2 ultrawide:max-w-[1440px] ipad:translate-y-[-10%] desktop-sm:translate-y-[0%]";
 
 export const Section36Hero = () => (
   <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-white">

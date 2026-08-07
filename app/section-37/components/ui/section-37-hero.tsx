@@ -1,4 +1,4 @@
-import { Backdrop } from "./backdrop";
+import { Backdrop, DotField } from "./backdrop";
 import { LineField } from "./line-field";
 import { Navbar } from "./navbar";
 
@@ -38,8 +38,9 @@ export const Section37Hero = () => (
         `min-height`, so its used height is `auto` as far as percentage
         resolution goes and `h-full` collapses the box to zero — which takes the
         canvas with it and leaves the fan invisible. */}
-    <LineField className="inset-x-[-60%] inset-y-0 ipad:inset-x-[-20%] desktop-sm:inset-x-0" />
     <Backdrop />
+    <DotField />
+    <LineField className="inset-x-[-60%] inset-y-0 ipad:inset-x-[-20%] desktop-sm:inset-x-0" />
 
     <Navbar />
 

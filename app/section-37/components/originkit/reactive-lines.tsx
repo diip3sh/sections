@@ -54,10 +54,12 @@ interface CanvasState {
 
 function useCanvasAnimation({
   deferStart = false,
+  transparent = false,
   onSetup,
   onDraw,
 }: {
   deferStart?: boolean;
+  transparent?: boolean;
   onSetup?: (ctx: CanvasRenderingContext2D, state: CanvasState) => void;
   onDraw: (ctx: CanvasRenderingContext2D, state: CanvasState) => void;
 }) {
@@ -82,7 +84,7 @@ function useCanvasAnimation({
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
 
-    const ctx = canvas.getContext("2d", { alpha: false });
+    const ctx = canvas.getContext("2d", { alpha: transparent });
     if (!ctx) return;
 
     const st = stateRef.current;
@@ -157,7 +159,7 @@ function useCanvasAnimation({
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onPageVis);
     };
-  }, [deferStart]);
+  }, [deferStart, transparent]);
 
   return { containerRef, canvasRef, stateRef };
 }
@@ -170,6 +172,12 @@ interface InteractiveLinesProps {
   maxLines?: number;
   fade?: boolean;
   fadeIntensity?: number;
+  /**
+   * Draw on transparency instead of filling `backgroundColor` each frame, so
+   * whatever sits under the canvas shows through the gaps between lines.
+   * Default `false` keeps the original opaque behaviour.
+   */
+  transparent?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -182,6 +190,7 @@ export default function InteractiveLines({
   maxLines = 15,
   fade = false,
   fadeIntensity = 15,
+  transparent = false,
 }: InteractiveLinesProps) {
   const mouseRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
   const cfgRef = useRef({ linesNum: 40, bias: 0.5 });
@@ -189,6 +198,7 @@ export default function InteractiveLines({
   const { containerRef, canvasRef, stateRef } = useCanvasAnimation({
     // Start on mount so mobile (no mouse) still paints the idle pose.
     deferStart: false,
+    transparent,
 
     onSetup: (e, t) => {
       mouseRef.current.targetX = t.width / 2;
@@ -205,8 +215,12 @@ export default function InteractiveLines({
       a.x = a.x + (a.targetX - a.x) * 0.05;
       a.y = a.y + (a.targetY - a.y) * 0.1;
 
-      e.fillStyle = backgroundColor;
-      e.fillRect(0, 0, r, n);
+      if (transparent) {
+        e.clearRect(0, 0, r, n);
+      } else {
+        e.fillStyle = backgroundColor;
+        e.fillRect(0, 0, r, n);
+      }
 
       e.save();
       e.translate(r / 2, n / 2);
@@ -283,8 +297,10 @@ export default function InteractiveLines({
         _.addColorStop(lerp(inner, 1, 0.5), rgba(maxA * 0.3));
         _.addColorStop(lerp(inner, 1, 0.8), rgba(maxA * 0.7));
         _.addColorStop(1, rgba(maxA));
+        if (transparent) e.globalCompositeOperation = "destination-out";
         e.fillStyle = _;
         e.fillRect(-x, -x, 2 * x, 2 * x);
+        e.globalCompositeOperation = "source-over";
         e.restore();
       }
     },

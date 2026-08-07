@@ -16,9 +16,11 @@
  * sparkles keep landing on its corners and the rules keep passing through them
  * at any width.
  *
- * The plate paints its own board colour over this layer, which is what opens
- * the clear band behind the headline — the rules genuinely stop at its edge in
- * Figma rather than fading under it.
+ * The plate paints its own board colour over the rules, which is what opens the
+ * clear band behind the headline — they genuinely stop at its edge in Figma
+ * rather than fading under it. The marks are the other side of that: they are a
+ * separate export so the caller can put them *above* the plate, where Figma has
+ * them.
  */
 
 /** Board `#f1f1e9`, rule `#eaeadf`, mark `#e1e1d1` — sampled off the frames. */
@@ -84,52 +86,60 @@ const NoteMark = () => (
 );
 
 /**
- * Two layers rather than one wrapper: the rules go under the plate and the
- * marks over it, exactly as Figma stacks them, and a single positioned parent
- * would trap both on the same side of it.
+ * The lattice both layers hang off, as one string so they cannot drift apart.
  */
-export const BoardBackdrop = () => (
-  <>
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 z-0 [--cell:80.4px] [--half-h:201px] [--half-w:min(201px,50%)] ipad:[--cell:84px] ipad:[--half-h:210px] ipad:[--half-w:294px]"
-      style={{
-        backgroundImage: RULES,
-        backgroundSize: "var(--cell) 100%, 100% var(--cell)",
-        backgroundPosition:
-          "calc(50% - var(--half-w) + var(--cell) / 2) 0, 0 calc(50% - var(--half-h) + var(--cell) / 2)",
-      }}
-    />
+const ANCHOR =
+  "[--cell:80.4px] [--half-h:201px] [--half-w:min(201px,50%)] ipad:[--cell:84px] ipad:[--half-h:210px] ipad:[--half-w:294px]";
 
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 z-0 [--cell:80.4px] [--half-h:201px] [--half-w:min(201px,50%)] ipad:[--cell:84px] ipad:[--half-h:210px] ipad:[--half-w:294px]"
-    >
-      {SPARKLES.map(({ id, x, y }) => (
-        <img
-          key={id}
-          src="/section-38/sparkle.svg"
-          alt=""
-          className="absolute block size-[40px] max-w-none -translate-x-1/2 -translate-y-1/2"
-          style={{
-            left: corner(x, "var(--half-w)"),
-            top: corner(y, "var(--half-h)"),
-          }}
-        />
-      ))}
+/**
+ * Two components rather than one, because the plate goes *between* them: the
+ * rules are painted under it and stop at its edge, while the sparkles sit on
+ * its corners and Figma draws their rings unbroken across it. Returning both
+ * from a single component puts them on the same side of the plate and clips
+ * the inner half of every ring, which is exactly what it looks like.
+ */
+export const BoardRules = () => (
+  <div
+    aria-hidden
+    className={`pointer-events-none absolute inset-0 z-0 ${ANCHOR}`}
+    style={{
+      backgroundImage: RULES,
+      backgroundSize: "var(--cell) 100%, 100% var(--cell)",
+      backgroundPosition:
+        "calc(50% - var(--half-w) + var(--cell) / 2) 0, 0 calc(50% - var(--half-h) + var(--cell) / 2)",
+    }}
+  />
+);
 
-      {NOTE_MARKS.map((cell) => (
-        <div
-          key={cell}
-          className={`absolute size-[80px] pt-[12px] pl-[13px] ipad:size-[84px] ipad:pt-[14px] ipad:pl-[15px] ${cell}`}
-          style={{
-            left: "calc(50% - var(--half-w) + var(--m) * var(--cell))",
-            top: "calc(50% - var(--half-h) + var(--n) * var(--cell))",
-          }}
-        >
-          <NoteMark />
-        </div>
-      ))}
-    </div>
-  </>
+export const BoardMarks = () => (
+  <div
+    aria-hidden
+    className={`pointer-events-none absolute inset-0 z-0 ${ANCHOR}`}
+  >
+    {SPARKLES.map(({ id, x, y }) => (
+      <img
+        key={id}
+        src="/section-38/sparkle.svg"
+        alt=""
+        className="absolute block size-[40px] max-w-none -translate-x-1/2 -translate-y-1/2"
+        style={{
+          left: corner(x, "var(--half-w)"),
+          top: corner(y, "var(--half-h)"),
+        }}
+      />
+    ))}
+
+    {NOTE_MARKS.map((cell) => (
+      <div
+        key={cell}
+        className={`absolute size-[80px] pt-[12px] pl-[13px] ipad:size-[84px] ipad:pt-[14px] ipad:pl-[15px] ${cell}`}
+        style={{
+          left: "calc(50% - var(--half-w) + var(--m) * var(--cell))",
+          top: "calc(50% - var(--half-h) + var(--n) * var(--cell))",
+        }}
+      >
+        <NoteMark />
+      </div>
+    ))}
+  </div>
 );

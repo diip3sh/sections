@@ -1,4 +1,4 @@
-import { BoardBackdrop } from "./board-backdrop";
+import { BoardMarks, BoardRules } from "./board-backdrop";
 import { EmailCapture } from "./email-capture";
 import { StickerNote } from "./sticker-note";
 
@@ -38,47 +38,46 @@ import { StickerNote } from "./sticker-note";
  */
 
 /**
- * Each note ships as one flattened PNG — see `sticker-note`. The box is Figma's
- * tablet/desktop size; the phone draws all four at exactly 0.75 of it.
+ * Each note ships as one square SVG — see `sticker-note` for why the box is the
+ * artwork's own size rather than Figma's `sticker N` box, and why it is square.
+ *
+ * The widths are the SVGs' own; the phone draws all four at exactly 0.75 of
+ * them. Every offset was read back off the frame renders by locating the paper
+ * itself, so they place the note you can see rather than a bounding box that
+ * includes a shadow. Where a note hangs off an edge its offset comes from the
+ * edge it is *not* clipped on — the clipped side reports the frame's own border
+ * and would place notes 3 and 1 tens of pixels too far in.
  */
 const NOTES = [
   {
     id: "note-1",
     label: "Good! Redesign the button",
-    width: 199.976,
-    height: 234.508,
     className:
-      "top-[51px] left-[-20px] w-[149.982px] ipad:top-[31px] ipad:left-[-15px] ipad:w-[199.976px]",
+      "top-[51.5px] left-[-36.88px] w-[183px] ipad:top-[31px] ipad:left-[-37.5px] ipad:w-[244px]",
   },
   {
     id: "note-4",
     label: "Keep track of critical details",
-    width: 220.25,
-    height: 217.451,
     className:
-      "top-[27.004px] right-[-20.174px] w-[165.188px] ipad:top-[77px] ipad:right-[-0.243px] ipad:w-[220.25px] desktop-sm:right-[2.756px]",
+      "top-[18px] right-[-27.88px] w-[182.25px] ipad:top-[65px] ipad:right-[-10.5px] ipad:w-[243px] desktop-sm:right-[-7.5px]",
   },
   {
     id: "note-3",
     label: "This needs to be done ASAP",
-    width: 230.092,
-    height: 230.99,
     className:
-      "bottom-[29.661px] left-[-43.239px] w-[172.569px] ipad:bottom-[114.813px] ipad:left-[-15.999px] ipad:w-[230.092px] desktop-sm:bottom-[28.012px] desktop-sm:left-[9.001px]",
+      "bottom-[20.38px] left-[-53.38px] w-[192px] ipad:bottom-[102.5px] ipad:left-[-29.5px] ipad:w-[256px] desktop-sm:bottom-[15.5px] desktop-sm:left-[-4px]",
   },
   {
     id: "note-2",
     label: "Pay attention to details",
-    width: 220.9,
-    height: 218.138,
     className:
-      "bottom-[10.363px] right-[-25.281px] w-[165.675px] ipad:bottom-[88.866px] ipad:right-[-39.903px] ipad:w-[220.9px] desktop-sm:bottom-[141.862px] desktop-sm:right-[-17.903px]",
+      "bottom-[1.12px] right-[-31.5px] w-[182.25px] ipad:bottom-[76.5px] ipad:right-[-49px] ipad:w-[243px] desktop-sm:bottom-[128.5px] desktop-sm:right-[-27px]",
   },
 ];
 
 export const Section38Hero = () => (
   <main className="animate-hero-reveal relative isolate flex min-h-[max(100dvh,874px)] w-full items-center justify-center overflow-hidden bg-[#f1f1e9] ipad:min-h-[max(100dvh,1133px)] desktop-sm:min-h-[max(100dvh,617px)]">
-    <BoardBackdrop />
+    <BoardRules />
 
     {/* The plate carries the board colour so the rules stop at its edge — the
         clear band behind the headline is Figma's own opaque fill, not a fade.
@@ -95,7 +94,12 @@ export const Section38Hero = () => (
           Tracking is Figma's -1.28px at 32 and -1.92px at 48, which is -0.04em
           at both — one ratio rather than two numbers that agree by accident.
         */}
-        <h1 className="text-center font-hedvig-serif text-[32px] leading-[1.1] tracking-[-0.04em] text-balance text-[#2a2722] ipad:text-[48px]">
+        {/*
+          No `text-balance`: Figma breaks after "Before" at both frames, which
+          is where the plate's own width puts the break. Balancing moves it up
+          to after "Access" and gives the headline a different silhouette.
+        */}
+        <h1 className="text-center font-hedvig-serif text-[32px] leading-[1.1] tracking-[-0.04em] text-[#2a2722] ipad:text-[48px]">
           Get Early Access Before Everyone Else
         </h1>
 
@@ -108,13 +112,15 @@ export const Section38Hero = () => (
       <EmailCapture />
     </div>
 
-    {NOTES.map(({ id, label, width, height, className }) => (
+    {/* After the plate, so the sparkles on its corners keep their full ring —
+        Figma draws them unbroken across it. */}
+    <BoardMarks />
+
+    {NOTES.map(({ id, label, className }) => (
       <StickerNote
         key={id}
-        src={`/section-38/${id}.png`}
+        src={`/section-38/${id}.svg`}
         label={label}
-        width={width}
-        height={height}
         className={className}
       />
     ))}

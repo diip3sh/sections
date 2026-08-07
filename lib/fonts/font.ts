@@ -14,6 +14,7 @@ import {
   Lato,
   Manrope,
   Monda,
+  Orbit,
   Outfit,
   Playfair_Display,
   Rajdhani,
@@ -153,6 +154,12 @@ export const clash = localFont({
 
 export const audiowide = Audiowide({
   variable: "--font-audiowide-family",
+  subsets: ["latin"],
+  weight: ["400"],
+});
+
+export const orbit = Orbit({
+  variable: "--font-orbit-family",
   subsets: ["latin"],
   weight: ["400"],
 });

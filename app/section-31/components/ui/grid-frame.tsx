@@ -153,6 +153,33 @@ const Tick = ({ variant, flip = false, anchor, className }: TickProps) => {
   );
 };
 
+/**
+ * The three vertical rails, split out from the grid because they answer to a
+ * different box.
+ *
+ * Every horizontal rule in `GridFrame` is placed against a frame y — two of
+ * them measured from the bottom, since they are the rules the stats row and the
+ * brand marquee sit on — so the grid has to stay the height of the stage or
+ * that closing pair walks away from the bands it rules. The rails have no such
+ * tie: they are pattern, and pattern runs to the bottom of the screen. Kept in
+ * the stage they broke off mid-page on anything taller than the frame.
+ *
+ * The middle rail still starts at the first rule rather than at the top edge,
+ * which is where Figma opens it.
+ */
+export const GridRails = () => (
+  <div
+    aria-hidden
+    className="pointer-events-none absolute inset-y-0 left-1/2 z-[1] w-full max-w-[402px] -translate-x-1/2 ipad:max-w-[744px] desktop-sm:max-w-[1440px]"
+  >
+    <div className={`${RULE} absolute inset-y-0 w-px ${RAIL_L}`} />
+    <div className={`${RULE} absolute inset-y-0 w-px ${RAIL_R}`} />
+    <div
+      className={`${RULE} absolute top-[80px] bottom-0 left-1/2 hidden w-px -translate-x-1/2 desktop-sm:block`}
+    />
+  </div>
+);
+
 export const GridFrame = () => (
   <div aria-hidden className="pointer-events-none absolute inset-0 z-[1]">
     {/* Horizontal rules — full bleed, wider than the stage as in Figma */}
@@ -164,13 +191,6 @@ export const GridFrame = () => (
     ))}
 
     <div className="relative mx-auto h-full w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-[1440px]">
-      <div className={`${RULE} absolute inset-y-0 w-px ${RAIL_L}`} />
-      <div className={`${RULE} absolute inset-y-0 w-px ${RAIL_R}`} />
-      {/* Middle rail — desktop only, and it starts at the first rule */}
-      <div
-        className={`${RULE} absolute top-[80px] bottom-0 left-1/2 hidden w-px -translate-x-1/2 desktop-sm:block`}
-      />
-
       {/* Dotted bands. The second is the seam between copy and visual while the
           page is stacked; desktop has no such seam. */}
       <div

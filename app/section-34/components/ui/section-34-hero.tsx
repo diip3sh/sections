@@ -17,17 +17,16 @@ import { WaveField } from "./wave-field";
  * those are measured from the stage, so they hold their distance from the copy
  * instead of walking out to the corners of a wide screen.
  *
- * All three frames are viewport-height rather than scroll-height (874 is an
- * iPhone 17, 1133 an iPad mini), so unlike most sections here the height floor
- * applies at every breakpoint, not just desktop:
- * `min-h-[max(100dvh, <frame>)]` — one property, so the two floors cannot fight.
+ * Height is two decisions. `<main>` takes `min-h-dvh` so the wave field and the
+ * rails reach the bottom of any screen, and the headline region takes the frame
+ * height less its siblings — nav, info band, capture row — as its own floor:
+ * 449 / 470 / 429 against frames of 874 / 1133 / 832.
  *
- * The surplus above that floor goes in one place, and the column says so without
- * a single absolute coordinate. Nav, headline, band and the frame's closing gap
- * are all in flow; the only flexible thing is the region holding the headline,
- * and it is bottom-aligned. Growth therefore opens up the empty wave field above
- * the headline, and the headline stays a fixed distance off the band, which is
- * the relationship the design actually draws. At each frame's own height it
+ * That floor is what holds the design's own spacing, and the column says so
+ * without a single absolute coordinate. Nav, headline, band and the frame's
+ * closing gap are all in flow, and none of them stretches with the viewport, so
+ * the headline stays a fixed distance off the band, which is the relationship
+ * the design actually draws. At each frame's own height it
  * reproduces Figma's absolute y exactly — 212 / 297 / 231 against Figma's
  * 212 / 297 / 231 — because those numbers were never anything but the leftovers.
  *
@@ -47,7 +46,7 @@ const FADE_FILL =
   "linear-gradient(to top, #002fff 0, #002fff var(--fade-solid), transparent 100%)";
 
 export const Section34Hero = () => (
-  <main className="animate-hero-reveal relative isolate flex min-h-[max(100dvh,874px)] w-full flex-col overflow-hidden bg-[#002fff] ipad:min-h-[max(100dvh,1133px)] desktop-sm:min-h-[max(100dvh,832px)]">
+  <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-[#002fff]">
     <WaveField />
 
     <div
@@ -73,7 +72,7 @@ export const Section34Hero = () => (
     {/* The one flexible band. Bottom-aligned, so a viewport taller than the frame
         grows the wave field above the headline rather than the gap below it. */}
     <div
-      className={`${STAGE} z-10 flex flex-1 flex-col justify-end px-[20px] ipad:px-[56px]`}
+      className={`${STAGE} z-10 flex flex-col justify-end min-h-[449px] ipad:min-h-[470px] desktop-sm:min-h-[429px] px-[20px] ipad:px-[56px]`}
     >
       {/*
         The break is unconditional — all three frames read "Your Front Desk," /
@@ -91,7 +90,7 @@ export const Section34Hero = () => (
         the clamp is inert at and above the frame width and only does anything
         on the phones the design never drew.
       */}
-      <h1 className="mb-[191px] font-helvetica-neue text-[clamp(36px,12vw,48px)] leading-[1.1] tracking-[-0.06em] text-white ipad:mb-[56px] ipad:text-[80px] desktop-sm:text-[100px]">
+      <h1 className="mb-[191px] font-helvetica text-[clamp(36px,12vw,48px)] leading-[1.1] tracking-[-0.06em] text-white ipad:mb-[56px] ipad:text-[80px] desktop-sm:text-[100px]">
         Your Front Desk,
         <br />
         Powered by AI

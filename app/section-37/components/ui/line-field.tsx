@@ -25,6 +25,7 @@ export const LineField = ({ className = "" }: { className?: string }) => (
       minLines={80}
       maxLines={37}
       fade
+      transparent
       fadeIntensity={25}
     />
   </div>

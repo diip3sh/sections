@@ -68,7 +68,7 @@ export const InfoBand = () => (
         {/* Figma breaks this into 3 / 3 / 4 lines purely on width, and the same
           break lands at every frame, so the widths hold it. `text-pretty` is
           left off deliberately — it is free to move the last break. */}
-        <p className="max-w-[343px] font-helvetica-neue text-[16px] leading-[1.14] text-white ipad:max-w-none ipad:text-[28px] ipad:tracking-[-0.03em] desktop-sm:max-w-[476px]">
+        <p className="max-w-[343px] font-helvetica text-[16px] leading-[1.14] text-white ipad:max-w-none ipad:text-[28px] ipad:tracking-[-0.03em] desktop-sm:max-w-[476px]">
           Custom AI voice agents that answer every call, schedule appointments,
           and support patients around the clock, without increasing headcount.
         </p>

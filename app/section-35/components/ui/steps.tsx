@@ -64,7 +64,7 @@ export const Steps = () => (
       From Idea to Production in Three Steps :
     </h2>
 
-    <ol className="mt-[12px] grid grid-cols-3 gap-[26px] ipad:mt-[25px] ipad:gap-[45px] desktop-sm:mt-[24px] desktop-sm:gap-[60px]">
+    <ol className="mt-[12px] grid grid-cols-1 md:grid-cols-3 gap-[26px] ipad:mt-[25px] ipad:gap-[45px] desktop-sm:mt-[24px] desktop-sm:gap-[60px]">
       {STEPS.map(({ number, title, body }) => (
         <li key={number}>
           {/* The warm inset is Figma's, and it scales with the chip: 5px at 44,
@@ -85,7 +85,7 @@ export const Steps = () => (
             {title}
           </h3>
 
-          <p className="mt-[6px] font-geist text-[8px] leading-[10px] font-medium text-[#707070] capitalize ipad:mt-[12px] ipad:text-[10px] ipad:leading-[16px] desktop-sm:mt-[16px] desktop-sm:text-[15px] desktop-sm:leading-[21px]">
+          <p className="mt-[6px] max-w-[300px] iphone:max-w-none text-balance font-geist leading-[10px] font-medium text-[#707070] capitalize ipad:mt-[12px] text-[10px] ipad:leading-[16px] desktop-sm:mt-[16px] desktop-sm:text-[15px] desktop-sm:leading-[21px]">
             {body}
           </p>
         </li>

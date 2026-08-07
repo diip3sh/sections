@@ -13,24 +13,44 @@ import { Stats } from "./stats";
  * backdrop: the engraved grid rail to rail, grain down both margins, and the
  * glow under the globe.
  *
- * The globe is the reason the height model is upside down from most sections
- * here. It is anchored to the bottom, not laid out in flow, so a viewport taller
- * than the frame opens space *between* the stats and the horizon rather than
- * pushing the horizon down. The copy stays where Figma puts it, measured from
- * the top, and the frame heights are floors — `min-h-[max(100dvh, <frame>)]`,
- * one property so the two cannot fight.
+ * The globe is anchored to the bottom of the section rather than laid out in
+ * flow, so it sits on the horizon Figma draws it on at every frame.
+ *
+ * Height. `<main>` takes `min-h-dvh` and everything answers to that: the grid,
+ * the rails and the grain reach the bottom of any screen, and the globe grows
+ * with them. The content keeps the frame height as a floor and does not stretch,
+ * so the copy and the stats stay where the design puts them and only the visual
+ * takes up the surplus — see `sphere.tsx`, which pins the dome's crest at
+ * Figma's y452 and derives the diameter from whatever is left below it. That is
+ * what closes the gap a fixed-size globe opened between the stats and the
+ * horizon on a tall screen.
+ *
+ * Width. The sheet is the screen up to an ultrawide, then it caps at 1440 — the
+ * rails sit 48 in from whatever edge applies. `<main>` is the one thing that
+ * never caps, and it is white rather than the sheet colour: past the cap it is
+ * all that shows, and the page's own `#181818` behind it read as a black band
+ * either side of the design. So the sheet colour rides on the stage layer, which
+ * caps with everything else, and `<main>` is the margin.
  *
  * Desktop is the only frame that sets the headline against the button; below
  * 1280 they stack, which is a `flex-col` that turns into a row rather than two
- * trees. Everything spans the rails, so the stage caps at 1440 and the rails cap
- * with it — the same split `section-30` uses.
+ * trees.
  */
-/** The capped, centred stage every backdrop layer is measured from. */
+/**
+ * The stage every backdrop layer is measured from — full-bleed, until 2560.
+ *
+ * This design reads as a ruled sheet with no line breaks holding it to a width,
+ * so the sheet is the screen; past an ultrawide the rails end up far enough
+ * apart that the stats stop reading as a row, so it caps at 1440 and `<main>`
+ * carries the margins. The sheet colour rides here rather than on `<main>` for
+ * exactly that reason: past the cap `<main>` is all that shows, and it has to be
+ * white — left on the page's own `#181818` it read as a black band either side.
+ */
 const STAGE_LAYER =
-  "absolute inset-y-0 left-1/2 w-full max-w-[1440px] -translate-x-1/2";
+  "absolute inset-y-0 left-1/2 w-full -translate-x-1/2 ultrawide:max-w-[1440px] ipad:translate-y-[-10%] desktop-sm:translate-y-[0%]";
 
 export const Section36Hero = () => (
-  <main className="animate-hero-reveal relative isolate flex min-h-[max(100dvh,874px)] w-full flex-col overflow-hidden bg-[#edeff3] ipad:min-h-[max(100dvh,1133px)] desktop-sm:min-h-[max(100dvh,832px)]">
+  <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-white">
     {/* The backdrop caps with the content rather than with the viewport. The
         rails, the grid and the globe are all measured off the same 1440 stage,
         so past the cap they stop together and the page colour is what fills the
@@ -42,11 +62,11 @@ export const Section36Hero = () => (
         rails. `-translate-x-1/2` makes every wrapper a stacking context, so a
         `z-*` on something inside one of them can never reach past the copy —
         the ordering has to happen out here. */}
-    <div className={STAGE_LAYER}>
+    <div className={`${STAGE_LAYER} bg-[#edeff3]`}>
       <GridBackdrop />
     </div>
 
-    <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 flex-col">
+    <div className="relative z-10 mx-auto flex w-full flex-col min-h-[874px] ultrawide:max-w-[1440px] ipad:min-h-[1133px] desktop-sm:min-h-[832px]">
       {/* Rail to rail. The copy sits four pixels inside on the phone and eight
           above it, which is Figma's 20/56 against rails at 16/48. */}
       <div className="mx-[16px] flex flex-1 flex-col ipad:mx-[48px]">
@@ -89,7 +109,31 @@ export const Section36Hero = () => (
       <Rails />
     </div>
 
-    <div className={`${STAGE_LAYER} pointer-events-none z-30`}>
+    {/*
+      The globe layer keeps the section's height and is *slid* up to the fold,
+      rather than being cut down to it.
+
+      Both fix the same thing — on a screen shorter than the 832 content floor
+      the section runs past the bottom of the window, and with it the dome's
+      horizon and the half of the surface you can actually reach. But capping the
+      layer with `max-h-dvh` shrinks it, and the diameter is derived from this box
+      (`(100% - 452px) * 2`), so the globe itself shrank: 760 across at 832,
+      only 496 at a 700-tall window.
+
+      The translate leaves the box at the section's height, so the diameter is
+      still the section's, and moves it bodily up by however much the section
+      overhangs the window. The upper bound is 0 — a no-op the moment the window
+      is the taller of the two, which is every normal case.
+
+      The lower bound is 77px and it is not arbitrary: Figma's stats band closes
+      at y375 and the crest sits at y452, so 77 is the whole gap between them.
+      Unbounded, the lift is the overhang, and a short enough window drives the
+      crest straight up through the stats and eventually off the top of the
+      section, which reads as the dome being cut rather than moved. Clamped, it
+      recovers as much of the dome as the composition has room for and leaves the
+      rest to the scroll, which is what the overhang is anyway.
+    */}
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-30 mx-auto h-full w-full translate-y-[clamp(-77px,calc(100dvh_-_100%),0px)] ultrawide:max-w-[1440px]">
       <Sphere />
     </div>
   </main>

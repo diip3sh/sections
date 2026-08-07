@@ -18,13 +18,14 @@ import { Steps } from "./steps";
  * a single band, which is the same markup with `desktop-sm:flex-row` and the
  * middle rule switched off.
  *
- * All three frames are viewport-height, so the height floor applies at every
- * breakpoint: `min-h-[max(100dvh, <frame>)]`, one property so the two floors
- * cannot fight. The surplus goes to the portrait band — it is `flex-1` and
- * everything else is sized by content, so a taller viewport gives the artwork
- * more room and leaves the nav, the copy and the steps exactly where Figma has
- * them. At each frame's own height the band lands on Figma's number without
- * being told it: 453 / 398 / 347.
+ * Height is two decisions, and here they land on the same box from opposite
+ * sides. The rails are this section's pattern — they are the `border-x` of the
+ * frame, not a separate layer — so the frame has to run the full height of the
+ * screen, and it grows with `<main>`. What must not grow is the content inside
+ * it: the bands carry Figma's own heights (605 / 746 / 453 for the portrait
+ * band), and each frame height is kept as a floor so a short viewport still
+ * gets the design. Surplus therefore collects as framed space under the steps,
+ * with the rails running past it to the bottom edge.
  *
  * Past 1440 the stage caps and the rails come with it, the way `section-30`
  * splits — there is nothing here that wants to keep growing, and the page
@@ -45,16 +46,24 @@ const RULE = "border-solid border-white/16";
 
 export const Section35Hero = () => (
   <main
-    className={`animate-hero-reveal relative flex min-h-[max(100dvh,874px)] w-full flex-col ${PAGE} ipad:min-h-[max(100dvh,1068px)] desktop-sm:min-h-[max(100dvh,831px)]`}
+    className={`animate-hero-reveal relative flex min-h-dvh w-full flex-col ${PAGE}`}
   >
-    <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col">
+    <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col min-h-[874px] ipad:min-h-[1068px] desktop-sm:min-h-[831px]">
       <div
         className={`mx-[11px] flex flex-1 flex-col border-x ${RULE} ipad:mx-[62px] desktop-sm:mx-[80px]`}
       >
         <Navbar />
 
+        {/*
+          The band takes Figma's height rather than the leftover space. The
+          rails are the `border-x` of the frame around it, and a rail is pattern
+          — it has to reach the bottom of the screen — so the frame is the piece
+          that grows. If the band grew with it the portrait stretched with the
+          viewport; fixing the band sends the surplus to framed space under the
+          steps instead, which is where the design leaves it.
+        */}
         <div
-          className={`flex flex-1 flex-col border-b ${RULE} desktop-sm:flex-row`}
+          className={`flex h-[605px] shrink-0 flex-col border-b ${RULE} ipad:h-[746px] desktop-sm:h-[453px] desktop-sm:flex-row`}
         >
           {/* The portrait hangs off the left rail with no gutter — Figma starts
               it at x80 on the desktop frame, flush with the rail, where every
@@ -72,7 +81,15 @@ export const Section35Hero = () => (
               a tall viewport. The band clips it; the top of the canvas is
               transparent there, so nothing opens up above.
             */}
-            <div className="relative w-full translate-y-[22%] ipad:w-[448px] desktop-sm:w-[510px]">
+            {/*
+              The canvas box is deliberately bigger than the cell that clips it
+              — `ZOOM` above the cell in both axes — which is what enlarges the
+              figure. It is a box change rather than a `scale`, because the glyph
+              count is fixed at 93: a wider box spends those 93 columns over more
+              pixels and redraws the art larger and still crisp, where a
+              transform would resample the canvas and soften every glyph.
+            */}
+            <div className="relative h-[128%] w-[128%] shrink-0 ipad:w-[573px] desktop-sm:w-[653px]">
               <AsciiPortrait />
             </div>
           </div>

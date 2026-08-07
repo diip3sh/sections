@@ -94,6 +94,11 @@ const MobileLogoHalf = () => (
  *
  * Layout split (load-bearing) for ultrawide / 4K:
  * - `<main>` is full-bleed: green bg + InteractiveLines fill the viewport.
+ *   It takes `min-h-dvh` for exactly that reason — the line field has to
+ *   reach the bottom of any screen. The stage does not follow it: it takes
+ *   the frame height less the nav above it (65 / 65 / 70) as its own floor,
+ *   so the section lands on Figma's 874 / 1133 / 832 and a taller viewport
+ *   adds line field below the logo band rather than stretching the column.
  * - `max-w-[1440px]` stays on the content stage (do not remove).
  * - Only the nav bottom hairline is full viewport width (the red-marked rule).
  * - Vertical rails + logo band stay on the 1440 stage.
@@ -185,25 +190,9 @@ export const Section30Hero = () => (
     {/*
       Content stage — keeps max-w-[1440px]. Rails, copy, bubbles, logo band.
     */}
-    <div className={`${STAGE} z-10 flex flex-1 flex-col`}>
-      {/*
-        Edge rails — inset from the *stage* edge (Figma 2356:1309 / 1405),
-        so they track the 1440 cap on ultrawide rather than the viewport.
-
-        They paint above the logo strip rather than under it. `RAIL_BAND` puts
-        the strip flush on the rails — both start at x48 — and the strip carries
-        an opaque fill at `z-10`, so at `z-[1]` the rail vanished for the strip's
-        height and the hairline broke just above the logos.
-      */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-4 z-20 w-px bg-white/10 ipad:left-12"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-4 z-20 w-px bg-white/10 ipad:right-12"
-      />
-
+    <div
+      className={`${STAGE} z-10 flex flex-col min-h-[809px] ipad:min-h-[1068px] desktop-sm:min-h-[762px]`}
+    >
       <div className={`relative z-10 flex flex-1 flex-col ${GUTTER}`}>
         {/*
           Hero copy — Figma tops: mobile y100 / ipad+y120.
@@ -262,10 +251,16 @@ export const Section30Hero = () => (
 
             {/*
               Figma mobile: left 95 / width 287 inside 402 (right edge 382, rail at 386).
-              Fixed 287px overflows on <402 viewports — cap to the remaining content
-              width after the 75px offset so the bubble stays inside the right rail.
+
+              The width is the content column less the 75px offset, and nothing
+              caps it. A `max-w-[287px]` used to: at 402 it is exactly the same
+              number, so it looked harmless, but the phone layout runs all the
+              way to 768 and the rails spread with the viewport while a capped
+              bubble does not — the 4px it sits inside the right rail at 402 had
+              opened to 345px by 744. Letting the width follow the column holds
+              that 4px at every width the mobile layout covers.
             */}
-            <div className="ml-[75px] flex w-[calc(100%-75px)] max-w-[287px] items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-bl-[12px] border border-solid border-[#2d503e] bg-[#254131] p-2 ipad:ml-[233px] ipad:w-[399px] ipad:max-w-none ipad:p-4">
+            <div className="ml-[75px] flex w-[calc(100%-75px)] items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-bl-[12px] border border-solid border-[#2d503e] bg-[#254131] p-2 ipad:ml-[233px] ipad:w-[399px] ipad:max-w-none ipad:p-4">
               <p className="font-tight text-[12px] leading-[1.5] text-white/80 ipad:text-[14px]">
                 Customer onboarding has the highest automation potential. AI can
                 verify documents, assign approvals, & trigger follow-up actions,{" "}
@@ -375,6 +370,28 @@ export const Section30Hero = () => (
           </div>
         </div>
       </div>
+    </div>
+
+    {/*
+      Edge rails — inset from the *stage* edge (Figma 2356:1309 / 1405), so they
+      track the 1440 cap on ultrawide rather than the viewport.
+
+      They hang off `<main>` rather than off the content stage. The stage stops
+      at the frame height, and the rails are pattern rather than content: they
+      have to run the full height of the section, so on a screen taller than the
+      frame a stage-bound rail broke off mid-page with line field below it.
+
+      `z-20` paints them above the logo strip rather than under it. `RAIL_BAND`
+      puts the strip flush on the rails — both start at x48 — and the strip
+      carries an opaque fill at `z-10`, so at `z-[1]` the rail vanished for the
+      strip's height and the hairline broke just above the logos.
+    */}
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-y-0 left-1/2 z-20 w-full max-w-[1440px] -translate-x-1/2"
+    >
+      <div className="absolute inset-y-0 left-4 w-px bg-white/10 ipad:left-12" />
+      <div className="absolute inset-y-0 right-4 w-px bg-white/10 ipad:right-12" />
     </div>
   </main>
 );

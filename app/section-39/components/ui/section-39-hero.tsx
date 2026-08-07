@@ -65,7 +65,10 @@ const NAV_BAND_FILL = `pointer-events-none absolute top-0 z-0 bg-[#101010] ipad:
 
 export const Section39Hero = () => (
   <main className="animate-hero-reveal relative isolate w-full overflow-hidden bg-[#0a0a0a]">
-    <div className="relative min-h-[874px] w-full ipad:min-h-[1133px] desktop-sm:min-h-[802px] desktop-sm:min-h-dvh">
+    {/* The stage caps at 1920 and centres. Past that the rails would keep
+          walking outward and the hero row's two blocks drift apart with them;
+          1920 is where the design stops reading as one composition. */}
+    <div className="relative mx-auto min-h-[874px] w-full ipad:min-h-[1133px] desktop-sm:min-h-[802px] desktop-sm:min-h-dvh desktop-sm:max-w-[1920px]">
       <CornerGlow />
       <div aria-hidden className={NAV_BAND_FILL} />
       <StarField />

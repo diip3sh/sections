@@ -27,6 +27,15 @@ import AsciiImage from "../originkit/ascii-reveal";
  *
  *   phone  centred at (+16.71, -27.28) of a 318.62x213 box
  *   tablet centred at (+28.5, -46.5) of a 543x363 box
+ *   desktop centred on the box itself, 1.25x the tablet canvas
+ *
+ * Desktop drops the anchor offsets and sits on its box centre. Figma's offsets
+ * are what place the shuttle against a 1440 frame, but this stage now runs to
+ * 1920, and carried across they read as the shuttle hanging off-centre in its
+ * own half of the row rather than as a considered placement. It is also 1.25x
+ * the tablet canvas: the ipad numbers held all the way up, so on a wide screen
+ * the shuttle kept the size it has on a 744 frame and read small against a hero
+ * that had grown around it.
  *
  * `columns` is a fixed count, not the usual count-from-a-fixed-pitch, and that
  * is deliberate: Figma scales one 1008px render to both sizes, so the column
@@ -49,10 +58,10 @@ import AsciiImage from "../originkit/ascii-reveal";
  * close to the centre, further out toward the edges.
  */
 const BOX =
-  "pointer-events-none relative h-[213px] w-full max-w-[318.62px] ipad:h-[363px] ipad:w-[543px] ipad:max-w-none desktop-sm:pointer-events-auto";
+  "pointer-events-none relative h-[213px] w-full max-w-[318.62px] ipad:h-[363px] ipad:w-[543px] ipad:max-w-none desktop-sm:h-[454px] desktop-sm:w-[679px] desktop-sm:pointer-events-auto";
 
 const CANVAS =
-  "absolute top-1/2 left-1/2 mt-[-27.28px] ml-[16.71px] h-[206.88px] w-[219.6px] -translate-x-1/2 -translate-y-1/2 ipad:mt-[-46.5px] ipad:ml-[28.5px] ipad:h-[352.56px] ipad:w-[374.24px]";
+  "absolute top-1/2 left-1/2 mt-[-27.28px] ml-[16.71px] h-[206.88px] w-[219.6px] -translate-x-1/2 -translate-y-1/2 ipad:mt-[-46.5px] ipad:ml-[28.5px] ipad:h-[352.56px] ipad:w-[374.24px] desktop-sm:mt-0 desktop-sm:ml-0 desktop-sm:h-[440.7px] desktop-sm:w-[467.8px]";
 
 export const AsciiRocket = () => (
   <div className={BOX}>

@@ -109,10 +109,17 @@ export const BlackHoleVisual = () => {
       )}
 
       {/* The vignette box is the ellipse plus its full blur falloff, which is
-          why the hand overhangs it slightly on the left. */}
+          why the hand overhangs it slightly on the left.
+
+          Figma puts this box at 50.19%; it sits at 47.19% — three points up.
+          The offset is on the box rather than on the `<img>` inside it so the
+          mask travels with the hand: moved on the image alone, the hand slides
+          out from under its own vignette and the falloff stops matching the
+          fingers. Everything here is a percentage of the visual, so the lift
+          re-pitches with the frame instead of drifting at one width. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute top-[50.19%] left-[37.11%] h-[67.5%] w-[42.85%]"
+        className="pointer-events-none absolute top-[47.19%] left-[37.11%] h-[67.5%] w-[42.85%]"
         style={{ maskImage: HAND_MASK, WebkitMaskImage: HAND_MASK }}
       >
         <img

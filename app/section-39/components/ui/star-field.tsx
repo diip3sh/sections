@@ -20,6 +20,10 @@ import { NAV_BOTTOM, RAIL_INSET } from "./stage";
  * needs no numbers of its own. Spoke length is the host's diagonal, so the rays
  * die exactly as they reach the far corner at any viewport size.
  *
+ * The origin belongs on the corner precisely because nothing is drawn there —
+ * see `flowerIntensity`. With no bloom there is no source to keep on screen, so
+ * the streaks read as arriving from off-frame, which is what the design shows.
+ *
  * Taking Figma's rotation off the burst costs nothing — the spokes are radially
  * symmetric with seeded random phases.
  *
@@ -66,12 +70,14 @@ export const StarField = () => {
           starSize={2}
           opacity={50}
           /*
-           * The bloom sits on the origin, which is now on screen, so it reads as
-           * the point the rays are thrown from rather than something bleeding in
-           * off the corner. The component sizes it off the shorter side of the
-           * content area.
+           * No bloom. The component throws a radial flare at the origin by
+           * default, and Figma has none — its burst is streaks and nothing else,
+           * with no lit source for them to come out of. Anything above 0 puts a
+           * glow at the corner that the design does not have, and moving it off
+           * the corner to stop it being clipped only walks it onto the copy,
+           * since the phone and tablet centre their column.
            */
-          flowerIntensity={10}
+          flowerIntensity={0}
           twinkleSpeed={4}
         />
       )}

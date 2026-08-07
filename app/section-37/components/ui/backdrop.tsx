@@ -288,7 +288,7 @@ export const Backdrop = () => (
 export const DotField = () => (
   <div
     aria-hidden
-    className="pointer-events-none absolute inset-x-0 top-0 h-[97.9%] [background-size:5.68px_5.68px] ipad:h-[80.1%] desktop-sm:h-[72.4%] desktop-sm:[background-size:11.13px_11.13px]"
+    className="pointer-events-none absolute inset-x-0 top-0 h-[97.9%] [background-size:5.68px_5.68px] ipad:h-[80.1%] desktop-sm:h-[72.4%] desktop-sm:[background-size:11.13px_11.13px] opacity-54"
     style={{
       backgroundImage: DOTS,
       maskImage: DOT_MASK,

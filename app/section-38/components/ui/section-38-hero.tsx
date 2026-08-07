@@ -83,8 +83,18 @@ export const Section38Hero = () => (
         clear band behind the headline is Figma's own opaque fill, not a fade.
         Its height is a floor rather than Figma's fixed 402/420, so a narrow
         phone that wraps the sub onto a fourth line grows the plate instead of
-        pushing the copy out of it. */}
-    <div className="relative z-0 flex w-full max-w-[402px] min-h-[402px] flex-col items-center justify-center gap-[24px] bg-[#f1f1e9] p-[16px] ipad:w-[588px] ipad:max-w-none ipad:min-h-[420px] ipad:gap-[40px]">
+        pushing the copy out of it.
+
+        `border-t`/`border-l` put back the two rules the fill covers. A 1px rule
+        at position p paints [p, p+1], and the plate spans [left, right): the
+        rules on its right and bottom edges therefore land just outside it and
+        survive, while the ones on its left and top land on the first pixel it
+        paints and disappear. Figma shows the plate outlined on all four sides,
+        so those two are redrawn as borders — box-sizing is border-box, so they
+        occupy exactly the pixels the lattice would have. Only two sides: a full
+        `border` would double up on the right and bottom, where the rule is
+        already there. */}
+    <div className="relative z-0 flex w-full max-w-[402px] min-h-[402px] flex-col items-center justify-center gap-[24px] border-t border-l border-solid border-[#eaeadf] bg-[#f1f1e9] p-[16px] ipad:w-[588px] ipad:max-w-none ipad:min-h-[420px] ipad:gap-[40px]">
       <div className="flex w-full flex-col items-center gap-[8px] ipad:gap-[16px]">
         <p className="rounded-[4px] border border-solid border-[#ddd] px-[8px] py-[6px] font-geist text-[12px] leading-[1.4] whitespace-nowrap text-[#2a2722] ipad:px-[12px] ipad:py-[8px] ipad:text-[14px]">
           2,500+ early adopters

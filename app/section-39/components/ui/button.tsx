@@ -9,7 +9,7 @@ type ButtonVariant = "primary" | "ghost";
  * The outline is white because every surface this button lands on is #0a0a0a.
  */
 const BASE_CLASS =
-  "relative inline-flex min-h-11 shrink-0 cursor-pointer touch-manipulation items-center justify-center gap-[10px] whitespace-nowrap font-rajdhani font-bold leading-[normal] text-white transition-[opacity,transform] duration-200 ease-out [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.97] motion-reduce:active:scale-100 [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90";
+  "group relative inline-flex min-h-11 shrink-0 cursor-pointer touch-manipulation items-center justify-center gap-[10px] whitespace-nowrap font-rajdhani font-bold leading-[normal] text-white transition-[opacity,transform] duration-200 ease-out [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.97] motion-reduce:active:scale-100 [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90";
 
 /**
  * Figma sizes the label box, not the button: 16/11 padding at 15px type on the
@@ -31,8 +31,16 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
  * same pixels without the transforms.
  *
  * "Explore Missions" carries the identical four squares at opacity 0 — Figma's
- * way of keeping both buttons on one component. That is the `ghost` variant, so
- * it simply renders no brackets.
+ * way of keeping both buttons on one component. That zero is not a spare part:
+ * it is the resting half of a hover, so the `ghost` variant renders the same
+ * four and fades them to the primary's 0.5 on pointer-over. Nothing moves and
+ * nothing is added on hover that the design does not already draw.
+ *
+ * `group-hover` is written bare rather than behind
+ * `[@media(hover:hover)_and_(pointer:fine)]`. That gated form is used widely in
+ * this repo but was measured emitting no rule at all, and a hover that compiles
+ * to nothing is the thing being fixed here. Opacity-only, so a touch device
+ * that latches :hover shows the brackets and nothing shifts.
  */
 const CORNERS = [
   "top-0 left-0 border-l border-t",
@@ -59,13 +67,16 @@ export const Button = ({
     {...props}
   >
     {children}
-    {variant === "primary" &&
-      CORNERS.map((corner) => (
-        <span
-          key={corner}
-          aria-hidden
-          className={`pointer-events-none absolute size-[10px] border-solid border-white opacity-50 ${corner}`}
-        />
-      ))}
+    {CORNERS.map((corner) => (
+      <span
+        key={corner}
+        aria-hidden
+        className={`pointer-events-none absolute size-[10px] border-solid border-white transition-opacity duration-200 ease-out ${corner} ${
+          variant === "primary"
+            ? "opacity-50"
+            : "opacity-0 group-hover:opacity-50"
+        }`}
+      />
+    ))}
   </button>
 );

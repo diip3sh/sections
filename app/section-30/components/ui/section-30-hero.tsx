@@ -251,10 +251,16 @@ export const Section30Hero = () => (
 
             {/*
               Figma mobile: left 95 / width 287 inside 402 (right edge 382, rail at 386).
-              Fixed 287px overflows on <402 viewports — cap to the remaining content
-              width after the 75px offset so the bubble stays inside the right rail.
+
+              The width is the content column less the 75px offset, and nothing
+              caps it. A `max-w-[287px]` used to: at 402 it is exactly the same
+              number, so it looked harmless, but the phone layout runs all the
+              way to 768 and the rails spread with the viewport while a capped
+              bubble does not — the 4px it sits inside the right rail at 402 had
+              opened to 345px by 744. Letting the width follow the column holds
+              that 4px at every width the mobile layout covers.
             */}
-            <div className="ml-[75px] flex w-[calc(100%-75px)] max-w-[287px] items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-bl-[12px] border border-solid border-[#2d503e] bg-[#254131] p-2 ipad:ml-[233px] ipad:w-[399px] ipad:max-w-none ipad:p-4">
+            <div className="ml-[75px] flex w-[calc(100%-75px)] items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-bl-[12px] border border-solid border-[#2d503e] bg-[#254131] p-2 ipad:ml-[233px] ipad:w-[399px] ipad:max-w-none ipad:p-4">
               <p className="font-tight text-[12px] leading-[1.5] text-white/80 ipad:text-[14px]">
                 Customer onboarding has the highest automation potential. AI can
                 verify documents, assign approvals, & trigger follow-up actions,{" "}

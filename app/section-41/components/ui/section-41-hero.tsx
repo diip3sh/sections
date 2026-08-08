@@ -24,14 +24,25 @@ import { TrustedBand } from "./trusted-band";
  *
  * Above the desktop frame the *canvas* takes the surplus, not the rails. The
  * absurd `grow-[999]` is the point: flex hands the canvas effectively all the
- * free width until `max-w` clamps it at 1440, freezes it there, and only then
+ * free width until `max-w` clamps it at 1920, freezes it there, and only then
  * redistributes what is left to the two rails. So the rails hold Figma's 120px
- * until 1680 and the drawing fills the screen, rather than the composition
+ * until 2160 and the drawing fills the screen, rather than the composition
  * sitting in a 1040 column with 440px of hatch either side of it at 1920.
- * Past 1680 the rails widen again, which is the intended ceiling.
+ * Past 2160 the rails widen again, which is the intended ceiling.
+ *
+ * The nav row is the one thing outside this box that has to move with the cap:
+ * it is measured to sit 80px outside the canvas on each side, so its own cap is
+ * this one plus 160. See `navbar.tsx`.
  *
  * Everything inside the canvas is therefore measured from a canvas edge, never
  * from 1040 (see `trusted-band.tsx` for the one place that is load-bearing).
+ *
+ * The one division of the canvas is Figma's 540/500 — copy against globe panel —
+ * and it is carried as a share, not as the 500. Left as a constant it made the
+ * gap between the CTAs and the panel the only thing that grew: 213px at the
+ * frame, 858 at a 1600 canvas. `globe-panel.tsx` holds the share and
+ * `trusted-band.tsx` repeats it, because the panel's left border and the band's
+ * seam are one line.
  *
  * Below the 402 frame the split runs the other way. Flex shrink is left on the
  * canvas so it gives ground before the rails collapse, which is why the phone's
@@ -40,18 +51,32 @@ import { TrustedBand } from "./trusted-band";
  * tablet and desktop canvases never leave 648 and 1040 inside their breakpoint
  * ranges, so everything there stays in Figma's pixels.
  *
- * Height is a floor, not a height. All three frame heights are handed to `h-*`
- * with `min-h-dvh` under them, so the rails and the lit ground reach the bottom
- * of any screen rather than stopping at Figma's frame and showing bare page.
+ * Height. The section is a floor, not a height, at all three frames: `min-h-dvh`
+ * under Figma's own number, so the rails and the lit ground reach the bottom of
+ * any window rather than stopping mid-screen and leaving the page's `#181818`
+ * showing under the section's `#080808`.
  *
- * The composition itself does not stretch with them. It is a single drawing —
- * the globe panel's top edge is the nav's bottom rule, its bottom edge is the
- * trusted-by band's top rule, and its left border runs on down as the divider
- * between the two strips — so every block stays anchored to the top of the
- * canvas at Figma's own offsets. Any block hung off the bottom instead pulls
- * away from the one above it and leaves a rule ending in mid-air. The surplus
- * therefore collects below the band, which is the one place nothing is drawn
- * across and the rails can simply carry it.
+ * The ceiling is on the *canvas*, not the section, and that split is the point.
+ * The composition stops growing at a 1040 window — 964 of canvas under the 76px
+ * nav — because past that it gains nothing: the globe is fixed at 400 and the
+ * copy is fixed by its type, so a taller composition is only air between them.
+ * But the rails are the frame edge in this design and have to run the full
+ * height, and they do, because they are siblings of the canvas in a row that is
+ * still `flex-1`. Only the drawing caps; the sheet it is drawn on does not.
+ *
+ * The surplus is distributed by flex, not by offsets. The canvas is a column of
+ * one growing row and one band, with Figma's 100px under the band carried as
+ * `pb` on the canvas itself; the row takes `flex-1` and everything inside it
+ * centres. At the 832 frame that resolves to Figma's numbers exactly — 756
+ * canvas less 100 less the band's 82 is the 574 row — and above it the row is
+ * the only thing that grows.
+ *
+ * It has to be flex rather than the offsets it replaced, because this is one
+ * drawing and not three blocks: the globe panel's top edge is the nav's bottom
+ * rule, its bottom edge is the band's top rule, and its left border runs on down
+ * as the divider between the two strips. Held at fixed y offsets those rules
+ * came apart as soon as the section grew past 832 — the panel border ran on past
+ * a band still pinned at 574. In flow they cannot.
  *
  * Paint order is Figma's: grain and page glow over the whole section, the arc
  * field and canvas wash under the canvas, content above both, nav above all.
@@ -67,7 +92,7 @@ export const Section41Hero = () => (
     <div className="relative z-10 flex w-full flex-1">
       <EdgeRail side="left" />
 
-      <div className="relative flex w-[370px] min-w-0 flex-col ipad:w-[648px] desktop-sm:w-[1040px] desktop-sm:max-w-[1440px] desktop-sm:grow-[999]">
+      <div className="relative flex w-[370px] min-w-0 flex-col ipad:w-[648px] desktop-sm:w-[1040px] desktop-sm:max-h-[964px] desktop-sm:max-w-[1920px] desktop-sm:grow-[999] desktop-sm:pb-[100px]">
         {/*
           Figma anchors this one to the frame's top-left canvas corner and only
           draws it on the desktop. Hung off the canvas rather than off the frame
@@ -86,7 +111,7 @@ export const Section41Hero = () => (
           absolute. At `desktop-sm:` they sit side by side in Figma's 574px row
           and the copy returns to flow.
         */}
-        <div className="relative z-[1] h-[809px] ipad:h-[1068px] desktop-sm:flex desktop-sm:h-[574px] desktop-sm:px-[16px]">
+        <div className="relative z-[1] h-[809px] ipad:h-[1068px] desktop-sm:flex desktop-sm:h-auto desktop-sm:flex-1 desktop-sm:items-center">
           <HeroCopy />
           <GlobePanel />
         </div>

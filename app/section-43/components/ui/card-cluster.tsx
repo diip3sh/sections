@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 import StickerDrag from "../originkit/draggable-sticker";
@@ -38,6 +39,11 @@ import StickerDrag from "../originkit/draggable-sticker";
  * The cluster is centred rather than carrying Figma's 1.4% leftward bias, which
  * both small frames share and which is an artifact of the same mismatched group
  * box — 7px on the phone, on a hand-scattered pile.
+ *
+ * **The fan is dealt in and dealt back out.** Figma draws the cards at rest, but
+ * the pile is the section's one moment, so each card rises into place as the
+ * cluster enters the viewport and lowers back out when it leaves — the same
+ * curve run in reverse, not a one-way reveal. See `entrance` below.
  */
 
 /**
@@ -84,10 +90,49 @@ const CARDS = [
   },
 ] as const;
 
+/**
+ * Ease-in-out cubic. The house standard elsewhere in this repo is `EASE_OUT`,
+ * which is deliberately asymmetric — right for something that arrives once and
+ * stays. This entrance runs in both directions, so it wants a curve that reads
+ * the same played forwards and backwards; anything ease-*out* would leave the
+ * cards snapping away from rest on the exit.
+ */
+const EASE_IN_OUT = [0.645, 0.045, 0.355, 1] as const;
+
+/**
+ * The entrance, and the exit — the same transition in both directions, which is
+ * what `whileInView` without `once` gives: the cards animate to rest when the
+ * cluster enters the viewport and back to `initial` when it leaves.
+ *
+ * The stagger runs in DOM order, which is Figma's stacking order and, because
+ * the fan is dealt right to left (83.5% → 16.8%), also right to left on screen.
+ * So the card that lands last is the one lying on top of the pile.
+ *
+ * `y` and `opacity` only. The host carries the fan's placement as `left`/`top`
+ * percentages and StickerDrag drags by writing screen-space deltas into its own
+ * offsets, so anything here that resolved to a scale or a rotate would turn
+ * those axes under it — the same reason the card art is exported pre-rotated.
+ */
+const entrance = (index: number, reduceMotion: boolean | null) =>
+  reduceMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 14 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { amount: 0.3 },
+        transition: {
+          type: "tween" as const,
+          duration: 0.5,
+          ease: EASE_IN_OUT,
+          delay: index * 0.08,
+        },
+      };
+
 type StickerCardProps = {
   id: string;
   native: number;
   className: string;
+  index: number;
 };
 
 /**
@@ -97,9 +142,10 @@ type StickerCardProps = {
  * sizes its backing store from them at 2x device pixels, and a fractional width
  * can land that on an odd pixel count.
  */
-const StickerCard = ({ id, native, className }: StickerCardProps) => {
+const StickerCard = ({ id, native, className, index }: StickerCardProps) => {
   const hostRef = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState({ width: 0, height: 0 });
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     const host = hostRef.current;
@@ -119,9 +165,16 @@ const StickerCard = ({ id, native, className }: StickerCardProps) => {
   const scale = box.width / native;
 
   return (
-    <div
+    /*
+      The entrance rides on `transform` while the host's own centring rides on
+      Tailwind's `translate` property. They are two separate CSS properties and
+      compose in that order, so the reveal can animate without ever restating
+      the `-50%/-50%` the placement depends on.
+    */
+    <motion.div
       ref={hostRef}
       className={`absolute -translate-x-1/2 -translate-y-1/2 ${className}`}
+      {...entrance(index, reduceMotion)}
     >
       {box.width > 0 && (
         <StickerDrag
@@ -135,7 +188,7 @@ const StickerCard = ({ id, native, className }: StickerCardProps) => {
           dynamicShadow={`0px ${(30 * scale).toFixed(1)}px ${(36 * scale).toFixed(1)}px rgba(0, 0, 0, 0.38)`}
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 
@@ -152,8 +205,8 @@ export const CardCluster = () => (
       they order by DOM position — Figma's own stacking, card 4 on top — and on
       pickup the dragged card clears the rest.
     */}
-    {CARDS.map((card) => (
-      <StickerCard key={card.id} {...card} />
+    {CARDS.map((card, index) => (
+      <StickerCard key={card.id} {...card} index={index} />
     ))}
   </div>
 );

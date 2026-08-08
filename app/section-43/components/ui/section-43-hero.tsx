@@ -33,14 +33,21 @@ import { Navbar } from "./navbar";
  *
  * **Rails and bands bleed, the composition does not.** The rails and the dashed
  * grid are the sheet and run to the screen edges at any width; the copy and the
- * fan cap at Figma's frame and centre inside it. The dashed band's columns are
- * a percentage, so it divides into whole cells whatever width it gets.
+ * fan cap and centre inside it. The dashed band's columns are a percentage, so
+ * it divides into whole cells whatever width it gets.
  *
- * Between 1280 and 1440 the desktop row is proportional rather than pixel-set:
- * Figma's 120 / 198.6 margins plus a 387px column plus a 584px fan come to
- * 1290, which does not fit at 1280. Stating the margins as their share of the
- * frame — 8.333% and 13.792% — reproduces Figma exactly at 1440 and closes the
- * gap evenly below it, which a fixed pixel and a breakpoint jump would not.
+ * The desktop row is proportional rather than pixel-set: Figma's 120 / 198.6
+ * margins plus a 387px column plus a 584px fan come to 1290, which does not fit
+ * at 1280. Stating the margins as their share of the frame — 8.333% and 13.792%
+ * — reproduces Figma exactly at its own 1440 and closes the gap evenly below it,
+ * which a fixed pixel and a breakpoint jump would not.
+ *
+ * The cap is 1920 rather than Figma's 1440, so the row runs 480 past the frame
+ * it was drawn at. Everything in it is a share except the copy column, which
+ * stays at Figma's 387 because both its line breaks are hard `<br />`s — a wider
+ * column would only add trailing space. So the margins and the fan scale, the
+ * column does not, and the gap between column and fan takes the difference: 150
+ * at 1440, 329 at 1920. That is the one proportion the extra width costs.
  */
 export const Section43Hero = () => (
   <main className="relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-[#f5f5f2]">
@@ -90,8 +97,8 @@ export const Section43Hero = () => (
         against the containing block, not the padded element, so writing both on
         one div would measure them off the full viewport.
       */}
-      <div className="flex w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-[1440px]">
-        <div className="relative flex w-full flex-col items-center justify-between px-[30px] pt-[29px] pb-[36px] ipad:px-[52px] ipad:pt-[38px] ipad:pb-[53px] desktop-sm:flex-row desktop-sm:items-center desktop-sm:px-0 desktop-sm:pt-0 desktop-sm:pb-0 desktop-sm:pl-[8.333%] desktop-sm:pr-[13.792%]">
+      <div className="flex w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-none">
+        <div className="relative flex w-full flex-col items-center justify-between px-[30px] pt-[29px] pb-[36px] ipad:px-[52px] ipad:pt-[38px] ipad:pb-[53px] desktop-sm:flex-row desktop-sm:items-center desktop-sm:px-0 desktop-sm:pt-0 desktop-sm:pb-0 desktop-sm:pl-[6.333%] desktop-sm:pr-[13.792%]">
           {/*
             Figma hangs this rule off the right edge of the copy column and runs
             it the full height of the clear band — it is the column's own trailing

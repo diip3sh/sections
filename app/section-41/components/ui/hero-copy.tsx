@@ -13,11 +13,15 @@ const DESCRIPTION =
  * The phone and tablet pin this block absolutely at y45 inside the canvas
  * because the globe panel below it is pinned too, and the gap between them is a
  * measured 318px / 419px rather than the sum of two auto-heights. From the
- * desktop up the column is back in flow with Figma's 140px top margin — there is
- * nothing under it to collide with.
+ * desktop up the column is a flex item beside the panel and is centred in the
+ * row rather than carrying Figma's 140px top margin: the row grows with the
+ * window now, and a top margin would have left the copy pinned to the ceiling
+ * while the globe — centred in the panel — drifted down away from it. At the 574
+ * row Figma's own 140 top against 175 bottom is centred to within 17px, so this
+ * reproduces the frame and survives the growth.
  */
 export const HeroCopy = () => (
-  <div className="absolute top-[45px] left-0 flex w-full flex-col items-center gap-[24px] text-center ipad:left-1/2 ipad:w-[497px] ipad:-translate-x-1/2 ipad:gap-[32px] desktop-sm:relative desktop-sm:top-auto desktop-sm:left-auto desktop-sm:mt-[140px] desktop-sm:translate-x-0 desktop-sm:items-start desktop-sm:text-left">
+  <div className="absolute top-[45px] left-0 flex w-full flex-col items-center gap-[24px] text-center ipad:left-1/2 ipad:w-[497px] ipad:-translate-x-1/2 ipad:gap-[32px] desktop-sm:relative desktop-sm:top-auto desktop-sm:left-auto desktop-sm:w-auto desktop-sm:flex-1 desktop-sm:translate-x-0 desktop-sm:items-start desktop-sm:pl-[16px] desktop-sm:text-left">
     <div className="flex w-full flex-col items-center gap-[8px] ipad:gap-[16px] desktop-sm:items-start">
       <h1 className="w-full text-[35px] leading-[normal] font-normal tracking-[-1.4px] text-balance text-white ipad:text-[48px] ipad:tracking-[-1.92px]">
         {TITLE}

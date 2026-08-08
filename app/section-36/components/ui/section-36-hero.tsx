@@ -17,13 +17,18 @@ import { Stats } from "./stats";
  * flow, so it sits on the horizon Figma draws it on at every frame.
  *
  * Height. `<main>` takes `min-h-dvh` and everything answers to that: the grid,
- * the rails and the grain reach the bottom of any screen, and the globe grows
- * with them. The content keeps the frame height as a floor and does not stretch,
- * so the copy and the stats stay where the design puts them and only the visual
- * takes up the surplus — see `sphere.tsx`, which pins the dome's crest at
- * Figma's y452 and derives the diameter from whatever is left below it. That is
- * what closes the gap a fixed-size globe opened between the stats and the
- * horizon on a tall screen.
+ * the rails and the grain reach the bottom of any screen. The content keeps the
+ * frame height as a floor and does not stretch, so the copy and the stats stay
+ * where the design puts them and the surplus falls below them as ruled sheet.
+ *
+ * The globe is the one thing that could have taken that surplus and does not —
+ * see `sphere.tsx`. It is sized from the rail-to-rail band, the dimension the
+ * design actually composed against, and pinned by its crest at y440 on desktop
+ * (Figma's 452, lifted 12 for a touch more presence). A tall window therefore
+ * gets the same globe in the same place and simply hides more of it below the
+ * fold, rather than a bigger one: driven off the section height instead, the
+ * dome reached 70% of the stage width on an 1100-tall screen where the frame
+ * draws 59%, and stopped reading as a horizon.
  *
  * Width. The sheet is the screen up to an ultrawide, then it caps at 1440 — the
  * rails sit 48 in from whatever edge applies. `<main>` is the one thing that
@@ -47,7 +52,7 @@ import { Stats } from "./stats";
  * white — left on the page's own `#181818` it read as a black band either side.
  */
 const STAGE_LAYER =
-  "absolute inset-y-0 left-1/2 w-full -translate-x-1/2 ultrawide:max-w-[1440px] ipad:translate-y-[-10%] desktop-sm:translate-y-[0%]";
+  "absolute inset-y-0 left-1/2 w-full -translate-x-1/2 ultrawide:max-w-[1440px]";
 
 export const Section36Hero = () => (
   <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-white">
@@ -66,7 +71,12 @@ export const Section36Hero = () => (
       <GridBackdrop />
     </div>
 
-    <div className="relative z-10 mx-auto flex w-full flex-col min-h-[874px] ultrawide:max-w-[1440px] ipad:min-h-[1133px] desktop-sm:min-h-[832px]">
+    {/* Desktop floor is 1280, not Figma's 832. The frame height is a floor and
+        this design wants a deeper sheet than the frame draws — the ruled page
+        below the stats is the composition, not dead space, and 832 ran out of it
+        on anything wider than the frame. Mobile and tablet keep their own frame
+        heights, which are already taller than the phones they are drawn for. */}
+    <div className="relative z-10 mx-auto flex w-full flex-col min-h-[874px] ultrawide:max-w-[1440px] ipad:min-h-[1133px] desktop-sm:min-h-[1280px]">
       {/* Rail to rail. The copy sits four pixels inside on the phone and eight
           above it, which is Figma's 20/56 against rails at 16/48. */}
       <div className="mx-[16px] flex flex-1 flex-col ipad:mx-[48px]">
@@ -110,30 +120,30 @@ export const Section36Hero = () => (
     </div>
 
     {/*
-      The globe layer keeps the section's height and is *slid* up to the fold,
-      rather than being cut down to it.
+      The layer takes the section's height flat, with nothing correcting for the
+      window. It used to slide up by however much the section overhung the fold,
+      clamped at 77 — Figma's whole gap between the stats band (closes y375) and
+      the crest (y452) — to recover the horizon on a window shorter than the 832
+      floor. At a 1280 floor that overhang is no longer the exception, so the
+      clamp saturated: every laptop got the full -77 as a constant, which is not
+      a recovery, it is the crest moved to y363 and driven into the stats.
 
-      Both fix the same thing — on a screen shorter than the 832 content floor
-      the section runs past the bottom of the window, and with it the dome's
-      horizon and the half of the surface you can actually reach. But capping the
-      layer with `max-h-dvh` shrinks it, and the diameter is derived from this box
-      (`(100% - 452px) * 2`), so the globe itself shrank: 760 across at 832,
-      only 496 at a 700-tall window.
+      Nothing has to replace it. The globe is hung off its crest and the glow off
+      the globe's equator, so both sit at a fixed offset from the top of the
+      section and are on screen at any window height. Only the foot of the sheet
+      is below the fold now, and the foot is meant to be scrolled to.
 
-      The translate leaves the box at the section's height, so the diameter is
-      still the section's, and moves it bodily up by however much the section
-      overhangs the window. The upper bound is 0 — a no-op the moment the window
-      is the taller of the two, which is every normal case.
-
-      The lower bound is 77px and it is not arbitrary: Figma's stats band closes
-      at y375 and the crest sits at y452, so 77 is the whole gap between them.
-      Unbounded, the lift is the overhang, and a short enough window drives the
-      crest straight up through the stats and eventually off the top of the
-      section, which reads as the dome being cut rather than moved. Clamped, it
-      recovers as much of the dome as the composition has room for and leaves the
-      rest to the scroll, which is what the overhang is anyway.
+      The layer is the frame height, not `h-full`, and that is the one cap in the
+      section. `<main>` keeps `min-h-dvh` so the sheet and the grid reach the foot
+      of any window — without it a window taller than the frame shows the page's
+      own `#181818` as a band under the design. But the globe must not follow the
+      window down. Phone and tablet anchor it to the *bottom* of this layer, so
+      on `h-full` the dome rode the window foot and the surplus opened as a hole
+      between the stats and the horizon: 622px of it at 375x1496. Capped, the
+      horizon lands where each frame draws it and the surplus falls below it as
+      ruled sheet, which is what the sheet is for.
     */}
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-30 mx-auto h-full w-full translate-y-[clamp(-77px,calc(100dvh_-_100%),0px)] ultrawide:max-w-[1440px]">
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-30 mx-auto h-[874px] w-full ultrawide:max-w-[1440px] ipad:h-[1133px] desktop-sm:h-[1280px]">
       <Sphere />
     </div>
   </main>

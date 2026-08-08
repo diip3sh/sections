@@ -15,10 +15,16 @@ import ParticleSphere from "../originkit/particle-sphere";
  * right. Only the colour is read off the frame rather than the panel — the
  * densest particles in the render measure `#167bde`.
  *
- * Both the globe and the glow are anchored to the *bottom* of the section rather
- * than to a top offset, because that is the relationship the design draws: the
- * globe rises out of the bottom edge and is cut by it, so what has to stay
- * constant as the viewport grows is how much of the cap shows. Hanging it off
+ * Phone and tablet anchor both the globe and the glow to the *bottom* of the
+ * section, which is the relationship those frames draw: the globe rises out of
+ * the bottom edge and is cut by it, and both frames are about as tall as the
+ * phone they are drawn for, so the foot is a fixed distance from the copy.
+ *
+ * Desktop anchors from the top instead — the globe by its crest, the glow by the
+ * globe's equator. There the foot is not a fixed distance from anything: the
+ * section floors at 1280 and grows with the window past that, so a bottom offset
+ * would walk the dome down the page and off the fold. The crest is the edge the
+ * composition can actually see, so it is the edge that gets pinned. Hanging it off
  * the top instead would push more of the sphere into frame on a tall screen and
  * the section would stop reading as a horizon.
  *
@@ -40,45 +46,46 @@ const WASH_MID = `linear-gradient(to bottom, ${CLEAR} 0%, #1d73c9 44.5%)`;
 const WASH_CORE = `linear-gradient(to bottom, ${CLEAR} 0%, #1d73c9 63.6%)`;
 
 /**
- * The component draws its sphere to the full width of its box — scale 10 puts
- * the 1.25-unit radius almost exactly on the frustum at the camera distance it
- * picks — so the box is Figma's diameter, unmodified. Squares, because the
- * sphere is one, and with the offsets below that lands the top edge on Figma's
- * y452 / y664 / y688 without either number being written down.
+ * The globe diameter — Figma `image 3083635` — as one number both the glow and
+ * the sphere are spent from.
  *
- * `min(…, 100%)` against the rail-to-rail wrapper is the floor under it. Figma's
- * phone frame sizes the globe at exactly the rail-to-rail width, so anything
- * narrower than 402 would push it out through both rails — 41px each side at
- * 320. Above 402 the clamp is inert.
+ * The component draws its sphere to the full width of its box: scale 10 puts the
+ * 1.25-unit radius almost exactly on the frustum at the camera distance it
+ * picks, so the box is the diameter, unmodified.
+ *
+ * Desktop is a *share* of the rail-to-rail band — 760 across the 1184 the 1280
+ * frame leaves between its rails, which is 0.6419 — and reading it off the band
+ * rather than off the section height is the load-bearing choice here. Height is
+ * the one dimension of this page the design does not set: `min-h-dvh` hands the
+ * section whatever the window has. A diameter derived from it (twice the drop
+ * from a pinned crest to the foot) asks for 1322 on an 1100-tall screen against
+ * Figma's 760 — 70% of the stage where the frame draws 59% — and the globe stops
+ * reading as a horizon and becomes the page. Width is the dimension Figma
+ * actually composed against, so the globe answers to that and takes the surplus
+ * height by hanging further below the fold instead of by growing.
+ *
+ * Stated in `vw`, not a percentage, because the two consumers sit in different
+ * boxes — the glow spans the stage, the globe sits inside the rails — and one
+ * driver has to mean the same thing in both. It caps where the sheet caps: past
+ * an ultrawide the stage stops at 1440, so the band stops at 1344.
  */
+const GLOBE_WIDTH =
+  "desktop-sm:[--globe:calc((100vw-96px)*0.6419)] ultrawide:[--globe:calc(1344px*0.6419)]";
+
 /**
- * Diameter, per frame — Figma `image 3083635` — carried by the *clip*, which is
- * the globe's box plus a tenth of the diameter of headroom above it (see the
- * block over the markup). So every height below is the diameter times 1.1, and
- * the aspect is 1/1.1 rather than square; the sphere's own box is the square
- * bottom-aligned inside it.
+ * The clip around the sphere is the globe's box plus a tenth of the diameter of
+ * headroom above it (see the block over the markup), so its aspect is 1/1.1
+ * rather than square and the sphere's own box is the square bottom-aligned
+ * inside it.
  *
- * Phone and tablet are tangent to the rails, and are sized from width: 370
- * across on a 402 frame whose rails are 16 in, 650 on a 744 frame whose rails
- * are 48 in. Both are the rail-to-rail width exactly, so `100%` and the cap say
- * the same thing there, and both frames are about as tall as the phone they are
- * drawn for — there is no surplus height for the globe to answer to.
- *
- * Desktop is sized from *height* instead, and from one number: 452, the y Figma
- * puts the top of the dome at. What the design fixes is not a width but a
- * relationship — exactly half the globe shows, and its crest sits just under the
- * stats — so the horizon is pinned there and the diameter is whatever reaches
- * the bottom edge from it: twice the distance from 452 to the foot of the
- * section. The aspect hands back the width.
- *
- * Both simpler readings fail on a tall screen. A fixed 760 leaves the dome where
- * it was and opens an empty band under the stats, which is what made the globe
- * read small on a wide monitor; a fixed *share* of the height shrinks that band
- * without closing it. Pinning the crest closes it at every height, and at 832 it
- * resolves to Figma's 760 exactly.
+ * Phone and tablet are tangent to the rails and sized from width: 370 across on
+ * a 402 frame whose rails are 16 in, 650 on a 744 frame whose rails are 48 in.
+ * Both are the rail-to-rail width exactly, so `100%` and the cap say the same
+ * thing there. `min(…, 100%)` is the floor under them — anything narrower than
+ * 402 would push the globe out through both rails, 41px each side at 320.
  */
 const CLIP =
-  "aspect-[1/1.1] w-[min(370px,100%)] ipad:w-[min(650px,100%)] desktop-sm:h-[calc((100%-452px)*2*1.1)] desktop-sm:w-auto";
+  "aspect-[1/1.1] w-[min(370px,100%)] ipad:w-[min(650px,100%)] desktop-sm:w-[var(--globe)]";
 
 /*
  * Painted above the rails, which is the order Figma uses — its rails group
@@ -129,18 +136,30 @@ export const Sphere = () => {
   );
 
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 z-30">
+    <div
+      aria-hidden
+      className={`pointer-events-none absolute inset-0 z-30 ${GLOBE_WIDTH}`}
+    >
       {/*
       Glow. Figma's box is 526x281 / 886x474 / 1278x684, sitting 133 / 51 / 342
       below the frame edge. The blurs bleed well past those bounds, which is why
       nothing here is clipped.
     */}
-      {/* The glow is seated on the globe, so it is driven off the same distance.
-        Figma's wash is 684 tall where the visible dome is 380 — 1.8 times it —
-        at a 1278/684 aspect, centred on the bottom edge. Left as fixed pixels it
-        stayed the size of the 832 frame while the globe grew past it, and the
-        dome came up out of a wash too small to seat it. */}
-      <div className="absolute bottom-[-133px] left-1/2 h-[281px] w-[526px] -translate-x-1/2 ipad:bottom-[-51px] ipad:h-[474px] ipad:w-[886px] desktop-sm:bottom-0 desktop-sm:aspect-[1278/684] desktop-sm:h-[calc((100%-452px)*1.8)] desktop-sm:w-auto desktop-sm:translate-y-1/2">
+      {/* The glow is seated on the globe, so it is spent from the same driver.
+        Figma's wash is 1278 across a 760 globe — 1.6816 times the diameter — at
+        a 1278/684 aspect. Left as fixed pixels it stayed the size of the 832
+        frame while the globe grew past it, and the dome came up out of a wash
+        too small to seat it.
+
+        Desktop centres it on the globe's *equator* — `440 + diameter / 2` —
+        rather than on the foot of the section, which is what Figma's frame draws
+        because there the two are the same edge. They stopped being the same edge
+        when the desktop floor went to 1280: the foot is now hundreds of pixels
+        below the widest point of the globe, and a wash pinned to it would light
+        empty sheet while the dome sat dark. Off the equator it lands within 12px
+        of Figma at the frame — the crest nudge, nothing else — and stays under
+        the globe at any section height. */}
+      <div className="absolute bottom-[-133px] left-1/2 h-[281px] w-[526px] -translate-x-1/2 ipad:bottom-[-51px] ipad:h-[474px] ipad:w-[886px] desktop-sm:top-[calc(440px+var(--globe)/2)] desktop-sm:bottom-auto desktop-sm:aspect-[1278/684] desktop-sm:h-auto desktop-sm:w-[calc(var(--globe)*1.6816)] desktop-sm:-translate-y-1/2">
         <span
           className="absolute inset-0 rounded-[50%] opacity-70 blur-[100px]"
           style={{ backgroundImage: WASH_WIDE }}
@@ -194,18 +213,36 @@ export const Sphere = () => {
       was hiding it, so the headroom costs nothing.
     */}
       {/*
-      Desktop hangs exactly half the globe below the frame edge. That half is a
-      self-relative translate rather than a pixel offset, because the diameter is
-      now the rail-to-rail width and that is fluid between the 1280 frame and the
-      1440 cap — a fixed -380 showed a shallower and shallower slice the wider
-      the stage got. It is 50%/1.1 of the clip rather than 50% because the clip
-      carries the headroom and the half being measured is the globe's. Phone and
-      tablet keep Figma's own offsets, which are not halves: the tablet shows
-      about seven tenths of its globe.
+      Desktop hangs the globe off its *crest*, not off the foot of the section.
+      Figma pins the crest at y452 on the 832 frame; 440 here, which lifts the
+      dome 12px for a touch more presence and still leaves 65 of Figma's 77px
+      clear of the stats band (it closes at y375).
+
+      The crest is the anchor because it is the only edge of the globe the
+      composition can see: it is what the 77px gap is measured to, and it is what
+      the eye reads as the horizon line. The foot is off the page at every frame,
+      so pinning it instead means the one visible relationship drifts with the
+      window height.
+
+      `top` lands the *clip*, and the clip carries a tenth of the diameter of
+      headroom above the sphere, so it has to be pulled back up by that tenth.
+      The clip is 1.1 diameters tall, so a tenth of the diameter is an eleventh
+      of the clip — `100% / 11` — a self-relative figure that needs no second
+      copy of the diameter.
+
+      What gives is where the globe stops — the window fold, or the section's own
+      foot at 1280, whichever comes first. Figma's frame cuts on the equator, and
+      at the 1280 frame height that is still what happens, 12px shy. Deeper than
+      that the cut falls below the equator and the silhouette turns back in
+      slightly before it goes. That is the trade for a globe that stays the size
+      the design draws instead of growing with the sheet.
+
+      Phone and tablet keep Figma's own bottom offsets, which are not halves:
+      the tablet shows about seven tenths of its globe.
     */}
       <div className="absolute inset-y-0 right-[16px] left-[16px] overflow-hidden ipad:right-[48px] ipad:left-[48px]">
         <div
-          className={`pointer-events-auto absolute bottom-[-184px] left-1/2 -translate-x-1/2 overflow-hidden ipad:bottom-[-181px] desktop-sm:bottom-0 desktop-sm:translate-y-[calc(50%/1.1)] ${CLIP}`}
+          className={`pointer-events-auto absolute bottom-[-184px] left-1/2 -translate-x-1/2 overflow-hidden ipad:bottom-[-181px] desktop-sm:top-[440px] desktop-sm:bottom-auto desktop-sm:translate-y-[calc(-100%/11)] ${CLIP}`}
         >
           <div
             ref={globeRef}

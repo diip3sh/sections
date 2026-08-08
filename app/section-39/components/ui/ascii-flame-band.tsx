@@ -23,7 +23,7 @@ import { RAIL_INSET } from "./stage";
  * measures 6px per column and 10.5px per row. Sampling the frames gives exactly
  * that pitch, so the band needs no scaling at any breakpoint.
  */
-const BAND = `pointer-events-none absolute z-[2] h-[544px] bottom-[-20px] ipad:bottom-0 desktop-sm:bottom-[-53px] ${RAIL_INSET}`;
+const BAND = `pointer-events-none absolute z-[2] h-[544px] bottom-[0px] ipad:bottom-0 desktop-sm:bottom-[0px] ${RAIL_INSET}`;
 
 export const AsciiFlameBand = () => (
   <div aria-hidden className={BAND}>

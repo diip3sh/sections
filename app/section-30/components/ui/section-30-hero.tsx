@@ -33,7 +33,7 @@ const GUTTER = "px-5 ipad:px-14";
 const RAIL_BAND = "mx-4 ipad:mx-12";
 
 /** Content + nav controls stay capped; bg / waves / nav rule do not. */
-const STAGE = "relative mx-auto w-full max-w-[1440px]";
+const STAGE = "relative mx-auto w-full max-w-[1920px]";
 
 /**
  * Desktop bubbles are positioned on the 1440 stage *below* the full-bleed nav.
@@ -260,7 +260,7 @@ export const Section30Hero = () => (
               opened to 345px by 744. Letting the width follow the column holds
               that 4px at every width the mobile layout covers.
             */}
-            <div className="ml-[75px] flex w-[calc(100%-75px)] items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-bl-[12px] border border-solid border-[#2d503e] bg-[#254131] p-2 ipad:ml-[233px] ipad:w-[399px] ipad:max-w-none ipad:p-4">
+            <div className="ml-[75px] flex w-[calc(100%-75px)] items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-bl-[12px] border border-solid border-[#2d503e] bg-[#254131] p-2 ipad:ml-[255px] ipad:w-[399px] ipad:max-w-none ipad:p-4">
               <p className="font-tight text-[12px] leading-[1.5] text-white/80 ipad:text-[14px]">
                 Customer onboarding has the highest automation potential. AI can
                 verify documents, assign approvals, & trigger follow-up actions,{" "}
@@ -388,7 +388,7 @@ export const Section30Hero = () => (
     */}
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-y-0 left-1/2 z-20 w-full max-w-[1440px] -translate-x-1/2"
+      className="pointer-events-none absolute inset-y-0 left-1/2 z-20 w-full max-w-[1920px] -translate-x-1/2"
     >
       <div className="absolute inset-y-0 left-4 w-px bg-white/10 ipad:left-12" />
       <div className="absolute inset-y-0 right-4 w-px bg-white/10 ipad:right-12" />

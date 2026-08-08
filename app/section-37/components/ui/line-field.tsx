@@ -15,9 +15,16 @@ import InteractiveLines from "../originkit/reactive-lines";
  *
  * `fade` is on because Figma's plate darkens toward its corners, which is the
  * component's own radial falloff rather than a separate wash.
+ *
+ * Mobile (2410:6622) paints the plate at 30% — the fan is atmosphere behind the
+ * copy rather than a lit crest. Tablet and desktop drop that dim and run full
+ * strength, so the opacity is gated off at `ipad:` rather than scaled.
  */
 export const LineField = ({ className = "" }: { className?: string }) => (
-  <div aria-hidden className={`pointer-events-none absolute ${className}`}>
+  <div
+    aria-hidden
+    className={`pointer-events-none absolute opacity-30 ipad:opacity-100 ${className}`}
+  >
     <InteractiveLines
       backgroundColor="#020202"
       lineColor="#D78715"

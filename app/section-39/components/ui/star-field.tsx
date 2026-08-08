@@ -30,21 +30,11 @@ import { NAV_BOTTOM, RAIL_INSET } from "./stage";
  * Blending is `plus-lighter` as in Figma, which also makes the component's
  * opaque black background a no-op instead of something to work around.
  *
- * Figma's burst is two things at once and only one of them is streaks: under the
- * spokes there is a smooth wash that thousands of overlapping rays average into,
- * which no reasonable spoke count reproduces. That is split out into the radial
- * gradient below, leaving the component doing the part it is good at. The wash
- * stays under reduced motion; only the moving pulses drop.
+ * No ambience wash under the spokes. An earlier radial falloff at the origin
+ * read as a soft white glow in the top-right corner that the frames do not
+ * carry — the burst is streaks alone.
  */
 const HOST = `pointer-events-none absolute bottom-0 z-[1] mix-blend-plus-lighter ${RAIL_INSET} ${NAV_BOTTOM}`;
-
-/**
- * The broad falloff around the origin. `farthest-corner at 100% 0%` pins it to
- * the same corner as the burst and lets it scale with the content area instead
- * of carrying a per-breakpoint radius.
- */
-const AMBIENCE =
-  "radial-gradient(circle farthest-corner at 100% 0%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.025) 45%, rgba(255,255,255,0.01) 70%, rgba(255,255,255,0) 100%)";
 
 export const StarField = () => {
   const reduceMotion = useReducedMotion();
@@ -81,11 +71,6 @@ export const StarField = () => {
           twinkleSpeed={4}
         />
       )}
-
-      <div
-        className="absolute inset-0 mix-blend-plus-lighter"
-        style={{ backgroundImage: AMBIENCE }}
-      />
     </div>
   );
 };

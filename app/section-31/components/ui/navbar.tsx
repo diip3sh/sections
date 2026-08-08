@@ -10,7 +10,9 @@
  * pushes it there rather than pretending the frames agree.
  *
  * The gutters are Figma's own (58 / 82 / 116), wider than the vertical rails
- * they sit inside.
+ * they sit inside. Desktop inherits that 116px inset on the 1920 stage — same
+ * rail→logo gap as the 1440 frame, not a scaled-up padding — so the wordmark
+ * and "Start Free" track the rails as the stage opens past 1440.
  */
 
 const NAV_LINKS = ["Platform", "Solutions", "Resources", "Pricing"] as const;

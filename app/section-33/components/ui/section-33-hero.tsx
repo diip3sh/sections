@@ -47,7 +47,7 @@ export const Section33Hero = () => (
   <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-black">
     {/* Hatch, rails and plume are pattern — they run the full height of the
         section, however tall the screen is. */}
-    <div className="absolute inset-y-0 left-1/2 w-full max-w-[1440px] -translate-x-1/2">
+    <div className="absolute inset-y-0 left-1/2 w-full max-w-[1920px] -translate-x-1/2">
       <Backdrop />
     </div>
 
@@ -59,13 +59,13 @@ export const Section33Hero = () => (
       the viewport instead, the disk slid down with every extra pixel of screen
       and left the strip behind.
     */}
-    <div className="pointer-events-none absolute top-0 left-1/2 h-[848px] w-full max-w-[1440px] -translate-x-1/2 ipad:h-[1063px] desktop-sm:h-[832px]">
+    <div className="pointer-events-none absolute top-0 left-1/2 h-[848px] w-full max-w-[1920px] -translate-x-1/2 ipad:h-[1063px] desktop-sm:h-[832px]">
       <AccretionDisk className="bottom-[128px] h-[297px] w-[370px] ipad:bottom-[144px] ipad:h-[520px] ipad:w-[647px] desktop-sm:bottom-[114px] desktop-sm:h-[540px] desktop-sm:w-[673px]" />
     </div>
 
     <Navbar />
 
-    <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-col min-h-[791px] ipad:min-h-[1006px] desktop-sm:min-h-[773px]">
+    <div className="relative z-10 mx-auto flex w-full max-w-[1920px] flex-col min-h-[791px] ipad:min-h-[1006px] desktop-sm:min-h-[773px]">
       <div
         className={`flex flex-col items-start gap-[24px] ${GUTTER} mt-[43px] ipad:mt-[63px] desktop-sm:mt-[64px] desktop-sm:flex-row desktop-sm:items-center desktop-sm:justify-between desktop-sm:gap-[16px]`}
       >

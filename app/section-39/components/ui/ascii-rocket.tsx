@@ -58,10 +58,10 @@ import AsciiImage from "../originkit/ascii-reveal";
  * close to the centre, further out toward the edges.
  */
 const BOX =
-  "pointer-events-none relative h-[213px] w-full max-w-[318.62px] ipad:h-[363px] ipad:w-[543px] ipad:max-w-none desktop-sm:h-[454px] desktop-sm:w-[679px] desktop-sm:pointer-events-auto";
+  "pointer-events-none relative h-[213px] w-full max-w-[318.62px] ipad:h-[363px] ipad:w-[543px] ipad:max-w-none desktop-sm:h-[454px] desktop-sm:w-[679px] desktop-sm:pointer-events-auto ";
 
 const CANVAS =
-  "absolute top-1/2 left-1/2 mt-[-27.28px] ml-[16.71px] h-[206.88px] w-[219.6px] -translate-x-1/2 -translate-y-1/2 ipad:mt-[-46.5px] ipad:ml-[28.5px] ipad:h-[352.56px] ipad:w-[374.24px] desktop-sm:mt-0 desktop-sm:ml-0 desktop-sm:h-[440.7px] desktop-sm:w-[467.8px]";
+  "absolute top-1/2 left-1/2 mt-[-27.28px] h-[206.88px] w-[219.6px] -translate-x-1/2 -translate-y-1/2 ipad:mt-[-46.5px] ipad:h-[352.56px] ipad:w-[374.24px] desktop-sm:mt-0 desktop-sm:ml-0 desktop-sm:h-[440.7px] desktop-sm:w-[467.8px]";
 
 export const AsciiRocket = () => (
   <div className={BOX}>

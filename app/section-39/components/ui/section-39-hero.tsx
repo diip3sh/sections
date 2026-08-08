@@ -42,20 +42,15 @@ import {
  * takes `max(frame, 100dvh)` so the rails, the star field and the fire band
  * reach the bottom of any screen and never leave bare page under the section.
  *
- * What must not follow the screen is the composition. The nav holds the top and
- * the fire band holds the bottom, both by their own anchors; the hero row is
- * measured from the bottom too — 401px up, which is where Figma's own
- * `top: calc(50% + 0.5px)` puts it on an 802 frame. Centred in the stage instead
- * it stretched with it: on a 1600 screen the row sat 400px lower, pulled clear
- * of the fire it is composed over and leaving a dead band under the nav. Hung
- * off the bottom it reproduces the frame exactly at 802 and simply opens sky
- * above, which is where the star field already is.
+ * The hero hangs off the nav with `mt` at every width (61 / 44 / 36), same
+ * convention on desktop as on the stacked frames. The fire band alone stays
+ * bottom-anchored; a taller viewport opens sky between the row and the fire,
+ * which is where the star field already is.
  *
  * Paint order follows Figma with one deliberate exception. Figma stacks the fire
  * band *above* the hero copy; at 802 that is harmless because the field's upper
- * tail is sparse, but the band is bottom-anchored and the copy is centred, so
- * every pixel of extra viewport height slides more of the dense base up behind
- * the headline. It sits under the content here instead.
+ * tail is sparse, but the band is bottom-anchored and would climb behind the
+ * headline as the viewport grew. It sits under the content here instead.
  */
 
 /** Nav rule — Figma's "Line 1222" is a plain 1px #333333 stroke, rail to rail. */
@@ -87,14 +82,12 @@ export const Section39Hero = () => (
         centred column with the shuttle below the CTAs, desktop turns the same
         column into a row and sends the shuttle to the right.
 
-        Desktop takes it out of flow and hangs it 401px off the bottom edge — the
-        frame's own centre, measured from the end the composition is anchored to
-        rather than from the middle it only happens to sit at. The centring
-        translate flips with the offset: `translate-y-1/2` against a `bottom`,
-        or the row lands a full height off.
+        Vertical gap under the nav is `mt` at every width — 61 / 44 / 36 — so
+        desktop follows the same convention as the stacked frames instead of
+        hanging off a bottom offset that only matched Figma's centre at 802.
       */}
       <div
-        className={`relative z-20 mt-[61px] flex w-full flex-col items-center gap-[58px] ${HERO_GUTTER} ipad:mt-[44px] ipad:gap-[66px] desktop-sm:absolute desktop-sm:inset-x-0 desktop-sm:bottom-[401px] desktop-sm:mt-0 desktop-sm:translate-y-1/2 desktop-sm:flex-row desktop-sm:items-center desktop-sm:justify-between desktop-sm:gap-0`}
+        className={`relative z-20 mt-[61px] flex w-full flex-col items-center justify-center gap-[58px] ${HERO_GUTTER} ipad:mt-[44px] ipad:gap-[66px] desktop-sm:mt-[136px] desktop-sm:flex-row desktop-sm:items-center desktop-sm:justify-between desktop-sm:gap-0`}
       >
         <div className="flex w-full flex-col items-center gap-[32px] desktop-sm:w-[586px] desktop-sm:items-start">
           <div className="flex flex-col items-center gap-[12px] desktop-sm:items-start">

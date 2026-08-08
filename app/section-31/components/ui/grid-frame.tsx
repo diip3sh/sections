@@ -17,6 +17,10 @@
  * vertical rail stays inside the capped stage instead, because the content
  * columns are measured from those rails (the headline sits at rail + 52px).
  *
+ * Desktop opens that stage to 1920 (Figma's frame is 1440) so the rails track
+ * the same box as the nav and content rather than stopping at 1440 while the
+ * stage keeps growing.
+ *
  * Figma's right rail lands a pixel short of mirroring the left one on iPad
  * (61.5 vs 62.5) and desktop (79 vs 80); both are symmetric here.
  */
@@ -170,7 +174,7 @@ const Tick = ({ variant, flip = false, anchor, className }: TickProps) => {
 export const GridRails = () => (
   <div
     aria-hidden
-    className="pointer-events-none absolute inset-y-0 left-1/2 z-[1] w-full max-w-[402px] -translate-x-1/2 ipad:max-w-[744px] desktop-sm:max-w-[1440px]"
+    className="pointer-events-none absolute inset-y-0 left-1/2 z-[1] w-full max-w-[402px] -translate-x-1/2 ipad:max-w-[744px] desktop-sm:max-w-[1920px]"
   >
     <div className={`${RULE} absolute inset-y-0 w-px ${RAIL_L}`} />
     <div className={`${RULE} absolute inset-y-0 w-px ${RAIL_R}`} />
@@ -190,7 +194,7 @@ export const GridFrame = () => (
       />
     ))}
 
-    <div className="relative mx-auto h-full w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-[1440px]">
+    <div className="relative mx-auto h-full w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-[1920px]">
       {/* Dotted bands. The second is the seam between copy and visual while the
           page is stacked; desktop has no such seam. */}
       <div

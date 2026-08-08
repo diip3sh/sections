@@ -9,7 +9,7 @@ import { StatsRow } from "./stats-row";
  * Figma frames:
  * - Mobile  2356:481  — 402 x 1233
  * - iPad    2356:751  — 744 x 1330  (`ipad:`)
- * - Desktop 2356:1021 — 1440 x 811  (`desktop-sm:`)
+ * - Desktop 2356:1021 — 1440 x 811  (`desktop-sm:`), stage capped at 1920
  *
  * The frame heights are load-bearing. Every rule, band and block in this design
  * is placed against a ruled grid at a fixed frame y, and the two stacked frames
@@ -18,10 +18,11 @@ import { StatsRow } from "./stats-row";
  * visual either side of a middle rail. So the stage carries all three heights
  * and each block is positioned into it, rather than flowed.
  *
- * The one thing that is not fixed is the visual: `BlackHoleVisual` takes its
- * width as a share of the stage, so the disc keeps its place relative to the
- * rails through the fluid stretch between 1280 and 1440 instead of hanging off
- * a number only true at 1440.
+ * Desktop width is the Figma 1440 frame opened to a 1920 cap: rails, nav and
+ * content share that stage so the wordmark and "Start Free" stay on the outer
+ * rails past 1440. The visual is the other fluid piece — `BlackHoleVisual`
+ * takes its width as a share of the stage, so the disc keeps its place relative
+ * to the rails through the stretch instead of hanging off a 1440-only number.
  *
  * Height is two decisions, not one. `<main>` takes `min-h-dvh` so the page runs
  * to the bottom of any screen. The stage inside it keeps each frame's own height
@@ -55,7 +56,7 @@ export const Section31Hero = () => (
       */}
       <GridFrame />
 
-      <div className="relative z-10 mx-auto h-full w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-[1440px]">
+      <div className="relative z-10 mx-auto h-full w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-[1920px]">
         <Navbar />
 
         <div className="pointer-events-none absolute inset-0 desktop-sm:top-[173px] desktop-sm:bottom-[168px]">

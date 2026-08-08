@@ -27,7 +27,7 @@ export const Navbar = () => (
     aria-label="Primary"
     className="relative z-20 w-full shrink-0 border-b border-solid border-white/12"
   >
-    <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-[16px] py-[12px] desktop-sm:px-[56px]">
+    <div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-[16px] py-[12px] desktop-sm:px-[56px]">
       <a href="#" aria-label="Home" className={`shrink-0 ${CONTROL}`}>
         <img
           src="/section-33/logo-mark.svg"

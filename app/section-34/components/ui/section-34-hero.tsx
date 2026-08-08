@@ -55,13 +55,13 @@ export const Section34Hero = () => (
       className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[567px] [--fade-solid:266px] ipad:h-[629px] ipad:[--fade-solid:264px] desktop-sm:h-[416px] desktop-sm:[--fade-solid:116px]"
     />
 
-    {/* Rails — inset from the *stage* edge, not the viewport, so past 1440 they
+    {/* Rails — inset from the *stage* edge, not the viewport, so past 1920 they
         stay 48px off the copy rather than tracking the screen and leaving the
         content floating unrailed in the middle. They run the full height and are
         simply covered at the top by the opaque nav, exactly as Figma stacks them. */}
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-y-0 left-1/2 z-[2] w-full max-w-[1440px] -translate-x-1/2"
+      className="pointer-events-none absolute inset-y-0 left-1/2 z-[2] w-full max-w-[1920px] -translate-x-1/2"
     >
       <span className="absolute inset-y-0 left-[16px] w-px bg-white/40 ipad:left-[48px]" />
       <span className="absolute inset-y-0 right-[16px] w-px bg-white/40 ipad:right-[48px]" />

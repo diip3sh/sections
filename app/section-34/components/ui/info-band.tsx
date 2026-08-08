@@ -22,7 +22,7 @@ import { STAGE } from "./stage";
  *
  * The band splits the way the nav does: the outer element carries the two rules
  * and runs the full width of the screen, while the cells, the centre divider and
- * the marks sit on the capped stage. Past 1440 the rules keep reaching the edge
+ * the marks sit on the capped stage. Past 1920 the rules keep reaching the edge
  * and the columns stop growing, so the marks stay on the rails instead of the
  * band turning into two very wide, very empty halves.
  */

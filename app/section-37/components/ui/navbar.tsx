@@ -3,7 +3,9 @@
  *
  * Logo against a hamburger below 1280; above it the full row — six links, two of
  * them carrying a caret, then Log in and Sign up. The bar is 60 / 64 / 80 tall
- * and its content is inset 16 / 48 / 54.
+ * and its content is inset 16 / 48 below `desktop-sm`. From there up the inset is
+ * the caller's: the hero passes its content shell in, so the bar and the copy
+ * column share one measure rather than each carrying its own desktop padding.
  *
  * Sign up carries Figma's top eclipse (2410:6832) — a blurred white ellipse
  * parked above the lip and clipped by the button, so only the lower half of the
@@ -42,10 +44,10 @@ const SignUpEclipse = () => (
   </span>
 );
 
-export const Navbar = () => (
+export const Navbar = ({ className = "" }: { className?: string }) => (
   <nav
     aria-label="Primary"
-    className="relative z-20 flex h-[60px] w-full shrink-0 items-center justify-between px-[16px] ipad:h-[64px] ipad:px-[48px] desktop-sm:h-[80px] desktop-sm:px-[54px]"
+    className={`relative z-20 flex h-[60px] w-full shrink-0 items-center justify-between px-[16px] ipad:h-[64px] ipad:px-[48px] desktop-sm:h-[80px] ${className}`}
   >
     <a
       href="#"

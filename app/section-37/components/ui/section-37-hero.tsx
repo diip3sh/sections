@@ -28,7 +28,24 @@ import { Navbar } from "./navbar";
  * The column hangs off the nav rather than the band centre: Figma's gap under
  * the bar is 281 / 163 / 56, written as `mt`, and the row is `flex justify-center`
  * so the stack is centred horizontally without `items-center` on a column.
+ *
+ * From `desktop-sm` up both rows — the bar and the copy — sit on the shared 1142
+ * `SHELL` below, so they hold one measure while the backdrop stays full-bleed.
  */
+
+/**
+ * Desktop content shell. Figma insets the desktop rows by 54px on a 1440 frame,
+ * which is 1332 of content and keeps widening past it; from `desktop-sm` up the
+ * rows take a 1142 measure and centre in whatever is left. The inset is the
+ * shell's from that breakpoint on, so the frames' own 16 / 48 padding is zeroed
+ * rather than added to the gutter the cap already opens — at 1280, the narrowest
+ * width this applies to, the cap alone leaves 69px a side.
+ *
+ * Only the rows take it. The fan, the rakes and the dot field stay full-bleed
+ * behind them: they are atmosphere sized from the section, and capping them
+ * would pull the crest in from the screen edges the composition sweeps out to.
+ */
+const SHELL = "mx-auto desktop-sm:max-w-[1142px] desktop-sm:px-0";
 
 /** Both buttons share their box; only the fill and the trailing chip differ. */
 const BUTTON =
@@ -46,7 +63,7 @@ export const Section37Hero = () => (
     <Backdrop />
     <DotField />
 
-    <Navbar />
+    <Navbar className={SHELL} />
 
     {/* The fan and the copy are one band, because they are composed against each
         other — the headline sits just above the crest. Sized separately they
@@ -86,7 +103,9 @@ export const Section37Hero = () => (
     <div className="relative h-[min(814px,calc(100dvh-60px))] w-full ipad:h-[min(1004px,calc(100dvh-64px))] desktop-sm:h-[min(788px,calc(100dvh-80px))]">
       <LineField className="-z-10 inset-x-[-60%] inset-y-0 ipad:inset-x-[-20%] desktop-sm:inset-x-0" />
 
-      <div className="relative z-10 mt-[218px] flex justify-center px-[24px] ipad:mt-[163px] ipad:px-[48px] desktop-sm:mt-[56px]">
+      <div
+        className={`relative z-10 mt-[218px] flex justify-center px-[24px] ipad:mt-[163px] ipad:px-[48px] desktop-sm:mt-[56px] ${SHELL}`}
+      >
         <div className="flex flex-col">
           <p className="relative inline-flex shrink-0 items-center gap-[6px] self-center rounded-[100px] border border-solid border-[#4d3819] bg-[rgba(133,93,32,0.1)] py-[6px] pr-[14px] pl-[8px] font-manrope text-[14px] leading-[1.5] text-white/80 capitalize shadow-[inset_0px_0px_4px_0px_rgba(59,43,19,0.4)] backdrop-blur-[10px]">
             <img

@@ -36,13 +36,35 @@ const RAIL_BAND = "mx-4 ipad:mx-12";
 const STAGE = "relative mx-auto w-full max-w-[1920px]";
 
 /**
- * Desktop bubbles are positioned on the 1440 stage *below* the full-bleed nav.
- * Figma y is from the frame top (incl. nav ≈ 70px), so subtract that here.
+ * Hero copy + bubbles alone are capped at 1440 and centred inside the 1920
+ * stage. The rails, the nav row and the logo band deliberately stay on the
+ * stage: they are the frame of the section, so they keep tracking its edges
+ * on ultrawide while the reading column stops widening.
+ */
+const CONTENT = "relative mx-auto w-full max-w-[1600px]";
+
+/**
+ * Desktop bubbles are positioned on the 1440 content column *below* the
+ * full-bleed nav. Figma y is from the frame top (incl. nav ≈ 70px), so
+ * subtract that here.
  */
 const BUBBLE_1_TOP = "top-[283px]";
 const BUBBLE_2_TOP = "top-[370px]";
-const BUBBLE_1_LEFT = "left-[744px]";
-const BUBBLE_2_LEFT = "left-[801px]";
+
+/**
+ * Both bubbles hang off the *right* content gutter rather than off Figma's
+ * x744 / x801. Those x values are measured in the 1280 desktop frame, so on the
+ * 1440 column a left offset drifts the pair inward and strands it mid-frame;
+ * anchoring right keeps the conversation pinned to the column's far edge at
+ * every width.
+ *
+ * The reply sits on the gutter itself (`px-14` = 56px). The question is stepped
+ * a further 57px inboard — Figma's own x744→x801 stagger, flipped to the right
+ * edge so the pair still reads as an indented exchange rather than a flush
+ * right-aligned block.
+ */
+const BUBBLE_1_RIGHT = "right-[113px]";
+const BUBBLE_2_RIGHT = "right-14";
 
 const Logoipsum = ({ boxClass }: { boxClass: string }) => (
   <div className={boxClass} aria-hidden>
@@ -99,14 +121,15 @@ const MobileLogoHalf = () => (
  *   the frame height less the nav above it (65 / 65 / 70) as its own floor,
  *   so the section lands on Figma's 874 / 1133 / 832 and a taller viewport
  *   adds line field below the logo band rather than stretching the column.
- * - `max-w-[1440px]` stays on the content stage (do not remove).
+ * - `max-w-[1920px]` stays on the stage (do not remove); the reading column
+ *   inside it — hero copy + desktop bubbles — takes a further 1440 cap.
  * - Only the nav bottom hairline is full viewport width (the red-marked rule).
- * - Vertical rails + logo band stay on the 1440 stage.
+ * - Vertical rails + logo band stay on the 1920 stage.
  */
 export const Section30Hero = () => (
   <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-x-hidden bg-[#17281e]">
     {/*
-      Live wavy field — full viewport, past the 1440 content cap, so 4K does not
+      Live wavy field — full viewport, past the 1920 stage cap, so 4K does not
       flash black gutters beside the stage.
     */}
     <div aria-hidden className="absolute inset-0 z-0">
@@ -123,14 +146,14 @@ export const Section30Hero = () => (
 
     {/*
       Nav — `border-b` is on this full-width shell (the red-marked line).
-      Logo / links / CTA stay inside max-w-[1440px].
+      Logo / links / CTA stay inside the 1920 stage.
     */}
     <nav
       aria-label="Primary"
       className="relative z-10 w-full border-b border-solid border-white/10"
     >
       <div
-        className={`${STAGE} ${GUTTER} flex items-center justify-between py-5 desktop-sm:py-4`}
+        className={`max-w-[1600px] mx-auto ${GUTTER} flex items-center justify-between py-5 desktop-sm:py-4`}
       >
         <a
           href="/"
@@ -140,7 +163,7 @@ export const Section30Hero = () => (
           Procura AI
         </a>
 
-        {/* Desktop center links — centered on the 1440 stage */}
+        {/* Desktop center links — centered on the stage */}
         <ul className="absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 desktop-sm:flex">
           {NAV_LINKS.map((link) => (
             <li key={link}>
@@ -188,68 +211,70 @@ export const Section30Hero = () => (
     </nav>
 
     {/*
-      Content stage — keeps max-w-[1440px]. Rails, copy, bubbles, logo band.
+      Content stage — rails and logo band run to the 1920 cap; the reading
+      column inside it stops at 1440.
     */}
     <div
       className={`${STAGE} z-10 flex flex-col min-h-[809px] ipad:min-h-[1068px] desktop-sm:min-h-[762px]`}
     >
-      <div className={`relative z-10 flex flex-1 flex-col ${GUTTER}`}>
-        {/*
+      <div className={`${CONTENT} flex flex-1 flex-col`}>
+        <div className={`relative z-10 flex flex-1 flex-col ${GUTTER}`}>
+          {/*
           Hero copy — Figma tops: mobile y100 / ipad+y120.
           Nav ≈ 65px (mobile/ipad) / 70px (desktop CTA + leading), so mt = 36 / 56 / 50.
           Headline column width caps line length without shifting away from the rails.
         */}
-        <div className="mt-9 flex flex-col ipad:mt-14 desktop-sm:mt-[50px]">
-          <div className="flex w-full flex-col gap-6 ipad:w-[611px] ipad:gap-8">
-            <div className="flex w-full flex-col gap-2 font-tight text-white ipad:gap-4">
-              <h1 className="text-balance text-[35px] leading-[1.1] tracking-[-1.4px] ipad:text-[48px] ipad:tracking-[-1.92px] desktop-sm:text-[56px] desktop-sm:tracking-[-2.24px]">
-                See Every Process. Improve Every Outcome.
-              </h1>
-              <p className="text-pretty text-[14px] leading-[1.5] opacity-60 ipad:w-[530px] ipad:text-[16px]">
-                Turn fragmented workflows into measurable business performance
-                with AI-powered process intelligence, automation, and real-time
-                operational insights.
-              </p>
-            </div>
+          <div className="mt-9 flex flex-col ipad:mt-14 desktop-sm:mt-[50px]">
+            <div className="flex w-full flex-col gap-6 ipad:w-[611px] ipad:gap-8">
+              <div className="flex w-full flex-col gap-2 font-tight text-white ipad:gap-4">
+                <h1 className="text-balance text-[35px] leading-[1.1] tracking-[-1.4px] ipad:text-[48px] ipad:tracking-[-1.92px] desktop-sm:text-[56px] desktop-sm:tracking-[-2.24px]">
+                  See Every Process. Improve Every Outcome.
+                </h1>
+                <p className="text-pretty text-[14px] leading-[1.5] opacity-60 ipad:w-[530px] ipad:text-[16px]">
+                  Turn fragmented workflows into measurable business performance
+                  with AI-powered process intelligence, automation, and
+                  real-time operational insights.
+                </p>
+              </div>
 
-            <div className="flex items-start gap-2">
-              {/*
+              <div className="flex items-start gap-2">
+                {/*
                 Hero primary label is "Boo a Call" in all three Figma frames
                 (2356:1305 / 1355 / 1414) — transcribed literally.
               */}
-              <button
-                type="button"
-                className={`relative inline-flex shrink-0 items-center justify-center rounded-lg px-4 py-3 font-tight text-[16px] leading-[normal] font-medium whitespace-nowrap text-[#0d1611] shadow-[0px_3px_3px_0px_rgba(0,0,0,0.1),0px_11px_5.5px_0px_rgba(0,0,0,0.09),0px_26px_7.5px_0px_rgba(0,0,0,0.05)] ${CONTROL} [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90`}
-                style={{ backgroundImage: PRIMARY_CTA_FILL }}
-              >
-                Book a Call
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_1px_2px_0px_rgba(255,255,255,0.5),inset_0px_-1px_0px_0px_rgba(0,0,0,0.12)]"
-                />
-              </button>
+                <button
+                  type="button"
+                  className={`relative inline-flex shrink-0 items-center justify-center rounded-lg px-4 py-3 font-tight text-[16px] leading-[normal] font-medium whitespace-nowrap text-[#0d1611] shadow-[0px_3px_3px_0px_rgba(0,0,0,0.1),0px_11px_5.5px_0px_rgba(0,0,0,0.09),0px_26px_7.5px_0px_rgba(0,0,0,0.05)] ${CONTROL} [@media(hover:hover)_and_(pointer:fine)]:hover:opacity-90`}
+                  style={{ backgroundImage: PRIMARY_CTA_FILL }}
+                >
+                  Book a Call
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_1px_2px_0px_rgba(255,255,255,0.5),inset_0px_-1px_0px_0px_rgba(0,0,0,0.12)]"
+                  />
+                </button>
 
-              <button
-                type="button"
-                className={`inline-flex shrink-0 items-center justify-center rounded-lg border border-solid border-[rgba(133,233,188,0.2)] px-4 py-3 font-tight text-[16px] leading-[normal] font-medium whitespace-nowrap text-white ${CONTROL} [@media(hover:hover)_and_(pointer:fine)]:hover:bg-white/5`}
-              >
-                Get Started
-              </button>
-            </div>
-          </div>
-
-          {/*
-            Chat bubbles (mobile + ipad) — stacked in flow.
-            Desktop uses the absolute layer on the stage so Figma x stays stage-relative.
-          */}
-          <div className="mt-10 flex w-full flex-col gap-[27px] ipad:mt-12 ipad:gap-8 desktop-sm:hidden">
-            <div className="flex w-[208px] max-w-full items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-br-[12px] border border-solid border-[#2d503e] bg-[#254131] p-2 ipad:w-[370px] ipad:p-4">
-              <p className="font-tight text-[12px] leading-[1.4] text-white/80 ipad:text-[14px] ipad:leading-[1.5] ipad:whitespace-nowrap">
-                Where can AI create the biggest operational impact?
-              </p>
+                <button
+                  type="button"
+                  className={`inline-flex shrink-0 items-center justify-center rounded-lg border border-solid border-[rgba(133,233,188,0.2)] px-4 py-3 font-tight text-[16px] leading-[normal] font-medium whitespace-nowrap text-white ${CONTROL} [@media(hover:hover)_and_(pointer:fine)]:hover:bg-white/5`}
+                >
+                  Get Started
+                </button>
+              </div>
             </div>
 
             {/*
+            Chat bubbles (mobile + ipad) — stacked in flow.
+            Desktop uses the absolute layer on the stage so Figma x stays stage-relative.
+          */}
+            <div className="mt-10 flex w-full flex-col gap-[27px] ipad:mt-12 ipad:gap-8 desktop-sm:hidden">
+              <div className="flex w-[208px] max-w-full items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-br-[12px] border border-solid border-[#2d503e] bg-[#254131] p-2 ipad:w-[370px] ipad:p-4">
+                <p className="font-tight text-[12px] leading-[1.4] text-white/80 ipad:text-[14px] ipad:leading-[1.5] ipad:whitespace-nowrap">
+                  Where can AI create the biggest operational impact?
+                </p>
+              </div>
+
+              {/*
               Figma mobile: left 95 / width 287 inside 402 (right edge 382, rail at 386).
 
               The width is the content column less the 75px offset, and nothing
@@ -260,49 +285,52 @@ export const Section30Hero = () => (
               opened to 345px by 744. Letting the width follow the column holds
               that 4px at every width the mobile layout covers.
             */}
-            <div className="ml-[75px] flex w-[calc(100%-75px)] items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-bl-[12px] border border-solid border-[#2d503e] bg-[#254131] p-2 ipad:ml-[255px] ipad:w-[399px] ipad:max-w-none ipad:p-4">
-              <p className="font-tight text-[12px] leading-[1.5] text-white/80 ipad:text-[14px]">
-                Customer onboarding has the highest automation potential. AI can
-                verify documents, assign approvals, & trigger follow-up actions,{" "}
-                <span className="text-[#71e5b1]">
-                  reducing processing time by 68%
-                </span>{" "}
-                while maintaining compliance.
-              </p>
+              <div className="ml-[75px] flex w-[calc(100%-75px)] items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-bl-[12px] border border-solid border-[#2d503e] bg-[#254131] p-2 ipad:ml-[255px] ipad:w-[399px] ipad:max-w-none ipad:p-4">
+                <p className="font-tight text-[12px] leading-[1.5] text-white/80 ipad:text-[14px]">
+                  Customer onboarding has the highest automation potential. AI
+                  can verify documents, assign approvals, & trigger follow-up
+                  actions,{" "}
+                  <span className="text-[#71e5b1]">
+                    reducing processing time by 68%
+                  </span>{" "}
+                  while maintaining compliance.
+                </p>
+              </div>
             </div>
+          </div>
+        </div>
+
+        {/*
+        Desktop bubbles — absolute to the 1440 content column, anchored to its
+        right gutter. Tops are Figma y minus nav (~70px) because the full-bleed
+        nav sits above this stage.
+      */}
+        <div className="pointer-events-none absolute inset-0 z-20 hidden desktop-sm:block">
+          <div
+            className={`pointer-events-auto absolute ${BUBBLE_1_TOP} ${BUBBLE_1_RIGHT} flex items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-br-[12px] border border-solid border-[#2d503e] bg-[#254131] p-4`}
+          >
+            <p className="font-tight text-[14px] leading-[1.5] whitespace-nowrap text-white/80">
+              Where can AI create the biggest operational impact?
+            </p>
+          </div>
+
+          <div
+            className={`pointer-events-auto absolute ${BUBBLE_2_TOP} ${BUBBLE_2_RIGHT} flex w-[359px] items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-bl-[12px] border border-solid border-[#2d503e] bg-[#254131] p-4`}
+          >
+            <p className="font-tight text-[14px] leading-[1.5] text-white/80">
+              Customer onboarding has the highest automation potential. AI can
+              verify documents, assign approvals, & trigger follow-up actions,{" "}
+              <span className="text-[#71e5b1]">
+                reducing processing time by 68%
+              </span>{" "}
+              while maintaining compliance.
+            </p>
           </div>
         </div>
       </div>
 
       {/*
-        Desktop bubbles — absolute to the 1440 stage. Tops are Figma y minus nav
-        (~70px) because the full-bleed nav sits above this stage.
-      */}
-      <div className="pointer-events-none absolute inset-0 z-20 hidden desktop-sm:block">
-        <div
-          className={`pointer-events-auto absolute ${BUBBLE_1_TOP} ${BUBBLE_1_LEFT} flex items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-br-[12px] border border-solid border-[#2d503e] bg-[#254131] p-4`}
-        >
-          <p className="font-tight text-[14px] leading-[1.5] whitespace-nowrap text-white/80">
-            Where can AI create the biggest operational impact?
-          </p>
-        </div>
-
-        <div
-          className={`pointer-events-auto absolute ${BUBBLE_2_TOP} ${BUBBLE_2_LEFT} flex w-[359px] items-center justify-center rounded-tl-[12px] rounded-tr-[12px] rounded-bl-[12px] border border-solid border-[#2d503e] bg-[#254131] p-4`}
-        >
-          <p className="font-tight text-[14px] leading-[1.5] text-white/80">
-            Customer onboarding has the highest automation potential. AI can
-            verify documents, assign approvals, & trigger follow-up actions,{" "}
-            <span className="text-[#71e5b1]">
-              reducing processing time by 68%
-            </span>{" "}
-            while maintaining compliance.
-          </p>
-        </div>
-      </div>
-
-      {/*
-        Trusted + logos — rail-to-rail on the 1440 stage.
+        Trusted + logos — rail-to-rail on the 1920 stage.
       */}
       <div className="relative z-10 w-full pb-12 ipad:pb-[72px] desktop-sm:pb-8">
         <p
@@ -374,7 +402,7 @@ export const Section30Hero = () => (
 
     {/*
       Edge rails — inset from the *stage* edge (Figma 2356:1309 / 1405), so they
-      track the 1440 cap on ultrawide rather than the viewport.
+      track the 1920 cap on ultrawide rather than the viewport.
 
       They hang off `<main>` rather than off the content stage. The stage stops
       at the frame height, and the rails are pattern rather than content: they

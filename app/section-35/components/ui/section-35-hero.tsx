@@ -48,7 +48,7 @@ export const Section35Hero = () => (
   <main
     className={`animate-hero-reveal relative flex min-h-dvh w-full flex-col ${PAGE}`}
   >
-    <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col min-h-[874px] ipad:min-h-[1068px] desktop-sm:min-h-[831px]">
+    <div className="mx-auto flex w-full max-w-[1920px] flex-1 flex-col min-h-[874px] ipad:min-h-[1068px] desktop-sm:min-h-[831px]">
       <div
         className={`mx-[11px] flex flex-1 flex-col border-x ${RULE} ipad:mx-[62px] desktop-sm:mx-[80px]`}
       >
@@ -131,7 +131,7 @@ export const Section35Hero = () => (
               breakpoints. The line breaks after "Scale" at every width on the
               column width alone, so nothing holds it.
             */}
-            <h1 className="mt-[17px] font-gemunu text-[38px] leading-[43.3px] font-medium tracking-[-0.02em] text-white ipad:mt-[13px] ipad:text-[68px] ipad:leading-[72px]">
+            <h1 className="mt-[17px] font-gemunu text-[38px] leading-[43.3px] font-medium tracking-[-0.02em] text-white ipad:mt-[13px] ipad:text-[68px] ipad:leading-[72px] max-w-[705px]">
               Build, Deploy &amp; Scale Intelligent Systems
             </h1>
 

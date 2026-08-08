@@ -33,16 +33,25 @@ export const AsciiFlameBand = () => (
        * set two different things and only move independently once both are
        * pinned.
        *
-       * `decay` sets how far the ink reaches. The component's 13 carries fire the
-       * full height of the band; Figma inks roughly the bottom third, which
-       * across this box's ~52 rows means heat has to fall to the palette floor
-       * inside about 15 of them.
+       * `decay` sets how far the ink reaches — it is subtracted from a cell's
+       * heat per row, so the front dies at roughly `intensity / decay` rows up.
+       * The component's 13 carries fire the full height of the band; Figma inks
+       * roughly the bottom third, which across this box's ~52 rows means heat has
+       * to fall to the palette floor inside about 15 of them, and 35 is what puts
+       * it there.
+       *
+       * 28 instead: a fifth slower, so the front reaches about 19 rows — some
+       * 50px more at the 10.5px row pitch. That is a deliberate departure from
+       * the frames, which sit at 15; the band reads low against the shuttle at
+       * the size it is drawn here. It is the one number to move for this, since
+       * the box is already ~52 rows tall and a taller box only adds rows the fire
+       * never reaches.
        *
        * `intensity` sets which glyph the base lands on. At 100 the bottom rows
        * sit near the top of the ramp and the band renders about twice Figma's
        * ink; 70 puts base heat near 0.55, which is where the frames sit.
        */
-      decay={35}
+      decay={16}
       intensity={70}
       turbulence={30}
       windDirection="right"

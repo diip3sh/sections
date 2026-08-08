@@ -23,7 +23,7 @@ const DESCRIPTION =
 export const HeroCopy = () => (
   <div className="absolute top-[45px] left-0 flex w-full flex-col items-center gap-[24px] text-center ipad:left-1/2 ipad:w-[497px] ipad:-translate-x-1/2 ipad:gap-[32px] desktop-sm:relative desktop-sm:top-auto desktop-sm:left-auto desktop-sm:w-auto desktop-sm:flex-1 desktop-sm:translate-x-0 desktop-sm:items-start desktop-sm:pl-[16px] desktop-sm:text-left">
     <div className="flex w-full flex-col items-center gap-[8px] ipad:gap-[16px] desktop-sm:items-start">
-      <h1 className="w-full text-[35px] leading-[normal] font-normal tracking-[-1.4px] text-balance text-white ipad:text-[48px] ipad:tracking-[-1.92px]">
+      <h1 className="w-full text-[35px] leading-[normal] font-normal tracking-[-1.4px] text-balance text-white ipad:text-[48px] ipad:tracking-[-1.92px] desktop-sm:w-[500px]">
         {TITLE}
       </h1>
       {/*
@@ -32,7 +32,7 @@ export const HeroCopy = () => (
         desktop. The phone value is a percentage because the canvas is the one
         box in this section that goes fluid below its frame width.
       */}
-      <p className="w-[95.68%] text-[16px] leading-[1.5] font-normal text-pretty text-[#a7a7a7] ipad:w-[453px] desktop-sm:w-full">
+      <p className="w-[95.68%] text-[16px] leading-[1.5] font-normal text-pretty text-[#a7a7a7] ipad:w-[453px] desktop-sm:w-[500px]">
         {DESCRIPTION}
       </p>
     </div>

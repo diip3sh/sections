@@ -21,7 +21,10 @@ const TICKS =
 const RAIL = "w-[32px] ipad:w-[52px] desktop-sm:w-[72px]";
 
 export const EdgeRulers = () => (
-  <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
+  <div
+    aria-hidden
+    className="pointer-events-none absolute inset-0 z-0 max-w-[1920px] w-full mx-auto"
+  >
     <span
       className={`absolute inset-y-0 left-0 block border-r border-solid border-[rgba(0,0,0,0.1)] ${RAIL}`}
       style={{ backgroundImage: TICKS }}

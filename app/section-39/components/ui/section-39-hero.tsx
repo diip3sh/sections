@@ -5,6 +5,7 @@ import { CornerGlow } from "./corner-glow";
 import { EdgeRails } from "./edge-rails";
 import { Navbar } from "./navbar";
 import { StarField } from "./star-field";
+import { StarGlow } from "./star-glow";
 import {
   HERO_GUTTER,
   NAV_BOTTOM,
@@ -145,6 +146,13 @@ export const Section39Hero = () => (
       </div>
 
       <EdgeRails />
+      {/*
+        Last, and unclipped: the burst's source paints over the copy and the
+        shuttle in its corner, and spills across the nav band and past the rail
+        rather than stopping on either line. It sits under the nav itself, which
+        is the one thing additive white should not touch.
+      */}
+      <StarGlow />
     </div>
   </main>
 );

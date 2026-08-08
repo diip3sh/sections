@@ -20,19 +20,15 @@ import { NAV_BOTTOM, RAIL_INSET } from "./stage";
  * needs no numbers of its own. Spoke length is the host's diagonal, so the rays
  * die exactly as they reach the far corner at any viewport size.
  *
- * The origin belongs on the corner precisely because nothing is drawn there —
- * see `flowerIntensity`. With no bloom there is no source to keep on screen, so
- * the streaks read as arriving from off-frame, which is what the design shows.
+ * The light those streaks come out of is the same Figma node but a separate
+ * layer here — see `star-glow.tsx`, which paints on that corner at `z-30` while
+ * the field stays at `z-[1]` under the copy.
  *
  * Taking Figma's rotation off the burst costs nothing — the spokes are radially
  * symmetric with seeded random phases.
  *
  * Blending is `plus-lighter` as in Figma, which also makes the component's
  * opaque black background a no-op instead of something to work around.
- *
- * No ambience wash under the spokes. An earlier radial falloff at the origin
- * read as a soft white glow in the top-right corner that the frames do not
- * carry — the burst is streaks alone.
  */
 const HOST = `pointer-events-none absolute bottom-0 z-[1] mix-blend-plus-lighter ${RAIL_INSET} ${NAV_BOTTOM}`;
 
@@ -60,12 +56,14 @@ export const StarField = () => {
           starSize={2}
           opacity={50}
           /*
-           * No bloom. The component throws a radial flare at the origin by
-           * default, and Figma has none — its burst is streaks and nothing else,
-           * with no lit source for them to come out of. Anything above 0 puts a
-           * glow at the corner that the design does not have, and moving it off
-           * the corner to stop it being clipped only walks it onto the copy,
-           * since the phone and tablet centre their column.
+           * No bloom from the component. Figma does draw the burst's source in
+           * this same node, but the component's version of it is sized off the
+           * host's shorter side and kept deliberately contained — around 80px on
+           * a host this wide, half of it off-frame, which is far too small and
+           * dim to read as the light the streaks come from. It is painted by
+           * `star-glow.tsx` instead, where it can be sized and z-ordered on its
+           * own; leaving this above 0 would only put a second, weaker source
+           * underneath it.
            */
           flowerIntensity={0}
           twinkleSpeed={4}

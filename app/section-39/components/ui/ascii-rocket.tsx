@@ -27,15 +27,23 @@ import AsciiImage from "../originkit/ascii-reveal";
  *
  *   phone  centred at (+16.71, -27.28) of a 318.62x213 box
  *   tablet centred at (+28.5, -46.5) of a 543x363 box
- *   desktop centred on the box itself, 1.25x the tablet canvas
+ *   desktop centred on the box itself, 1.5625x the tablet canvas
  *
  * Desktop drops the anchor offsets and sits on its box centre. Figma's offsets
  * are what place the shuttle against a 1440 frame, but this stage now runs to
  * 1920, and carried across they read as the shuttle hanging off-centre in its
- * own half of the row rather than as a considered placement. It is also 1.25x
- * the tablet canvas: the ipad numbers held all the way up, so on a wide screen
- * the shuttle kept the size it has on a 744 frame and read small against a hero
- * that had grown around it.
+ * own half of the row rather than as a considered placement. It is also 1.5625x
+ * the tablet canvas — 1.25 applied twice: the ipad numbers held all the way up,
+ * so on a wide screen the shuttle kept the size it has on a 744 frame and read
+ * small against a hero that had grown around it, and one step of that was still
+ * short of the weight the right half of the row wants.
+ *
+ * Only the canvas grows; the 679px box does not. The box is what the row
+ * measures, and the two blocks in it (586 copy + 679) already exceed the content
+ * width below about 1533, where flex shrinks both — widening it would take that
+ * straight out of the headline column. At 584.75 the canvas still clears the
+ * shrunk box at 1280, which is the narrowest width this layout runs at. The box
+ * height follows the canvas instead, since height costs the row nothing.
  *
  * `columns` is a fixed count, not the usual count-from-a-fixed-pitch, and that
  * is deliberate: Figma scales one 1008px render to both sizes, so the column
@@ -58,10 +66,10 @@ import AsciiImage from "../originkit/ascii-reveal";
  * close to the centre, further out toward the edges.
  */
 const BOX =
-  "pointer-events-none relative h-[213px] w-full max-w-[318.62px] ipad:h-[363px] ipad:w-[543px] ipad:max-w-none desktop-sm:h-[454px] desktop-sm:w-[679px] desktop-sm:pointer-events-auto ";
+  "pointer-events-none relative h-[213px] w-full max-w-[318.62px] ipad:h-[363px] ipad:w-[543px] ipad:max-w-none desktop-sm:h-[551px] desktop-sm:w-[679px] desktop-sm:pointer-events-auto ";
 
 const CANVAS =
-  "absolute top-1/2 left-1/2 mt-[-27.28px] h-[206.88px] w-[219.6px] -translate-x-1/2 -translate-y-1/2 ipad:mt-[-46.5px] ipad:h-[352.56px] ipad:w-[374.24px] desktop-sm:mt-0 desktop-sm:ml-0 desktop-sm:h-[440.7px] desktop-sm:w-[467.8px]";
+  "absolute top-1/2 left-1/2 mt-[-27.28px] h-[206.88px] w-[219.6px] -translate-x-1/2 -translate-y-1/2 ipad:mt-[-46.5px] ipad:h-[352.56px] ipad:w-[374.24px] desktop-sm:mt-0 desktop-sm:-ml-40 desktop-sm:h-[650.88px] desktop-sm:w-[684.75px]";
 
 export const AsciiRocket = () => (
   <div className={BOX}>

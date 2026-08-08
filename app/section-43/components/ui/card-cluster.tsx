@@ -40,6 +40,25 @@ import StickerDrag from "../originkit/draggable-sticker";
  * both small frames share and which is an artifact of the same mismatched group
  * box — 7px on the phone, on a hand-scattered pile.
  *
+ * **The fan is anchored to the copy's rule, not to the right margin.** This box
+ * and the copy column are two independent containers, and the cards inside this
+ * one are free to hang over its edges — which is the whole point, because Figma
+ * starts the fan 16px *left* of the rule the copy column trails, so the leftmost
+ * card straddles it. Left flush to the right margin that 16 only holds at 1440:
+ * the margins are shares and the fan is a share, but the copy column is a fixed
+ * 387, so every pixel of extra width lands in the gap between them and the fan
+ * walks off to the right — 107px clear of the rule at 1920, 431 at 3174.
+ *
+ * `mr` closes that gap by exactly the amount it opens: `25.758%` is the fan's
+ * left edge measured from the rule's own 8.333% and the 387 column, and 371 is
+ * what that comes to at the 1440 frame, so the shift is zero there and grows
+ * with the sheet. It is a margin rather than an offset because the fan is still
+ * in flow — the clear band takes its height from this box, and a fan pulled out
+ * of flow would let the band collapse to its 410 floor and drop the cards
+ * through the dashed grid below. `max(0px, …)` stops it going the other way
+ * under 1440, where the fan already overhangs the rule further and pushing it
+ * right would cost the right margin instead.
+ *
  * **The fan is dealt in and dealt back out.** Figma draws the cards at rest, but
  * the pile is the section's one moment, so each card rises into place as the
  * cluster enters the viewport and lowers back out when it leaves — the same
@@ -196,7 +215,7 @@ export const CardCluster = () => (
   <div
     role="img"
     aria-label="A fan of four payment cards, loosely stacked"
-    className="relative w-[298px] max-w-full shrink-0 aspect-[297.99/180.85] ipad:w-[448px] desktop-sm:aspect-[584.45/398.52] desktop-sm:w-[52.117%]"
+    className="relative w-[298px] max-w-full shrink-0 aspect-[297.99/180.85] ipad:w-[448px] desktop-sm:mr-[max(0px,calc(25.758%-371px))] desktop-sm:aspect-[584.45/398.52] desktop-sm:w-[52.117%]"
   >
     {/*
       No `z-*` on the hosts. StickerDrag lifts the card being dragged by writing

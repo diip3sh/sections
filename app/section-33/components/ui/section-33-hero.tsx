@@ -22,10 +22,17 @@ import { Navbar } from "./navbar";
  * push the disk through the strip.
  *
  * Height is two decisions. `<main>` takes `min-h-dvh` so the hatch, the rails and
- * the plume reach the bottom of any screen; the content column takes the frame
- * height as its own floor, less the nav above it (57 / 57 / 59), so the section
- * lands on Figma's 848 / 1063 / 832 and stops there. A taller viewport adds
- * backdrop below the strip rather than opening the gaps the design fixes.
+ * the plume reach the bottom of any screen. The design itself is `--section-h`:
+ * Figma's 832 as a floor, the window past that, and a stop at 1142, with the
+ * content column carrying it less the nav above it (57 / 57 / 59). Past the cap
+ * the surplus is backdrop below the strip.
+ *
+ * The surplus in between falls into the one gap the design leaves open — the
+ * spacer between the stat row and the logo strip, which is where the disk turns.
+ * Nothing else moves: the copy is measured from the top, the strip and the disk
+ * from the bottom, and the disk keeps Figma's own size rather than growing with
+ * the gap. The two stacked frames keep their fixed heights, being taller already
+ * than the phones and tablets they are drawn for.
  *
  * Everything is measured from the rails at 16 / 48, which the stage caps with at
  * 1440 — the split `section-30` uses.
@@ -44,7 +51,7 @@ const STATS = [
 ];
 
 export const Section33Hero = () => (
-  <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-black">
+  <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-black [--section-h:clamp(832px,100dvh,1142px)]">
     {/* Hatch, rails and plume are pattern — they run the full height of the
         section, however tall the screen is. */}
     <div className="absolute inset-y-0 left-1/2 w-full max-w-[1920px] -translate-x-1/2">
@@ -55,17 +62,34 @@ export const Section33Hero = () => (
       The disk is not pattern, and it cannot hang off the screen the way the
       backdrop does. Figma's box is 370x297 / 647x520 / 673x540 with its foot
       128 / 144 / 114 above the frame edge — where the logo strip starts — so it
-      is anchored to the bottom of a box that *is* the frame height. Measured off
-      the viewport instead, the disk slid down with every extra pixel of screen
-      and left the strip behind.
+      is anchored to the bottom of a box that *is* the section height. Measured
+      off the viewport instead, the disk slid down with every extra pixel of
+      screen and left the strip behind — which is why desktop reads `--section-h`
+      here rather than `100dvh`: past the 1142 cap the strip stops descending and
+      so must the disk that sits on it.
+
+      Desktop is also the one frame where the disk is not a fixed box. Figma's
+      673 is 52.6% of its 1280 frame, and held at 673 across a stage that runs to
+      1920 the disk shrinks to a third of the width with dead sheet all around
+      it. So it is a share instead — 56%, a little over Figma's own ratio, which
+      is the size increase this design wanted at every width — capped at 1010
+      where the stage caps. The aspect is Figma's 673/540 throughout.
+
+      The lift is the other half of the same problem. The foot sits 114 above the
+      section edge at the 832 floor, which is Figma exactly, and takes 30% of
+      whatever the section gains after that: at the 1142 cap that is 207, so the
+      taller section opens more space above the disk than below it and the disk
+      still reads as sitting down on the strip, the way Figma draws it.
     */}
-    <div className="pointer-events-none absolute top-0 left-1/2 h-[848px] w-full max-w-[1920px] -translate-x-1/2 ipad:h-[1063px] desktop-sm:h-[832px]">
-      <AccretionDisk className="bottom-[128px] h-[297px] w-[370px] ipad:bottom-[144px] ipad:h-[520px] ipad:w-[647px] desktop-sm:bottom-[114px] desktop-sm:h-[540px] desktop-sm:w-[673px]" />
+    <div className="pointer-events-none absolute top-0 left-1/2 h-[848px] w-full max-w-[1920px] -translate-x-1/2 ipad:h-[1063px] desktop-sm:h-[var(--section-h)]">
+      <AccretionDisk className="bottom-[128px] h-[297px] w-[370px] ipad:bottom-[144px] ipad:h-[520px] ipad:w-[647px] desktop-sm:bottom-[calc(114px+(var(--section-h)-832px)*0.3)] desktop-sm:aspect-[673/540] desktop-sm:h-auto desktop-sm:w-[min(56%,1010px)]" />
     </div>
 
     <Navbar />
 
-    <div className="relative z-10 mx-auto flex w-full max-w-[1920px] flex-col min-h-[791px] ipad:min-h-[1006px] desktop-sm:min-h-[773px]">
+    {/* The frame height less the nav that sits above it — 59 on desktop, so the
+        column and the disk layer close on the same edge. */}
+    <div className="relative z-10 mx-auto flex w-full max-w-[1920px] flex-col min-h-[791px] ipad:min-h-[1006px] desktop-sm:min-h-[calc(var(--section-h)-59px)]">
       <div
         className={`flex flex-col items-start gap-[24px] ${GUTTER} mt-[43px] ipad:mt-[63px] desktop-sm:mt-[64px] desktop-sm:flex-row desktop-sm:items-center desktop-sm:justify-between desktop-sm:gap-[16px]`}
       >
@@ -122,7 +146,8 @@ export const Section33Hero = () => (
         </dl>
       </div>
 
-      {/* The disk lives in this gap. */}
+      {/* The disk lives in this gap, and so does everything the section gains
+          between its 832 floor and the 1142 cap. */}
       <div aria-hidden className="flex-1" />
 
       <div className="mx-[16px] ipad:mx-[48px]">

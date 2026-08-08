@@ -180,7 +180,7 @@ export default function HomePage() {
                 fontSize: 15,
               }}
               speed={7}
-              rotationSide="counterclockwise"
+              rotationSide="clockwise"
               twist={50}
               letterSpacing={240}
             />

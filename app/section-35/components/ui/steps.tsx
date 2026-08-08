@@ -80,12 +80,12 @@ export const Steps = () => (
 
           <h3
             style={{ backgroundImage: SHEEN_FILL }}
-            className={`mt-[8px] font-geist text-[12px] leading-[13.75px] font-medium capitalize ipad:mt-[13px] ipad:text-[18px] ipad:leading-[22px] desktop-sm:mt-[16px] desktop-sm:text-[20px] desktop-sm:leading-[21px] ${SHEEN}`}
+            className={`mt-[8px] font-geist text-[13px] leading-[13.75px] font-medium capitalize ipad:mt-[13px] ipad:text-[18px] ipad:leading-[22px] desktop-sm:mt-[16px] desktop-sm:text-[20px] desktop-sm:leading-[21px] ${SHEEN}`}
           >
             {title}
           </h3>
 
-          <p className="mt-[6px] max-w-[300px] iphone:max-w-none text-balance font-geist leading-[10px] font-medium text-[#707070] capitalize ipad:mt-[12px] text-[10px] ipad:leading-[16px] desktop-sm:mt-[16px] desktop-sm:text-[15px] desktop-sm:leading-[21px]">
+          <p className="mt-[6px] max-w-[300px] iphone:max-w-none text-balance font-geist leading-5 font-medium text-[#707070] capitalize ipad:mt-[12px] text-[13px] ipad:leading-[16px] desktop-sm:mt-[16px] desktop-sm:text-[15px] desktop-sm:leading-[21px]">
             {body}
           </p>
         </li>

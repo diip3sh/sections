@@ -18,12 +18,13 @@ import { Navbar } from "./navbar";
  * anchored to the bottom so a taller viewport opens sky above the copy instead
  * of pushing the crest off the fold.
  *
- * Height is two decisions, the same split sections 30-36 use. `<main>` takes
- * `min-h-dvh` so the rakes and the dot field reach the bottom of any screen. The
- * band under it does not follow: it carries the frame height less the nav above
- * it (60 / 64 / 80) as its own height — 814 / 1004 / 788 — and stops there. Let
- * it track the viewport and the composition stretches, which walks the crest
- * away from the copy it is composed against.
+ * Height follows the house floor rule. `<main>` takes `min-h-dvh` so the rakes
+ * and the dot field reach the bottom of any screen, and the band under it takes
+ * the surplus rather than stopping at the frame: Figma's height — the frame less
+ * the nav above it (60 / 64 / 80), so 814 / 1004 / 788 — is where a frame-sized
+ * window lands, not a ceiling. The fan is the section's floor and has to reach
+ * the bottom edge; held at 788 it left a quarter-screen of bare page under the
+ * crest on an ordinary laptop.
  *
  * The column hangs off the nav rather than the band centre: Figma's gap under
  * the bar is 281 / 163 / 56, written as `mt`, and the row is `flex justify-center`
@@ -74,33 +75,27 @@ export const Section37Hero = () => (
         The band sits directly under the nav — not `mt-auto` — so the copy's
         `mt` (281 / 163 / 56) is the gap under the bar Figma draws, rather than
         that gap plus whatever surplus a tall viewport opens above a
-        bottom-pinned band. The fan still ends with the band; a taller screen
-        opens sky below the crest through the full-bleed backdrop, which is the
-        layer that can take it.
+        bottom-pinned band. The surplus goes below the copy instead, into the fan.
 
-        Its height is Figma's rather than the screen's: the frame height less the
-        nav, so 814 / 1004 / 788. Tracking `dvh` stretched the composition and
-        walked the crest away from the copy. Holding the design's height keeps
-        them together at every viewport.
+        `flex-1` rather than a stated height, because the height is a floor. On a
+        frame-sized window `<main>`'s `min-h-dvh` less the nav is exactly Figma's
+        814 / 1004 / 788, so the design's number is what the band gets; on a taller
+        one it takes the surplus instead of leaving it to the page. Stated as a
+        height it stopped at 788 and a 1114px-tall window showed a quarter screen
+        of bare black under the crest — the fan is the section's floor, so it has
+        to reach the bottom edge. It follows the band through `inset-y-0` and
+        stretches with it, which walks the crest a little further below the copy
+        on a tall screen; the fan ending mid-page reads far worse than the drift.
 
-        `min()` against the room under the nav is the other half. Figma's height
-        is what the band wants, but a window shorter than the frame cannot give
-        it: the band would overflow the fold and drop the crest below it. A wide
-        but short window sits exactly there. So the band takes Figma's height
-        wherever there is room for it and yields to the space available
-        otherwise — and carries no `min-height`, which would only fight that.
-
-        Height is stated in `dvh` minus the nav, not as a percentage. `<main>`
-        carries only a `min-height`, so its used height counts as `auto` when a
-        percentage resolves against it — `h-full` here silently became `auto` and
-        left the band at its content height at every viewport. Same trap the fan
-        hits with `h-full`, one level up.
+        No `min-height` to go with it: a flex item's is already `auto`, so the band
+        cannot be shorter than the copy column. A window shorter than the frame
+        overflows through `<main>` rather than cropping the stack.
 
         The fan carries `-z-10`. Its canvas is opaque and none of these layers
         set a z-index — they stacked by source order, with the fan first. Inside
         the band it now comes last and would paint over the rakes and dots it is
         supposed to sit under. Stating the layer beats relying on tag order. */}
-    <div className="relative h-[min(814px,calc(100dvh-60px))] w-full ipad:h-[min(1004px,calc(100dvh-64px))] desktop-sm:h-[min(788px,calc(100dvh-80px))]">
+    <div className="relative w-full flex-1">
       <LineField className="-z-10 inset-x-[-60%] inset-y-0 ipad:inset-x-[-20%] desktop-sm:inset-x-0" />
 
       <div

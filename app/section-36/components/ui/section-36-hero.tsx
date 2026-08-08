@@ -17,49 +17,52 @@ import { Stats } from "./stats";
  * flow, so it sits on the horizon Figma draws it on at every frame.
  *
  * Height. `<main>` takes `min-h-dvh` and everything answers to that: the grid,
- * the rails and the grain reach the bottom of any screen. The content keeps the
- * frame height as a floor and does not stretch, so the copy and the stats stay
- * where the design puts them and the surplus falls below them as ruled sheet.
+ * the rails and the grain reach the bottom of any screen. The design itself is
+ * `--section-h` — Figma's 832 as a floor, the window past that, and a stop at
+ * 1141 — and the copy and the stats stay where the design puts them, with the
+ * surplus falling below as ruled sheet.
  *
- * The globe is the one thing that could have taken that surplus and does not —
- * see `sphere.tsx`. It is sized from the rail-to-rail band, the dimension the
- * design actually composed against, and pinned by its crest at y440 on desktop
- * (Figma's 452, lifted 12 for a touch more presence). A tall window therefore
- * gets the same globe in the same place and simply hides more of it below the
- * fold, rather than a bigger one: driven off the section height instead, the
- * dome reached 70% of the stage width on an 1100-tall screen where the frame
- * draws 59%, and stopped reading as a horizon.
+ * That one number is also what lets the globe be cut in half. Figma's frame
+ * closes exactly on the equator (crest y452 + a 380 radius = the 832 foot), so
+ * the globe hangs off the foot of the section by half its diameter and shows its
+ * top half at every width — see `sphere.tsx`. It needs the foot to be a real
+ * edge, which is what the cap gives it: unbounded, `min-h-dvh` handed the
+ * section whatever the window had and the horizon drifted with it.
  *
- * Width. The sheet is the screen up to an ultrawide, then it caps at 1440 — the
- * rails sit 48 in from whatever edge applies. `<main>` is the one thing that
- * never caps, and it is white rather than the sheet colour: past the cap it is
- * all that shows, and the page's own `#181818` behind it read as a black band
- * either side of the design. So the sheet colour rides on the stage layer, which
- * caps with everything else, and `<main>` is the margin.
+ * The globe is sized from the rail-to-rail band, the dimension the design
+ * actually composed against, rather than from that height. Driven off height it
+ * asked for 70% of the stage width on an 1100-tall screen where the frame draws
+ * 59%, and stopped reading as a horizon.
+ *
+ * Width. Only the copy caps. The sheet, the grid, the grain and the rails are
+ * the page itself and run edge to edge at every width — a ruled sheet that stops
+ * short of the screen is a card, which is not what this design is — so the rails
+ * sit 48 in from the viewport, wherever it ends. The headline, the button and
+ * the stats cap at 1440 past an ultrawide, where the rails would otherwise pull
+ * the three stats far enough apart to stop reading as a row.
+ *
+ * The globe goes with the rails rather than with the copy: it is tangent to
+ * them, clipped by them, and its diameter is a share of the band they leave.
  *
  * Desktop is the only frame that sets the headline against the button; below
  * 1280 they stack, which is a `flex-col` that turns into a row rather than two
  * trees.
  */
 /**
- * The stage every backdrop layer is measured from — full-bleed, until 2560.
+ * The stage every backdrop layer is measured from — full-bleed at every width.
  *
  * This design reads as a ruled sheet with no line breaks holding it to a width,
- * so the sheet is the screen; past an ultrawide the rails end up far enough
- * apart that the stats stop reading as a row, so it caps at 1440 and `<main>`
- * carries the margins. The sheet colour rides here rather than on `<main>` for
- * exactly that reason: past the cap `<main>` is all that shows, and it has to be
- * white — left on the page's own `#181818` it read as a black band either side.
+ * so the sheet is the screen and nothing about the pattern caps: a grid that
+ * stops at 1440 with page colour either side turns the sheet into a card. The
+ * cap belongs to the copy alone, which is where it sits.
  */
-const STAGE_LAYER =
-  "absolute inset-y-0 left-1/2 w-full -translate-x-1/2 ultrawide:max-w-[1440px]";
+const STAGE_LAYER = "absolute inset-y-0 left-1/2 w-full -translate-x-1/2";
 
 export const Section36Hero = () => (
-  <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-white">
-    {/* The backdrop caps with the content rather than with the viewport. The
-        rails, the grid and the globe are all measured off the same 1440 stage,
-        so past the cap they stop together and the page colour is what fills the
-        margins — the split `section-30` uses.
+  <main className="animate-hero-reveal relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-white [--section-h:clamp(832px,100dvh,1141px)]">
+    {/* The backdrop answers to the viewport, not to the content cap — the sheet,
+        the grid, the grain, the rails and the globe are one pattern and all five
+        are measured off the same full-bleed stage.
 
         Three layers rather than one because Figma's paint order runs grid →
         copy → rails → globe, and each of those boundaries is load-bearing: the
@@ -71,12 +74,16 @@ export const Section36Hero = () => (
       <GridBackdrop />
     </div>
 
-    {/* Desktop floor is 1280, not Figma's 832. The frame height is a floor and
-        this design wants a deeper sheet than the frame draws — the ruled page
-        below the stats is the composition, not dead space, and 832 ran out of it
-        on anything wider than the frame. Mobile and tablet keep their own frame
-        heights, which are already taller than the phones they are drawn for. */}
-    <div className="relative z-10 mx-auto flex w-full flex-col min-h-[874px] ultrawide:max-w-[1440px] ipad:min-h-[1133px] desktop-sm:min-h-[1280px]">
+    {/* Desktop follows the window between Figma's 832 and 1141 rather than
+        sitting on either bound. The frame height is a floor and this design
+        wants a deeper sheet than the frame draws — the ruled page below the
+        stats is the composition, not dead space — but the sheet cannot open
+        without limit either: the globe is cut in half by the foot of the
+        section, so the foot is a composed edge and every pixel it gains is a
+        pixel of gap between the stats and the horizon. Mobile and tablet keep
+        their own frame heights, which are already taller than the phones they
+        are drawn for. */}
+    <div className="relative z-10 mx-auto flex w-full flex-col min-h-[874px] ultrawide:max-w-[1440px] ipad:min-h-[1133px] desktop-sm:min-h-[var(--section-h)]">
       {/* Rail to rail. The copy sits four pixels inside on the phone and eight
           above it, which is Figma's 20/56 against rails at 16/48. */}
       <div className="mx-[16px] flex flex-1 flex-col ipad:mx-[48px]">
@@ -124,26 +131,34 @@ export const Section36Hero = () => (
       window. It used to slide up by however much the section overhung the fold,
       clamped at 77 — Figma's whole gap between the stats band (closes y375) and
       the crest (y452) — to recover the horizon on a window shorter than the 832
-      floor. At a 1280 floor that overhang is no longer the exception, so the
-      clamp saturated: every laptop got the full -77 as a constant, which is not
-      a recovery, it is the crest moved to y363 and driven into the stats.
+      floor. Once the floor went past 832 that overhang stopped being the
+      exception and the clamp saturated: every laptop got the full -77 as a
+      constant, which is not a recovery, it is the crest driven into the stats.
 
-      Nothing has to replace it. The globe is hung off its crest and the glow off
-      the globe's equator, so both sit at a fixed offset from the top of the
-      section and are on screen at any window height. Only the foot of the sheet
-      is below the fold now, and the foot is meant to be scrolled to.
+      Nothing has to replace it. Every frame hangs the globe off the *bottom*
+      edge of this layer — the layer is the horizon — so all the correcting there
+      is to do is deciding what that edge is.
 
-      The layer is the frame height, not `h-full`, and that is the one cap in the
-      section. `<main>` keeps `min-h-dvh` so the sheet and the grid reach the foot
-      of any window — without it a window taller than the frame shows the page's
-      own `#181818` as a band under the design. But the globe must not follow the
-      window down. Phone and tablet anchor it to the *bottom* of this layer, so
-      on `h-full` the dome rode the window foot and the surplus opened as a hole
-      between the stats and the horizon: 622px of it at 375x1496. Capped, the
-      horizon lands where each frame draws it and the surplus falls below it as
-      ruled sheet, which is what the sheet is for.
+      Desktop takes the window whenever the window is the taller of the two. The
+      horizon is the one line in this design that reads as the foot of the page,
+      and a layer stopped at the 1141 cap put it 100-400px above the fold with
+      ruled sheet showing underneath, which reads as the dome floating rather
+      than rising out of the bottom edge. `--section-h` still floors it at 832,
+      so a window shorter than the frame gets Figma's own horizon and cuts it
+      off, rather than sliding the globe up into the copy.
+
+      What this costs is the gap between the stats and the crest, which now grows
+      with the window: about 550px of ruled sheet on a 1500-tall screen against
+      Figma's 77. The sheet is what the surplus is meant to fall into, and the
+      globe itself no longer grows past a 1020-tall window — see `sphere.tsx` —
+      so the dome cannot swallow the copy on the way down.
+
+      The two stacked frames keep their own fixed heights. There the layer must
+      not follow the window: on `h-full` the dome rode the foot of a phone that
+      is far taller than the frame, and the surplus opened as a hole between the
+      stats and the horizon — 622px of it at 375x1496.
     */}
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-30 mx-auto h-[874px] w-full ultrawide:max-w-[1440px] ipad:h-[1133px] desktop-sm:h-[1280px]">
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-30 mx-auto h-[874px] w-full ipad:h-[1133px] desktop-sm:h-[max(var(--section-h),100dvh)]">
       <Sphere />
     </div>
   </main>

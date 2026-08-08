@@ -72,7 +72,7 @@ const PATTERN_MASK = "linear-gradient(to bottom, #000 0%, transparent 100%)";
  *
  * The desktop is the one frame that shows the whole drawing, so there it takes
  * the canvas width instead of a clip. That width is no longer a constant — the
- * canvas grows to 1440 before the rails do — so it is `w-full` rather than
+ * canvas grows to 1920 before the rails do — so it is `w-full` rather than
  * Figma's 1040, and the arcs stretch with it. They are a 25%-opacity ambience
  * behind a mask, not a measured object; stretching reads as the sweep opening
  * out, where clipping at 1040 would leave the field ending mid-canvas.

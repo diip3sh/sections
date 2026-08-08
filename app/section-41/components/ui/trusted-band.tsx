@@ -51,14 +51,13 @@ const STRIP_CLASS =
  * panel filling the space between them, and on the phone the figures are cut
  * entirely and only the logos remain.
  *
- * On the desktop the stats strip is the fixed half and the logo strip absorbs
- * the difference — the reverse of how Figma lists them, and the only split that
- * survives the canvas growing past 1040. The seam between the two strips is not
- * a seam: it is the globe panel's left border continuing down the page, and the
- * panel is pinned to the right edge at a fixed 500. Holding the stats at Figma's
- * 499 keeps the seam under that border at any canvas width. Splitting the two
- * proportionally instead reproduces 1280 and then drifts — at a 1440 canvas the
- * seam lands 192px adrift of the border it is supposed to continue.
+ * On the desktop the stats strip is the measured half and the logo strip absorbs
+ * whatever is left — the reverse of how Figma lists them. The seam between the
+ * two is not a seam: it is the globe panel's left border continuing down the
+ * page, so the stats strip has to be whatever the panel is, and it is written
+ * the same way — Figma's share of the canvas, 48.0769%, rather than the 499 that
+ * share happens to equal at 1040. The two numbers are one measurement in two
+ * files; move one and the seam leaves the border.
  *
  * Figma calls both strips 80px tall and also gives their cells 80px, which
  * cannot both be true once the two hairlines are counted. The cells are the
@@ -66,26 +65,32 @@ const STRIP_CLASS =
  * are left to size themselves to 82 and everything around them is measured from
  * the cell edge instead.
  *
- * The desktop band stays measured from the top of the canvas, at Figma's y574,
- * because that edge is shared: y574 is also the bottom of the globe panel, and
- * the divider between the two strips continues the panel's left border down the
- * page on the same x540. Those are one continuous drawing, not two blocks that
- * happen to be adjacent.
+ * The desktop band is in flow, directly under the copy-and-globe row, because
+ * its top edge is shared: Figma's y574 is also the bottom of the globe panel,
+ * and the divider between the two strips continues the panel's left border down
+ * the page on the same x540. Those are one continuous drawing, not two blocks
+ * that happen to be adjacent, so they are laid out as one — the row takes the
+ * canvas's spare height and the band rides on its bottom edge.
  *
- * Measuring the band off the bottom instead — the usual move for a strip that
- * reads as sitting on the fold — breaks exactly that. Figma's 832 frame is a
- * floor here (see `section-41-hero.tsx`), so on anything taller the band slid
- * away from the panel and left the rule hanging in mid-air: 68px of gap at 900,
- * 368px at 1200. The surplus goes under the band instead, where the rails carry
- * it and nothing is drawn across.
+ * Neither a fixed y574 nor a bottom offset survives that. Pinned to the top the
+ * band stayed at 574 while the row grew and the panel border ran on past it;
+ * pinned to the bottom it slid the other way and left the rule hanging in
+ * mid-air. In flow the two cannot come apart.
+ *
+ * The 100px Figma leaves under the band is `pb` on the canvas rather than
+ * anything here, so the row's `flex-1` resolves to exactly 574 at the frame.
+ *
+ * The "Trusted by people from" label is the one thing still absolute, and it is
+ * measured from the canvas foot for the same reason — 197 is the 100 of padding
+ * plus the band's 82 plus Figma's 15px of clearance above the rule.
  */
 export const TrustedBand = () => (
   <>
-    <p className="absolute z-[1] hidden text-[16px] leading-[normal] whitespace-nowrap text-[#a7a7a7] ipad:top-[348px] ipad:left-1/2 ipad:block ipad:-translate-x-1/2 ipad:text-center desktop-sm:top-[540px] desktop-sm:left-[17px] desktop-sm:translate-x-0">
+    <p className="absolute z-[1] hidden text-[16px] leading-[normal] whitespace-nowrap text-[#a7a7a7] ipad:top-[348px] ipad:left-1/2 ipad:block ipad:-translate-x-1/2 ipad:text-center desktop-sm:top-auto desktop-sm:bottom-[197px] desktop-sm:left-[17px] desktop-sm:translate-x-0">
       Trusted by people from
     </p>
 
-    <div className="absolute top-[686px] right-0 left-0 z-[1] h-[80px] ipad:top-[382px] ipad:h-[612px] desktop-sm:top-[574px] desktop-sm:left-px desktop-sm:flex desktop-sm:h-auto desktop-sm:flex-nowrap">
+    <div className="absolute top-[686px] right-0 left-0 z-[1] h-[80px] ipad:top-[382px] ipad:h-[612px] desktop-sm:relative desktop-sm:top-auto desktop-sm:right-auto desktop-sm:left-auto desktop-sm:ml-px desktop-sm:flex desktop-sm:h-auto desktop-sm:flex-nowrap">
       <div className={`${STRIP_CLASS} top-0 flex desktop-sm:flex-1`}>
         <div className={CELL_CLASS}>
           {/* Figma pairs the mark with the wordmark; this is the only cell with two files. */}
@@ -122,7 +127,7 @@ export const TrustedBand = () => (
       </div>
 
       <div
-        className={`${STRIP_CLASS} top-[530px] hidden ipad:flex desktop-sm:w-[499px] desktop-sm:flex-none`}
+        className={`${STRIP_CLASS} top-[530px] hidden ipad:flex desktop-sm:w-[48.0769%] desktop-sm:flex-none`}
       >
         {STATS.map((stat) => (
           <div className={`${CELL_CLASS} flex-col gap-[6px]`} key={stat.label}>

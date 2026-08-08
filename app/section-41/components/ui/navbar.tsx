@@ -27,15 +27,16 @@ const LINK_CLASS =
  * worth keeping, not the 1200.
  *
  * So the row tracks the canvas rather than holding a constant. The canvas grows
- * to 1440 before the rails do (see `section-41-hero.tsx`), and a fixed 1200 row
+ * to 1920 before the rails do (see `section-41-hero.tsx`), and a fixed 1200 row
  * would have flipped the relationship inside out — at 1920 the brand would sit
- * 136px *inside* a canvas edge it is supposed to sit outside. `100% - 16px`
+ * 376px *inside* a canvas edge it is supposed to sit outside. `100% - 16px`
  * against the band's own 32px padding resolves to exactly 1200 at the 1280
- * frame, and the 1600 cap is the 1440 canvas plus the same 80 either side.
+ * frame, and the 2080 cap is the 1920 canvas plus the same 80 either side.
+ * The two caps are one number in two places: move the canvas and this follows.
  */
 export const Navbar = () => (
   <header className="relative z-30 flex h-[65px] w-full flex-none items-center justify-center border-b border-white/10 px-[16px] py-[20px] desktop-sm:h-[76px] desktop-sm:px-[32px] desktop-sm:py-[16px]">
-    <div className="relative flex w-full max-w-none items-center justify-between px-[16px] desktop-sm:w-[calc(100%-16px)] desktop-sm:max-w-[1600px]">
+    <div className="relative flex w-full max-w-none items-center justify-between px-[16px] desktop-sm:w-[calc(100%-16px)] desktop-sm:max-w-[2080px]">
       <Link
         href="#"
         aria-label="Procura AI home"

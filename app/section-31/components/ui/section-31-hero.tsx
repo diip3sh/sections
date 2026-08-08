@@ -25,12 +25,16 @@ import { StatsRow } from "./stats-row";
  * to the rails through the stretch instead of hanging off a 1440-only number.
  *
  * Height is two decisions, not one. `<main>` takes `min-h-dvh` so the page runs
- * to the bottom of any screen. The stage inside it keeps each frame's own height
- * and does not grow with the viewport: 811 is
- * shorter than most laptops, but the answer is background below the design, not
- * a design stretched to fill the gap — stretching pulled the nav, stats and
- * brand bands off the spacing Figma draws between them. The middle band is
- * transparent to the pointer so it cannot swallow nav clicks.
+ * to the bottom of any screen. The stacked frames keep their own heights — they
+ * are already taller than the phones and tablets they run on. Desktop takes
+ * Figma's 811 as a floor and follows the viewport up to 1142, past which the
+ * bands drift so far apart that the design reads as three strips rather than one
+ * screen; beyond that the surplus is background below the stage. `--stage-h`
+ * carries that one number, and `--band-h` the middle band it leaves once the nav
+ * (173) and the stats-and-brands band (168) have taken their fixed share — the
+ * visual sizes itself off it, so a wide short viewport cannot push the disc
+ * through the rule below it. The middle band is transparent to the pointer so it
+ * cannot swallow nav clicks.
  */
 export const Section31Hero = () => (
   <main className="animate-hero-reveal relative isolate min-h-dvh w-full overflow-hidden bg-[#0a0a0a]">
@@ -43,7 +47,7 @@ export const Section31Hero = () => (
     */}
     <GridRails />
 
-    <div className="relative h-[1233px] w-full ipad:h-[1330px] desktop-sm:h-[811px]">
+    <div className="relative h-[1233px] w-full [--stage-h:clamp(811px,100dvh,1142px)] ipad:h-[1330px] desktop-sm:h-[var(--stage-h)]">
       {/*
         The horizontal grid belongs to the stage, not to the screen. Every rule
         in it is placed against a frame y and two of them are measured from the
@@ -59,7 +63,7 @@ export const Section31Hero = () => (
       <div className="relative z-10 mx-auto h-full w-full max-w-[402px] ipad:max-w-[744px] desktop-sm:max-w-[1920px]">
         <Navbar />
 
-        <div className="pointer-events-none absolute inset-0 desktop-sm:top-[173px] desktop-sm:bottom-[168px]">
+        <div className="pointer-events-none absolute inset-0 [--band-h:calc(var(--stage-h)-341px)] desktop-sm:top-[173px] desktop-sm:bottom-[168px]">
           <HeroContent />
           <BlackHoleVisual />
         </div>

@@ -39,6 +39,17 @@ import BlackHole from "../originkit/black-hole";
  * Figma puts it at y76 in a 173-643 band, i.e. 76px above that centre, and
  * holding the offset means the disc and the copy drift down by the same amount
  * when the band opens up on a viewport taller than Figma's 811.
+ *
+ * Width is the smaller of two things, and the second one is what keeps the art
+ * off the brand strip. A share of the stage alone grows with width only: at the
+ * 1920 cap it makes the box 978 wide and 683 tall inside a band that is 470,
+ * and the hand — which hangs to 114.7% of the box — drops well past the rule the
+ * strip sits on. So the box is also capped by the band it lives in, at exactly
+ * the overhang Figma draws: the hand's foot sits at `0.6469 * boxH - 76` below
+ * the band centre and Figma lets that clear the band's own half-height by 20px,
+ * which solves to `boxH <= 0.7729 * bandH + 148.86` and, through the aspect
+ * ratio, to the width below. At 1440 x 811 the two agree to a tenth of a pixel,
+ * so the reference frame is untouched and only wider or shorter viewports bind.
  */
 
 /** Width of the Figma render the parameters above were measured from. */
@@ -96,7 +107,7 @@ export const BlackHoleVisual = () => {
   return (
     <div
       ref={hostRef}
-      className="absolute top-[489px] left-[-2.74%] z-10 aspect-[733.681/512.049] w-[102.84%] ipad:top-[567px] ipad:left-[14.11%] ipad:w-[71.75%] desktop-sm:top-[calc(50%-76px)] desktop-sm:left-[45.21%] desktop-sm:w-[50.95%] desktop-sm:-translate-y-1/2"
+      className="absolute top-[489px] left-[-2.74%] z-10 aspect-[733.681/512.049] w-[102.84%] ipad:top-[567px] ipad:left-[14.11%] ipad:w-[71.75%] desktop-sm:top-[calc(50%-76px)] desktop-sm:left-[45.21%] desktop-sm:w-[min(50.95%,calc((0.7729*var(--band-h)_+_148.86px)*1.4328))] desktop-sm:-translate-y-1/2"
     >
       {width > 0 && (
         <BlackHole

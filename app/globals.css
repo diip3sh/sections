@@ -193,6 +193,7 @@
   --font-sans: var(--font-inter);
   --font-tight: var(--font-inter-tight);
   --font-lato: var(--font-lato-family);
+  --font-covered: var(--font-covered-by-your-grace-family);
   --font-geist-mono: var(--font-geist-mono-family);
   --font-dm-mono: var(--font-dm-mono-family);
   --font-monda: var(--font-monda-family);
@@ -208,6 +209,7 @@
   --font-manrope: var(--font-manrope-family);
   --font-baskervville: var(--font-baskervville-family);
   --font-playfair: var(--font-playfair-display-family);
+  --font-poppins: var(--font-poppins-family);
   --font-rajdhani: var(--font-rajdhani-family);
   --font-space: var(--font-space-grotesk-family);
   --font-audiowide: var(--font-audiowide-family);

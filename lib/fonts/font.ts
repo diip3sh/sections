@@ -11,12 +11,14 @@ import {
   Instrument_Serif,
   Inter,
   Inter_Tight,
+  Covered_By_Your_Grace,
   Lato,
   Manrope,
   Monda,
   Orbit,
   Outfit,
   Playfair_Display,
+  Poppins,
   Rajdhani,
   Red_Hat_Display,
   Rethink_Sans,
@@ -69,6 +71,12 @@ export const lato = Lato({
   variable: "--font-lato-family",
   subsets: ["latin"],
   weight: ["400", "700"],
+});
+
+export const coveredByYourGrace = Covered_By_Your_Grace({
+  variable: "--font-covered-by-your-grace-family",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export const rethinkSans = Rethink_Sans({
@@ -166,6 +174,12 @@ export const orbit = Orbit({
 
 export const outfit = Outfit({
   variable: "--font-outfit-family",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
+
+export const poppins = Poppins({
+  variable: "--font-poppins-family",
   subsets: ["latin"],
   weight: ["400", "500"],
 });

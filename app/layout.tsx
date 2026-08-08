@@ -15,12 +15,14 @@ import {
   interTight,
   dmMono,
   geistMono,
+  coveredByYourGrace,
   lato,
   monda,
   manrope,
   orbit,
   outfit,
   playfairDisplay,
+  poppins,
   rajdhani,
   redHatDisplay,
   rethinkSans,
@@ -47,7 +49,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${interTight.variable} ${lato.variable} ${geistMono.variable} ${dmMono.variable} ${monda.variable} ${switzer.variable} ${rethinkSans.variable} ${geist.variable} ${tillana.variable} ${instrumentSans.variable} ${instrumentSerif.variable} ${hedvigLettersSerif.variable} ${manrope.variable} ${baskervville.variable} ${playfairDisplay.variable} ${rajdhani.variable} ${urbanist.variable} ${spaceGrotesk.variable} ${clash.variable} ${audiowide.variable} ${orbit.variable} ${outfit.variable} ${redHatDisplay.variable} ${HelveticaNeueNormal.variable} ${Aeonik.variable} ${CanelaDeck.variable} ${canelaDeck.variable} ${gemunuLibre.variable} ${Helvetica.variable} h-full antialiased`}
+      className={`${inter.variable} ${interTight.variable} ${lato.variable} ${coveredByYourGrace.variable} ${geistMono.variable} ${dmMono.variable} ${monda.variable} ${switzer.variable} ${rethinkSans.variable} ${geist.variable} ${tillana.variable} ${instrumentSans.variable} ${instrumentSerif.variable} ${hedvigLettersSerif.variable} ${manrope.variable} ${baskervville.variable} ${playfairDisplay.variable} ${poppins.variable} ${rajdhani.variable} ${urbanist.variable} ${spaceGrotesk.variable} ${clash.variable} ${audiowide.variable} ${orbit.variable} ${outfit.variable} ${redHatDisplay.variable} ${HelveticaNeueNormal.variable} ${Aeonik.variable} ${CanelaDeck.variable} ${canelaDeck.variable} ${gemunuLibre.variable} ${Helvetica.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>

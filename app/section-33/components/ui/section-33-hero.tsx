@@ -80,9 +80,14 @@ export const Section33Hero = () => (
       whatever the section gains after that: at the 1142 cap that is 207, so the
       taller section opens more space above the disk than below it and the disk
       still reads as sitting down on the strip, the way Figma draws it.
+
+      Sideways it sits 3% of the row left of centre rather than on it. A share
+      rather than a pixel, so the step keeps its proportion as the row widens —
+      38px at 1280, 58 at 1920 — where a fixed nudge would vanish into an
+      ultrawide. The two stacked frames keep Figma's own centring.
     */}
     <div className="pointer-events-none absolute top-0 left-1/2 h-[848px] w-full max-w-[1920px] -translate-x-1/2 ipad:h-[1063px] desktop-sm:h-[var(--section-h)]">
-      <AccretionDisk className="bottom-[128px] h-[297px] w-[370px] ipad:bottom-[144px] ipad:h-[520px] ipad:w-[647px] desktop-sm:bottom-[calc(114px+(var(--section-h)-832px)*0.3)] desktop-sm:aspect-[673/540] desktop-sm:h-auto desktop-sm:w-[min(56%,1010px)]" />
+      <AccretionDisk className="bottom-[128px] h-[297px] w-[370px] ipad:bottom-[144px] ipad:h-[520px] ipad:w-[647px] desktop-sm:bottom-[calc(114px+(var(--section-h)-832px)*0.3)] desktop-sm:left-[48%] desktop-sm:aspect-[673/540] desktop-sm:h-auto desktop-sm:w-[min(56%,1010px)]" />
     </div>
 
     <Navbar />
